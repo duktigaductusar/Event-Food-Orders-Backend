@@ -1,0 +1,6 @@
+@EventFoodOrders_HostAddress = http://localhost:5209
+
+GET {{EventFoodOrders_HostAddress}}/api/dummies/
+Accept: application/json
+
+###
