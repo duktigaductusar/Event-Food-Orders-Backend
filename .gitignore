@@ -332,4 +332,5 @@ ServiceFabricBackup/
 # Microsoft Fakes
 FakesAssemblies/
 
-*.bin
+**/bin/
+**/obj/
