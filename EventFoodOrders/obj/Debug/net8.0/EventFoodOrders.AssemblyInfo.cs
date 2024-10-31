@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EventFoodOrders")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64bc6e354edbd687399756cca676d1e6a13857e7")]
 [assembly: System.Reflection.AssemblyProductAttribute("EventFoodOrders")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EventFoodOrders")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

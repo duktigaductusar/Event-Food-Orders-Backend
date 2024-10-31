@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrdersApp\\EventFoodOrders\\EventFoodOrders.csproj": {}
+    "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrders\\c-backend\\EventFoodOrders\\EventFoodOrders.csproj": {}
   },
   "projects": {
-    "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrdersApp\\EventFoodOrders\\EventFoodOrders.csproj": {
+    "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrders\\c-backend\\EventFoodOrders\\EventFoodOrders.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrdersApp\\EventFoodOrders\\EventFoodOrders.csproj",
+        "projectUniqueName": "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrders\\c-backend\\EventFoodOrders\\EventFoodOrders.csproj",
         "projectName": "EventFoodOrders",
-        "projectPath": "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrdersApp\\EventFoodOrders\\EventFoodOrders.csproj",
+        "projectPath": "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrders\\c-backend\\EventFoodOrders\\EventFoodOrders.csproj",
         "packagesPath": "C:\\Users\\maxsjogr\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrdersApp\\EventFoodOrders\\obj\\",
+        "outputPath": "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrders\\c-backend\\EventFoodOrders\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "XlbpqgFPjeSSwuNDdGpw6jKpJYpA+Qs35VJ3osUDLE2P8IKvIOfG7NIv/85iEwJPBhXfh2+kSWxSmywyl5X39A==",
+  "dgSpecHash": "BAKWdmdbZTkV7hc6LUC7egkHeYeL1X/CMhvFsXm8S9pX3QyWSJBESSo2MMdjCKEhGNFN69JwUqnrpK8fFn4A3w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrdersApp\\EventFoodOrders\\EventFoodOrders.csproj",
+  "projectFilePath": "C:\\Users\\maxsjogr\\DEV\\GIT\\csharp\\EventFoodOrders\\c-backend\\EventFoodOrders\\EventFoodOrders.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\maxsjogr\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\maxsjogr\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
