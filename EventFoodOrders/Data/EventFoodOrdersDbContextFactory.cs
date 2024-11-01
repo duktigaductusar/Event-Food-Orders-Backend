@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace EventFoodOrders.Data
+namespace EventFoodOrders.Data;
+
+public class EventFoodOrdersDbContextFactory : IDbContextFactory<EventFoodOrdersDbContext>
 {
-    public class EventFoodOrdersDbContextFactory : IDbContextFactory<EventFoodOrdersDbContext>
+    public EventFoodOrdersDbContext CreateDbContext()
     {
-        public EventFoodOrdersDbContext CreateDbContext()
-        {
-            var builder = new DbContextOptionsBuilder<EventFoodOrdersDbContext>();
-            //ServiceCollection.
-            //    return new EventDataContext(builder.Options);
-            return null;
-        }
+        var builder = new DbContextOptionsBuilder<EventFoodOrdersDbContext>();
+        //ServiceCollection.
+        //    return new EventDataContext(builder.Options);
+        return null;
     }
 }

@@ -15,7 +15,21 @@ public class Program
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
         builder.Services.AddTransient<IEventFoodOrdersApi, EventFoodOrdersApi>();
 
+        // Adjust for prod.
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AngularFontendDEV", policyBuilder =>
+            {
+                policyBuilder.AllowAnyOrigin();
+                policyBuilder.AllowAnyHeader();
+                policyBuilder.AllowAnyMethod();
+                //policyBuilder.AllowCredentials();
+            });
+        });
+
         var app = builder.Build();
+
+        app.UseCors("AngularFontendDEV");
 
         // Configure the HTTP request pipeline.
 
