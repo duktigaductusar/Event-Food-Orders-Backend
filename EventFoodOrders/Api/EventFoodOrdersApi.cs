@@ -98,4 +98,49 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
 
     }
+
+    public List<Event> GetEvents()
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<Participant> GetParticipants()
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<User> GetUsers()
+    {
+        throw new NotImplementedException();
+    }
+
+    public User GetUser(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Event GetEvent(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Participant GetParticipant(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public User createUser(User _user)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Event createEvent(Event _event)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Participant Participant(Participant _participant)
+    {
+        throw new NotImplementedException();
+    }
 }

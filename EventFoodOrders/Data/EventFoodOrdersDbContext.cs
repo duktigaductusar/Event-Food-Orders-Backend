@@ -11,5 +11,8 @@ public class EventFoodOrdersDbContext : DbContext
     }
 
     public DbSet<Dummy> Dummies { get; set; }
+    public DbSet<Event> Events { get; set; }
+    public DbSet<Participant> Participants { get; set; }
+    public DbSet<User> Users { get; set; }
 
 }
