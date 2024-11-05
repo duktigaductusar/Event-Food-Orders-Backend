@@ -4,8 +4,6 @@ namespace EventFoodOrders.Api;
 
 public interface IEventFoodOrdersApi
 {
-    public List<Dummy> GetDummies();
-
     public List<Event> GetEvents();
     public List<Participant> GetParticipants();
     public List<User> GetUsers();

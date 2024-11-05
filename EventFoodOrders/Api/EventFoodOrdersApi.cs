@@ -13,92 +13,6 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
         _contextFactory = contextFactory;
     }
 
-
-    public List<Dummy> GetDummies()
-    {
-        List<Dummy> result = new List<Dummy>();
-
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
-        {
-            result = context.Dummies.ToList();
-        }
-
-        return result;
-
-    }
-    public Dummy GetDummy(string id)
-    {
-        Dummy result = new Dummy();
-
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
-        {
-            result = context.Dummies.Where(d => d.Id == id).FirstOrDefault();
-        }
-
-        return result;
-
-    }
-
-    public void DeleteDummy(string id)
-    {
-
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
-        {
-            context.Dummies.Remove(GetDummy(id));
-            context.SaveChanges();
-        }
-
-    }
-
-
-
-    public Dummy AddDummy(Dummy item)
-    {
-        Dummy retVal = new Dummy();
-
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
-        {
-            retVal = context.Dummies.Add(item).Entity;
-            context.SaveChanges();
-        }
-        return retVal;
-
-
-    }
-    public Dummy? UpdateDummy(Dummy item)
-    {
-        Dummy retVal = new Dummy();
-
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
-        {
-
-            try
-            {
-                Dummy existing = context.Dummies.Where(d => d.Id == item.Id).FirstOrDefault();
-
-                if (existing != null)
-                {
-                    existing.Description = item.Description;
-                    existing.Name = item.Name;
-
-                    retVal = context.Dummies.Update(existing).Entity;
-                    context.SaveChanges();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-
-
-
-        }
-        return retVal;
-
-
-    }
-
     public List<Event> GetEvents()
     {
         throw new NotImplementedException();
@@ -106,7 +20,15 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
     public List<Participant> GetParticipants()
     {
-        throw new NotImplementedException();
+
+        List<Participant> result = new List<Participant>();
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            result = context.Participants.ToList();
+        }
+
+        return result;
     }
 
     public List<User> GetUsers()
@@ -137,6 +59,35 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
     public Event createEvent(Event _event)
     {
         throw new NotImplementedException();
+    }
+
+    public Participant GetParticipant(Participant _participant)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Participant? CreateParticipant(Participant participant)
+    {
+        Participant retVal = new Participant();
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            retVal = context.Participants.Add(participant).Entity;
+            context.SaveChanges();
+        }
+        return retVal;
+    }
+
+    public User? AddUser(User user)
+    {
+        User retVal = new User();
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            retVal = context.Users.Add(user).Entity;
+            context.SaveChanges();
+        }
+        return retVal;
     }
 
     public Participant Participant(Participant _participant)

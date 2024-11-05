@@ -11,46 +11,27 @@ public class EventFoodOrdersController(ILogger<EventFoodOrdersController> logger
     private readonly EventFoodOrdersApi _api = (EventFoodOrdersApi)api;
 
     [HttpGet]
-    [Route("/api/dummies")]
-    public IActionResult Get()
+    [Route("/api/participants")]
+    public IActionResult GetParticipants()
     {
-        List<Dummy> dummies = _api.GetDummies().ToList<Dummy>();
+        List<Participant> participants = _api.GetParticipants().ToList<Participant>();
 
-        return Ok(dummies);
+        return Ok(participants);
     }
 
-    [HttpGet]
-    [Route("/api/dummy/{id}")]
-    public IActionResult Get(string id)
-    {
-        Dummy dummy = _api.GetDummy(id);
 
-        return Ok(dummy);
+    [HttpPost]
+    [Route("/api/add/participants")]
+    public IActionResult newParticipant(Participant participant)
+    {
+        return Ok(_api.CreateParticipant(participant));
     }
 
     [HttpPost]
-    [Route("/api/add/dummy")]
-    public IActionResult newDummy(Dummy dummy)
+    [Route("/api/add/user")]
+    public IActionResult newUser(User user)
     {
-        return Ok(_api.AddDummy(dummy));
+        return Ok(_api.AddUser(user));
     }
-
-    [HttpPut]
-    [Route("/api/update/dummy")]
-    public IActionResult UpdateDummy(Dummy dummy)
-    {
-        return Ok(_api.UpdateDummy(dummy));
-    }
-
-    [HttpDelete]
-    [Route("/api/delete/dummy/{id}")]
-    public IActionResult DeleteDummy(string id)
-    {
-        _api.DeleteDummy(id);
-
-        return Ok();
-    }
-
-
 
 }

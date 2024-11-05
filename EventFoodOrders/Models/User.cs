@@ -1,9 +1,10 @@
 ﻿using EventFoodOrders.security;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EventFoodOrders.Models;
 
-public class User /* : IUserDetails */
+public class User
 {
     public User()
     {
@@ -11,51 +12,53 @@ public class User /* : IUserDetails */
         {
             user_id = Guid.NewGuid();
         }
+
+        IsEnabled = true;
+        IsCredentialsNonExpired = false;
+        IsAccountNonLocked = false;
+        IsAccountNonExpired = false;
+        Authority = Role.PARTICIPANT.ToString();
     }
 
     [Key]
+    [Column("user_id")]
     private Guid user_id { get; }
 
+    [Column]
     private String name { get; set; }
 
     //@Column(unique = true, nullable = false)
+    [Column]
     private String email { get; set; }
 
+    [Column]
     private String password { get; set; }
 
     //@Enumerated(EnumType.STRING)
-    private Role role { get; set; }
+    [Column]
+    private Role role;
+
+    [Column]
+    private bool IsEnabled { get; set; }
+
+    [Column]
+    private bool IsCredentialsNonExpired { get; set; }
+
+    [Column]
+    private bool IsAccountNonLocked { get; set; }
+
+    [Column]
+    private bool IsAccountNonExpired { get; set; }
+
+    [Column]
+    private string Authority { get; set; }
 
     //@Override
     public List<IGrantedAuthority> getAuthorities()
     {
-        //return IList < Role > = [];
-        return null;
-    }
+        List<IGrantedAuthority> retVal = new List<IGrantedAuthority>();
 
-    public string getAuthority()
-    {
-        return role.ToString();
-    }
-
-    public bool isAccountNonExpired()
-    {
-        return false;
-    }
-
-    public bool isAccountNonLocked()
-    {
-        return false;
-    }
-
-    public bool isCredentialsNonExpired()
-    {
-        return false;
-    }
-
-    public bool isEnabled()
-    {
-        return false;
+        return retVal;
     }
 }
 
