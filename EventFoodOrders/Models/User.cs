@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EventFoodOrders.Models;
-
+[Table("users")]
 public class User
 {
     public User()
@@ -21,22 +21,23 @@ public class User
     }
 
     [Key]
+    [Required]
     [Column("user_id")]
     private Guid user_id { get; }
 
-    [Column]
-    private String name { get; set; }
+    [Column("name")]
+    [Required]
+    [DataType(DataType.Text)]
+    private string name { get; set; }
 
-    //@Column(unique = true, nullable = false)
-    [Column]
+    [Column("email")]
     private String email { get; set; }
 
     [Column]
     private String password { get; set; }
 
-    //@Enumerated(EnumType.STRING)
     [Column]
-    private Role role;
+    private string role;
 
     [Column]
     private bool IsEnabled { get; set; }
@@ -53,7 +54,6 @@ public class User
     [Column]
     private string Authority { get; set; }
 
-    //@Override
     public List<IGrantedAuthority> getAuthorities()
     {
         List<IGrantedAuthority> retVal = new List<IGrantedAuthority>();

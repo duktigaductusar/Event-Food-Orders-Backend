@@ -12,10 +12,14 @@ public interface IEventFoodOrdersApi
     public Event GetEvent(Guid id);
     public Participant GetParticipant(Guid id);
 
-    public User createUser(User _user);
-    public Event createEvent(Event _event);
-    public Participant Participant(Participant _participant);
+    public User CreateUser(User _user);
+    public Event CreateEvent(Event _event);
+    public Participant CreateParticipant(Participant _participant);
 
+    public User UpdateUser(User _user);
+    public Event UpdateEvent(Event _event);
+    public Participant UpdateParticipant(Participant _participant);
 
+    public List<User> FindByName(string name);
 
 }

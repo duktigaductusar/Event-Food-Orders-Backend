@@ -94,4 +94,34 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
     {
         throw new NotImplementedException();
     }
+
+    public User CreateUser(User _user)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Event CreateEvent(Event _event)
+    {
+        throw new NotImplementedException();
+    }
+
+    public User UpdateUser(User _user)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Event UpdateEvent(Event _event)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Participant UpdateParticipant(Participant _participant)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<User> FindByName(string name)
+    {
+        throw new NotImplementedException();
+    }
 }

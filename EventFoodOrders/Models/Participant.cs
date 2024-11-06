@@ -3,8 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EventFoodOrders.Models;
 
-//@Data
-//@Entity
 [Table("participants")]
 public class Participant
 {
