@@ -124,4 +124,19 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
     {
         throw new NotImplementedException();
     }
+
+    public void DeleteUser(Guid guid)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DeleteEvent(Guid guid)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<Participant> getEventWithMeal(Guid guid)
+    {
+        throw new NotImplementedException();
+    }
 }

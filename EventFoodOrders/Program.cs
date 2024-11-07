@@ -15,7 +15,7 @@ public class Program
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
         builder.Services.AddTransient<IEventFoodOrdersApi, EventFoodOrdersApi>();
 
-        // Adjust for prod.
+        //TODO Adjust for prod.
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AngularFontendDEV", policyBuilder =>
