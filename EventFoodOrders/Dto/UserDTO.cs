@@ -7,7 +7,7 @@ public class UserDTO
     private string Name { get; set; }
     private string Email { get; set; }
     private string Allergies { get; set; }
-    private Role Roll { get; set; }
+    private Role Role { get; set; }
 
     public UserDTO()
     {
