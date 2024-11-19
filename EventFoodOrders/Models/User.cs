@@ -17,7 +17,7 @@ public class User
         IsCredentialsNonExpired = false;
         IsAccountNonLocked = false;
         IsAccountNonExpired = false;
-        Authority = Role.PARTICIPANT.ToString();
+        Authority = Models.Role.PARTICIPANT.ToString();
     }
 
     [Key]
@@ -28,16 +28,16 @@ public class User
     [Column("name")]
     [Required]
     [DataType(DataType.Text)]
-    private string name { get; set; }
+    private string Name { get; set; }
 
     [Column("email")]
-    private String email { get; set; }
+    private String Email { get; set; }
 
     [Column]
-    private String password { get; set; }
+    private String Password { get; set; }
 
     [Column]
-    private string role;
+    private string Role { get; set; }
 
     [Column]
     private bool IsEnabled { get; set; }

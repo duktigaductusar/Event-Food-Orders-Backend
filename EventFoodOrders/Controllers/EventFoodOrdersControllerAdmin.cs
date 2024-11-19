@@ -18,19 +18,20 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     // TODO Post /admin/users
     [HttpPost]
     [Route("/admin/users")]
-    public IActionResult AddUsers(User _user)
+    public IActionResult AddUsers(UserDTO _user)
     {
         if (_user == null)
         {
             return BadRequest();
         }
 
+        User user = new();
 
         // TODO fix mapping or let API fix it.
 
 
 
-        User user = _api.AddUser(_user);
+        //   User user = _api.AddUser(_user);
 
         return Ok(user);
     }
