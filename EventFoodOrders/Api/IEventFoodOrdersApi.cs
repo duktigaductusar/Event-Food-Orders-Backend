@@ -11,9 +11,7 @@ public interface IEventFoodOrdersApi
     public User GetUser(Guid id);
     public Event GetEvent(Guid id);
     public Participant GetParticipant(Guid id);
-
-    public User CreateUser(User _user);
-    public Event CreateEvent(Event _event);
+    public Event SaveEvent(Event _event);
     public Participant CreateParticipant(Participant _participant);
 
     public User UpdateUser(User _user);
