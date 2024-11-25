@@ -36,12 +36,12 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
         throw new NotImplementedException();
     }
 
-    public User GetUser(Guid id)
+    public User GetUser(Guid _id)
     {
         throw new NotImplementedException();
     }
 
-    public Event GetEvent(Guid id)
+    public Event GetEvent(Guid _id)
     {
         throw new NotImplementedException();
     }
@@ -66,20 +66,20 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
         throw new NotImplementedException();
     }
 
-    public Participant? CreateParticipant(Participant participant)
+    public Participant? CreateParticipant(Participant _participant)
     {
         Participant retVal = new Participant();
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Participants.Add(participant).Entity;
+            retVal = context.Participants.Add(_participant).Entity;
             context.SaveChanges();
         }
 
         return retVal;
     }
 
-    public User? AddUser(User user)
+    public User? AddUser(User _user)
     {
         User retVal = new User();
 
@@ -118,22 +118,22 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
         throw new NotImplementedException();
     }
 
-    public List<User> FindByName(string name)
+    public List<User> FindByName(string _name)
     {
         throw new NotImplementedException();
     }
 
-    public void DeleteUser(Guid guid)
+    public void DeleteUser(Guid _guid)
     {
         throw new NotImplementedException();
     }
 
-    public void DeleteEvent(Guid guid)
+    public void DeleteEvent(Guid _guid)
     {
         throw new NotImplementedException();
     }
 
-    public List<Participant> getEventWithMeal(Guid guid)
+    public List<Participant> getEventWithMeal(Guid _guid)
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {

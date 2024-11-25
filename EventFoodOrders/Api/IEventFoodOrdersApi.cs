@@ -1,23 +1,27 @@
 ﻿using EventFoodOrders.Models;
 
-namespace EventFoodOrders.Api;
-
-public interface IEventFoodOrdersApi
+namespace EventFoodOrders.Api
 {
-    public List<Event> GetEvents();
-    public List<Participant> GetParticipants();
-    public List<User> GetUsers();
-
-    public User GetUser(Guid id);
-    public Event GetEvent(Guid id);
-    public Participant GetParticipant(Guid id);
-    public Event SaveEvent(Event _event);
-    public Participant CreateParticipant(Participant _participant);
-
-    public User UpdateUser(User _user);
-    public Event UpdateEvent(Event _event);
-    public Participant UpdateParticipant(Participant _participant);
-
-    public List<User> FindByName(string name);
-
+    public interface IEventFoodOrdersApi
+    {
+        User? AddUser(User _user);
+        Event createEvent(Event _event);
+        Participant? CreateParticipant(Participant _participant);
+        User createUser(User _user);
+        void DeleteEvent(Guid guid);
+        void DeleteUser(Guid _guid);
+        List<User> FindByName(string _name);
+        Event GetEvent(Guid id);
+        List<Event> GetEvents();
+        List<Participant> getEventWithMeal(Guid _guid);
+        Participant GetParticipant(Guid _id);
+        Participant GetParticipant(Participant _participant);
+        List<Participant> GetParticipants();
+        User GetUser(Guid _id);
+        List<User> GetUsers();
+        Event SaveEvent(Event _event);
+        Event UpdateEvent(Event _event);
+        Participant UpdateParticipant(Participant _participant);
+        User UpdateUser(User _user);
+    }
 }
