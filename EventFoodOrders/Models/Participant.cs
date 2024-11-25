@@ -15,23 +15,22 @@ public class Participant
     }
 
 
-    //@Id
-    //@GeneratedValue(strategy = GenerationType.UUID)
-    //@Column(name = "participant_id", updatable = false, nullable = false)
-    //[DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Key]
     [Column("participant_id")]
+    [Required]
     private Guid participant_id;
 
     //@ManyToOne
     //@JoinColumn(name = "user_id", nullable = false)
     [Column("user_id")]
+    [Required]
     private User user;
 
     //@ManyToOne
     //@JoinColumn(name = "event_id", nullable = false)
-    //[Column("event_id")]
-    //private Event event;
+    [Column("event_id")]
+    [Required]
+    private Event _event;
 
     private bool wantsMeal;
 

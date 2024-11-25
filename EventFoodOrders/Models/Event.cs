@@ -1,32 +1,35 @@
-﻿//@Data
-//@Entity
-//@Table(name = "events")
+﻿
+using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EventFoodOrders.Models;
 
 [Table("events")]
 public class Event
 {
     public Event()
     {
-        if (event_id == Guid.Empty)
+        if (Event_id == Guid.Empty)
         {
-            event_id = Guid.NewGuid();
+            Event_id = Guid.NewGuid();
         }
-        active = false;
+        Active = false;
     }
 
     [Key]
     [Column("event_id")]
     [Required]
-    private Guid event_id { get; }
+    private Guid Event_id { get; }
 
 
     [Required]
     [Column("event_date")]
-    private DateTime eventDate { get; set; }
+    private DateAndTime EventDate { get; set; }
 
     [Required]
     [Column("active")]
-    private bool active { get; set; }
+    private bool Active { get; set; }
+
+
 }

@@ -17,42 +17,39 @@ public class User
         IsCredentialsNonExpired = false;
         IsAccountNonLocked = false;
         IsAccountNonExpired = false;
-        Authority = Role.PARTICIPANT.ToString();
+        Authority = Models.Role.PARTICIPANT.ToString();
     }
 
     [Key]
     [Required]
     [Column("user_id")]
-    private Guid user_id { get; }
+    public Guid user_id { get; }
 
     [Column("name")]
     [Required]
     [DataType(DataType.Text)]
-    private string name { get; set; }
+    public string Name { get; set; }
 
     [Column("email")]
-    private String email { get; set; }
+    public String Email { get; set; }
 
     [Column]
-    private String password { get; set; }
+    public string Role { get; set; }
 
     [Column]
-    private string role;
+    public bool IsEnabled { get; set; }
 
     [Column]
-    private bool IsEnabled { get; set; }
+    public bool IsCredentialsNonExpired { get; set; }
 
     [Column]
-    private bool IsCredentialsNonExpired { get; set; }
+    public bool IsAccountNonLocked { get; set; }
 
     [Column]
-    private bool IsAccountNonLocked { get; set; }
+    public bool IsAccountNonExpired { get; set; }
 
     [Column]
-    private bool IsAccountNonExpired { get; set; }
-
-    [Column]
-    private string Authority { get; set; }
+    public string Authority { get; set; }
 
     public List<IGrantedAuthority> getAuthorities()
     {

@@ -3,11 +3,11 @@
 public class UserDTO
 {
     //@Schema(description = "User's name", example = "Duck Ductus")
-    private String name;
+    public String Name;
     //@Schema(description = "User's email address", example = "user@example.com")
-    private String email;
+    public String Email;
     //@Schema(description = "User's password", example = "password123")
-    private String password;
+    public String Password;
     //@Schema(description = "User's role", example = "ADMIN")
-    private Role role;
+    public Role Role;
 }

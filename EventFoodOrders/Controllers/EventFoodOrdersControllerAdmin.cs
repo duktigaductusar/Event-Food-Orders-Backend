@@ -12,14 +12,29 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     private readonly ILogger<EventFoodOrdersControllerAdmin> _logger = logger;
     private readonly EventFoodOrdersApi _api = (EventFoodOrdersApi)api;
 
-    // Admin Start
+
+
 
     // TODO Post /admin/users
     [HttpPost]
     [Route("/admin/users")]
-    public IActionResult AddUsers(User _user)
+    public IActionResult AddUsers(UserDTO _user)
     {
-        User user = _api.AddUser(_user);
+        if (_user == null)
+        {
+            return BadRequest();
+        }
+
+        User user = new();
+        user.Name = _user.Name;
+        user.Email = _user.Email;
+
+
+        // TODO fix mapping or let API fix it.
+
+
+
+        //   User user = _api.AddUser(_user);
 
         return Ok(user);
     }
@@ -29,13 +44,11 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     [Route("/admin/users/{id}")]
     public IActionResult UpdateUsers(String id, [FromBody] User _user)
     {
-        Guid GuidId = new Guid(id);
-
-        User existingUser = _api.GetUser(GuidId);
+        User existingUser = _api.GetUser(new Guid(id));
 
         if (existingUser == null)
         {
-            // TODO return 400
+            return BadRequest();
         }
 
         // TODO Map values from _user to existing user
@@ -55,7 +68,8 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         return Ok(users);
     }
 
-    // TODO Get /admin/search ? String name
+
+    // TODO Get /admin/search ? String name. Inte säker på att det behövs. Filtrering/Sök går att göra i frontend.
     [HttpGet]
     [Route("/admin/search")]
     public IActionResult searchUsersByName()
@@ -83,9 +97,9 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     // TODO Post /admin/events 
     [HttpPost]
     [Route("/admin/events")]
-    public IActionResult CreateEvent(Event _event)
+    public IActionResult AddEvent(Event _event)
     {
-        Event retVal = _api.CreateEvent(_event);
+        Event retVal = _api.SaveEvent(_event);
 
         return Ok(retVal);
     }
@@ -109,9 +123,7 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     [Route("/admin/events/{id}")]
     public IActionResult GetEvent(string id)
     {
-        Event existingEvent = _api.GetEvent(new Guid(id));
-
-        Event retVal = _api.UpdateEvent(existingEvent);
+        Event retVal = _api.GetEvent(new Guid(id));
 
         return Ok(retVal);
     }
@@ -130,39 +142,13 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     [Route("/admin/events/{eventId}/participants-with-meal")]
     public IActionResult getEventWithMeal(string eventId)
     {
-
         List<Participant> participants = _api.getEventWithMeal(new Guid(eventId));
-
+        if (participants == null || participants.Count > 0)
+        {
+            return NotFound();
+        }
 
         return Ok(participants);
     }
-
-    // Admin End
-
-
-
-    //[HttpGet]
-    //[Route("/api/participants")]
-    //public IActionResult GetParticipants()
-    //{
-    //    List<Participant> participants = _api.GetParticipants().ToList<Participant>();
-
-    //    return Ok(participants);
-    //}
-
-
-    //[HttpPost]
-    //[Route("/api/add/participants")]
-    //public IActionResult newParticipant(Participant participant)
-    //{
-    //    return Ok(_api.CreateParticipant(participant));
-    //}
-
-    //[HttpPost]
-    //[Route("/api/add/user")]
-    //public IActionResult newUser(User user)
-    //{
-    //    return Ok(_api.AddUser(user));
-    //}
 
 }
