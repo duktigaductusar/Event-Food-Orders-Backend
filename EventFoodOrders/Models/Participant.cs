@@ -18,7 +18,7 @@ public class Participant
     [Key]
     [Column("participant_id")]
     [Required]
-    private Guid participant_id;
+    public Guid participant_id;
 
     //@ManyToOne
     //@JoinColumn(name = "user_id", nullable = false)

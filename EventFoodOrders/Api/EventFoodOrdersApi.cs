@@ -15,7 +15,14 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
     public List<Event> GetEvents()
     {
-        throw new NotImplementedException();
+        List<Event> Result = new();
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            Result = context.Events.ToList();
+        }
+
+        return Result;
     }
 
     public List<Participant> GetParticipants()
@@ -33,7 +40,16 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
     public List<User> GetUsers()
     {
-        throw new NotImplementedException();
+
+
+        List<User> Result = new();
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            Result = context.Users.ToList();
+        }
+
+        return Result;
     }
 
     public User GetUser(Guid _id)
@@ -85,7 +101,7 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Users.Add(user).Entity;
+            retVal = context.Users.Add(_user).Entity;
             context.SaveChanges();
         }
         return retVal;
@@ -135,16 +151,19 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
     public List<Participant> getEventWithMeal(Guid _guid)
     {
+        List<Participant> retVal = new List<Participant>();
+
+
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            //    context.Participants.Where((Participant p) =>
-            //    {
-            //        p.
-            //    })
-            //        context.SaveChanges();
-            //}
-
-            throw new NotImplementedException();
+            //          retVal =   context.Participants.Where((Participant p) =>
+            //          {
+            //p.participant_id == _guid;
+            //        });
+            return retVal;
         }
+
+        return retVal;
     }
+}
 }
