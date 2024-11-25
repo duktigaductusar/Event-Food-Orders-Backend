@@ -18,7 +18,10 @@ public class Participant
     [Key]
     [Column("participant_id")]
     [Required]
-    public Guid participant_id;
+    private Guid participant_id;
+
+    public Guid id
+    { get { return participant_id; } }
 
     //@ManyToOne
     //@JoinColumn(name = "user_id", nullable = false)
@@ -32,7 +35,7 @@ public class Participant
     [Required]
     private Event _event;
 
-    private bool wantsMeal;
+    public bool wantsMeal;
 
     private String allergies;
 

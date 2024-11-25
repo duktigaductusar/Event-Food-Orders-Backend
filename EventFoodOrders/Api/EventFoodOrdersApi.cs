@@ -1,4 +1,5 @@
 ﻿using EventFoodOrders.Data;
+using EventFoodOrders.Dto;
 using EventFoodOrders.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,8 +41,6 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
     public List<User> GetUsers()
     {
-
-
         List<User> Result = new();
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
@@ -54,12 +53,32 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
     public User GetUser(Guid _id)
     {
-        throw new NotImplementedException();
+        User retVal = new();
+
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            User tmp = context.Users.Find(_id)!;
+            if (tmp != null)
+            {
+                retVal = tmp;
+            }
+        }
+
+        return retVal;
     }
 
     public Event GetEvent(Guid _id)
     {
-        throw new NotImplementedException();
+        Event retVal = new();
+
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            retVal = context.Events.First(e => e.id == _id);
+        }
+
+        return retVal;
     }
 
     public Participant GetParticipant(Guid id)
@@ -74,12 +93,27 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
     public Event createEvent(Event _event)
     {
-        throw new NotImplementedException();
+        Event retVal = new();
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            retVal = context.Events.Add(_event).Entity;
+            context.SaveChanges();
+        }
+        return retVal;
     }
 
     public Participant GetParticipant(Participant _participant)
     {
-        throw new NotImplementedException();
+        Participant retVal = new();
+
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            retVal = context.Participants.First(p => p.id == _participant.id);
+        }
+
+        return retVal;
     }
 
     public Participant? CreateParticipant(Participant _participant)
@@ -107,13 +141,16 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
         return retVal;
     }
 
-    public Event SaveEvent(Event _event)
+    public Event SaveEvent(EventDTO _event)
     {
-        Event retVal = new Event();
+        Event retVal = new();
+        Event toSave = new Event(_event.getEventId());
+        // TODO Map between EventDTO to Event
+
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Events.Add(_event).Entity;
+            retVal = context.Events.Add(toSave).Entity;
             context.SaveChanges();
         }
         return retVal;
@@ -156,14 +193,14 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            //          retVal =   context.Participants.Where((Participant p) =>
-            //          {
-            //p.participant_id == _guid;
-            //        });
-            return retVal;
+            retVal = context.Participants.Where(p => p.wantsMeal && p.id == _guid).ToList();
         }
 
         return retVal;
     }
-}
+
+    public Event SaveEvent(Event _event)
+    {
+        throw new NotImplementedException();
+    }
 }

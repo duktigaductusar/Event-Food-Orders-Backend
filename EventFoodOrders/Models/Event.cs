@@ -1,6 +1,4 @@
-﻿
-using Microsoft.VisualBasic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EventFoodOrders.Models;
@@ -8,6 +6,8 @@ namespace EventFoodOrders.Models;
 [Table("events")]
 public class Event
 {
+    private Guid guid;
+
     public Event()
     {
         if (Event_id == Guid.Empty)
@@ -17,15 +17,27 @@ public class Event
         Active = false;
     }
 
+    public Event(Guid guid)
+    {
+        this.guid = guid;
+    }
+
     [Key]
     [Column("event_id")]
     [Required]
     private Guid Event_id { get; }
 
+    public Guid id
+    { get { return Event_id; } }
+
+
+    [Required]
+    [Column("event_name")]
+    private string Name;
 
     [Required]
     [Column("event_date")]
-    private DateAndTime EventDate { get; set; }
+    private DateTime EventDate { get; set; }
 
     [Required]
     [Column("active")]

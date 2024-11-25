@@ -23,33 +23,40 @@ public class User
     [Key]
     [Required]
     [Column("user_id")]
-    public Guid user_id { get; }
+    private Guid user_id;
+
+    private Guid id
+    { get { return user_id; } }
+
 
     [Column("name")]
     [Required]
     [DataType(DataType.Text)]
-    public string Name { get; set; }
+    private string Name;
 
     [Column("email")]
-    public String Email { get; set; }
+    private String Email { get; set; }
+
+    [Column("allergies")]
+    private String allergies;
 
     [Column]
-    public string Role { get; set; }
+    private string Role { get; set; }
 
     [Column]
-    public bool IsEnabled { get; set; }
+    private bool IsEnabled { get; set; }
 
     [Column]
-    public bool IsCredentialsNonExpired { get; set; }
+    private bool IsCredentialsNonExpired { get; set; }
 
     [Column]
-    public bool IsAccountNonLocked { get; set; }
+    private bool IsAccountNonLocked { get; set; }
 
     [Column]
-    public bool IsAccountNonExpired { get; set; }
+    private bool IsAccountNonExpired { get; set; }
 
     [Column]
-    public string Authority { get; set; }
+    private string Authority { get; set; }
 
     public List<IGrantedAuthority> getAuthorities()
     {
@@ -57,5 +64,51 @@ public class User
 
         return retVal;
     }
+
+    public Guid getId()
+    {
+        return id;
+    }
+
+    public String getName()
+    {
+        return Name;
+    }
+
+    public void setName(String name)
+    {
+        this.Name = name;
+    }
+
+    public String getEmail()
+    {
+        return Email;
+    }
+
+    public void setEmail(String _email)
+    {
+        this.Email = _email;
+    }
+
+    public String getAllergies()
+    {
+        return allergies;
+    }
+
+    public void setAllergies(String _allergies)
+    {
+        this.allergies = _allergies;
+    }
+
+    public Role getRole()
+    {
+        return (Role)Enum.Parse(typeof(Role), Role);
+    }
+
+    public void setRole(Role _role)
+    {
+        this.Role = _role.ToString();
+    }
+
 }
 

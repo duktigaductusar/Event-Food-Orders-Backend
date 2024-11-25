@@ -1,6 +1,7 @@
 
 
 using EventFoodOrders.Api;
+using EventFoodOrders.Dto;
 using EventFoodOrders.Models;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,6 +1,7 @@
 
 
 using EventFoodOrders.Api;
+using EventFoodOrders.Dto;
 using EventFoodOrders.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,8 +27,8 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         }
 
         User user = new();
-        user.Name = _user.Name;
-        user.Email = _user.Email;
+        user.setName(_user.getName());
+        user.setEmail(_user.getEmail());
 
 
         // TODO fix mapping or let API fix it.
@@ -37,35 +38,6 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         //   User user = _api.AddUser(_user);
 
         return Ok(user);
-    }
-
-    // TODO Put /admin/users/{id}
-    [HttpPut]
-    [Route("/admin/users/{id}")]
-    public IActionResult UpdateUsers(String id, [FromBody] User _user)
-    {
-        User existingUser = _api.GetUser(new Guid(id));
-
-        if (existingUser == null)
-        {
-            return BadRequest();
-        }
-
-        // TODO Map values from _user to existing user
-
-        User user = _api.UpdateUser(existingUser);
-
-        return Ok(user);
-    }
-
-    // TODO Get /admin/users
-    [HttpGet]
-    [Route("/admin/users")]
-    public IActionResult GetUsers()
-    {
-        List<User> users = _api.GetUsers();
-
-        return Ok(users);
     }
 
 
@@ -97,7 +69,7 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     // TODO Post /admin/events 
     [HttpPost]
     [Route("/admin/events")]
-    public IActionResult AddEvent(Event _event)
+    public IActionResult AddEvent(EventDTO _event)
     {
         Event retVal = _api.SaveEvent(_event);
 
@@ -114,16 +86,6 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         //TODO Map _event -> existingEvent
 
         Event retVal = _api.UpdateEvent(existingEvent);
-
-        return Ok(retVal);
-    }
-
-    // TODO Get /admin/events/{id}
-    [HttpGet]
-    [Route("/admin/events/{id}")]
-    public IActionResult GetEvent(string id)
-    {
-        Event retVal = _api.GetEvent(new Guid(id));
 
         return Ok(retVal);
     }
