@@ -26,6 +26,9 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         }
 
         User user = new();
+        user.Name = _user.Name;
+        user.Email = _user.Email;
+
 
         // TODO fix mapping or let API fix it.
 
