@@ -26,5 +26,15 @@ public class UserDTO
         }
     }
 
+    public string getEmail()
+    {
+        return Email;
+    }
+
+    public string getName()
+    {
+        return Name;
+    }
+
 }
 
