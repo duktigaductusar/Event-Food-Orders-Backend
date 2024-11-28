@@ -75,7 +75,7 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Events.First(e => e.id == _id);
+            retVal = context.Events.First(e => e.Event_id == _id);
         }
 
         return retVal;
@@ -110,7 +110,7 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Participants.First(p => p.id == _participant.id);
+            retVal = context.Participants.First(p => p.participant_id == _participant.participant_id);
         }
 
         return retVal;
@@ -193,7 +193,7 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Participants.Where(p => p.wantsMeal && p.id == _guid).ToList();
+            retVal = context.Participants.Where(p => p.wantsMeal && p.participant_id == _guid).ToList();
         }
 
         return retVal;
