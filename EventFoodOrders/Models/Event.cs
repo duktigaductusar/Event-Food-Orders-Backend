@@ -6,8 +6,6 @@ namespace EventFoodOrders.Models;
 [Table("events")]
 public class Event
 {
-    private Guid guid;
-
     public Event()
     {
         if (Event_id == Guid.Empty)
@@ -15,33 +13,32 @@ public class Event
             Event_id = Guid.NewGuid();
         }
         Active = false;
+        EventName = "";
     }
 
     public Event(Guid guid)
     {
-        this.guid = guid;
+        this.Event_id = guid;
+        this.EventName = "";
     }
 
     [Key]
     [Column("event_id")]
     [Required]
-    private Guid Event_id { get; }
-
-    public Guid id
-    { get { return Event_id; } }
+    public Guid Event_id { get; set; }
 
 
     [Required]
     [Column("event_name")]
-    private string Name;
+    public string EventName { get; set; }
 
     [Required]
     [Column("event_date")]
-    private DateTime EventDate { get; set; }
+    public DateTimeOffset EventDate { get; set; }
 
     [Required]
     [Column("active")]
-    private bool Active { get; set; }
+    public bool Active { get; set; }
 
 
 }

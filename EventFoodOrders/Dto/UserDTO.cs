@@ -4,10 +4,10 @@ namespace EventFoodOrders.Dto;
 
 public class UserDTO
 {
-    private string Name { get; set; }
-    private string Email { get; set; }
-    private string Allergies { get; set; }
-    private Role Role { get; set; }
+    public string Name { get; }
+    public string Email { get; }
+    public string Allergies { get; }
+    public Role Role { get; }
 
     public UserDTO()
     {
@@ -25,16 +25,5 @@ public class UserDTO
             Allergies = string.Empty;
         }
     }
-
-    public string getEmail()
-    {
-        return Email;
-    }
-
-    public string getName()
-    {
-        return Name;
-    }
-
 }
 

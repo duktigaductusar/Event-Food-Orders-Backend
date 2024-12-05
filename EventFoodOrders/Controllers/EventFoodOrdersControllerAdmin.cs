@@ -27,8 +27,6 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         }
 
         User user = new();
-        user.setName(_user.getName());
-        user.setEmail(_user.getEmail());
 
 
         // TODO fix mapping or let API fix it.

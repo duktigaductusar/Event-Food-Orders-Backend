@@ -18,25 +18,22 @@ public class Participant
     [Key]
     [Column("participant_id")]
     [Required]
-    private Guid participant_id;
-
-    public Guid id
-    { get { return participant_id; } }
+    public Guid participant_id { get; set; }
 
     //@ManyToOne
     //@JoinColumn(name = "user_id", nullable = false)
     [Column("user_id")]
     [Required]
-    private User user;
+    public User user { get; set; }
 
     //@ManyToOne
     //@JoinColumn(name = "event_id", nullable = false)
     [Column("event_id")]
     [Required]
-    private Event _event;
+    public Event _event { get; set; }
 
-    public bool wantsMeal;
+    public bool wantsMeal { get; set; }
 
-    private String allergies;
+    public String allergies { get; set; }
 
 }

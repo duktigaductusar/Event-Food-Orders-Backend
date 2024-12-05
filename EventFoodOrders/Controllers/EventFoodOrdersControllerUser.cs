@@ -15,29 +15,20 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
 
 
     // Keep
-    // TODO Put /admin/users/{id}
+    // TODO Put /user/users/{id}
     [HttpPut]
-    [Route("/admin/users/{id}")]
+    [Route("/user/users/{id}")]
     public IActionResult UpdateUsers(String id, [FromBody] User _user)
     {
-        User existingUser = _api.GetUser(new Guid(id));
-
-        if (existingUser == null)
-        {
-            return BadRequest();
-        }
-
-        // TODO Map values from _user to existing user
-
-        User user = _api.UpdateUser(existingUser);
+        User user = _api.UpdateUser(id, _user);
 
         return Ok(user);
     }
 
     // Keep
-    // TODO Get /admin/users
+    // TODO Get /user/users
     [HttpGet]
-    [Route("/admin/users")]
+    [Route("/user/users")]
     public IActionResult GetUsers()
     {
         List<User> users = _api.GetUsers();
@@ -46,9 +37,9 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
     }
 
     // Keep
-    // TODO Get /admin/events
+    // TODO Get /user/events
     [HttpGet]
-    [Route("/admin/events")]
+    [Route("/user/events")]
     public IActionResult GetEvents()
     {
         List<Event> events = _api.GetEvents();
@@ -57,9 +48,9 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
     }
 
 
-    // TODO Get /admin/events/{id}
+    // TODO Get /user/events/{id}
     [HttpGet]
-    [Route("/admin/events/{id}")]
+    [Route("/user/events/{id}")]
     public IActionResult getEventById(string id)
     {
         Event retVal = _api.GetEvent(new Guid(id));

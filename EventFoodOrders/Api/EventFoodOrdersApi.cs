@@ -1,18 +1,16 @@
 ﻿using EventFoodOrders.Data;
 using EventFoodOrders.Dto;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EventFoodOrders.Api;
 
-public class EventFoodOrdersApi : IEventFoodOrdersApi
+public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : IEventFoodOrdersApi
 {
-    public IDbContextFactory<EventFoodOrdersDbContext> _contextFactory;
-
-    public EventFoodOrdersApi(IDbContextFactory<EventFoodOrdersDbContext> contextFactory)
-    {
-        _contextFactory = contextFactory;
-    }
+    public IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
+    private readonly ILogger<EventFoodOrdersApi> _logger = logger;
 
     public List<Event> GetEvents()
     {
@@ -75,7 +73,7 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Events.First(e => e.id == _id);
+            retVal = context.Events.First(e => e.Event_id == _id);
         }
 
         return retVal;
@@ -110,7 +108,7 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Participants.First(p => p.id == _participant.id);
+            retVal = context.Participants.First(p => p.participant_id == _participant.participant_id);
         }
 
         return retVal;
@@ -156,9 +154,44 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
         return retVal;
     }
 
-    public User UpdateUser(User _user)
+    public User UpdateUser(String id, User _user)
     {
-        throw new NotImplementedException();
+        Guid _id;
+
+        try
+        {
+            _id = new Guid(id);
+        }
+        catch (Exception ex)
+        {
+            //TODO: Create own custom exception and thorw that exception
+            _logger.LogError("id not a valid guid: " + ex.Message, ex);
+            throw;
+        }
+
+
+        User existingUser = GetUser(_id);
+
+        if (existingUser == null)
+        {
+            _logger.LogError("Could not find a user with id " + id);
+            throw new Exception("Could not find a user with id " + id);
+        }
+
+        existingUser.allergies = _user.allergies;
+        existingUser.Role = _user.Role;
+        existingUser.Email = _user.Email;
+        existingUser.Name = _user.Name;
+
+        User retVal = new();
+
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            retVal = context.Users.Update(existingUser).Entity;
+            context.SaveChanges();
+        }
+        return retVal;
     }
 
     public Event UpdateEvent(Event _event)
@@ -193,7 +226,7 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Participants.Where(p => p.wantsMeal && p.id == _guid).ToList();
+            retVal = context.Participants.Where(p => p.wantsMeal && p.participant_id == _guid).ToList();
         }
 
         return retVal;
@@ -202,5 +235,68 @@ public class EventFoodOrdersApi : IEventFoodOrdersApi
     public Event SaveEvent(Event _event)
     {
         throw new NotImplementedException();
+    }
+
+    public User UpdateUser(User _user)
+    {
+        throw new NotImplementedException();
+    }
+
+
+    public User signup(UserDTO input)
+    {
+        if (findByEmail(input.Email).Count > 0)
+        {
+            throw new EmailAlreadyExistsException("Email already registered: " + input.Email);
+        }
+
+        User user = new User();
+        user.Email = input.Email;
+        user.Name = input.Name;
+        user.allergies = input.Allergies;
+        user.Role = input.Role.ToString();
+
+        User retVal;
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            retVal = context.Users.Add(user).Entity;
+        }
+
+        return retVal;
+    }
+
+    private List<User> findByEmail(String input)
+    {
+        List<User> retVal = new List<User>();
+
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            retVal = context.Users.Where(p => p.Email == input).ToList();
+        }
+
+        return retVal;
+    }
+
+    public LoginResponse Login(UserLoginDTO input)
+    {
+        if (input.email.IsNullOrEmpty())
+        {
+            throw new UserNotFoundException("input email is null or empty");
+        }
+
+        User user = findByEmail(input.email).FirstOrDefault();
+        if (user == null)
+        {
+            throw new UserNotFoundException("User not found with email: " + input.email);
+        }
+
+        if (user.Role != Role.ADMIN.ToString())
+        {
+            throw new AccessDeniedException("Access denied. Only admins can log in.");
+        }
+
+        return new LoginResponse(input.email, "");
     }
 }

@@ -1,6 +1,6 @@
-@EventFoodOrders_HostAddress = http://localhost:5209
+@EventFoodOrders_HostAddress = http://localhost:8080
 
-GET {{EventFoodOrders_HostAddress}} ##/api/dummies/
+GET {{EventFoodOrders_HostAddress}}
 Accept: application/json
 
 ###
