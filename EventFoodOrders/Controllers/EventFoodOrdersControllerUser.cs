@@ -20,16 +20,7 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
     [Route("/user/users/{id}")]
     public IActionResult UpdateUsers(String id, [FromBody] User _user)
     {
-        User existingUser = _api.GetUser(new Guid(id));
-
-        if (existingUser == null)
-        {
-            return BadRequest();
-        }
-
-        // TODO Map values from _user to existing user
-
-        User user = _api.UpdateUser(existingUser);
+        User user = _api.UpdateUser(id, _user);
 
         return Ok(user);
     }

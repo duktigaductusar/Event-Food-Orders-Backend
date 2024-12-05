@@ -11,12 +11,6 @@ public class User
         {
             user_id = Guid.NewGuid();
         }
-
-        IsEnabled = true;
-        IsCredentialsNonExpired = false;
-        IsAccountNonLocked = false;
-        IsAccountNonExpired = false;
-        Authority = Models.Role.PARTICIPANT.ToString();
     }
 
     [Key]
@@ -37,23 +31,5 @@ public class User
 
     [Column]
     public string Role { get; set; }
-
-    [Column]
-    public bool IsEnabled { get; set; }
-
-    [Column]
-    public bool IsCredentialsNonExpired { get; set; }
-
-    [Column]
-    public bool IsAccountNonLocked { get; set; }
-
-    [Column]
-    public bool IsAccountNonExpired { get; set; }
-
-    [Column]
-    public string Authority { get; set; }
-
-
-
 }
 
