@@ -73,7 +73,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Events.First(e => e.Event_id == _id);
+            retVal = context.Events.First(e => e.id == _id);
         }
 
         return retVal;
@@ -211,12 +211,33 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
     public void DeleteUser(Guid _guid)
     {
-        throw new NotImplementedException();
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            User existingUser = context.Users.First(u => u.id == _guid);
+            if (existingUser == null)
+            {
+                throw new UserNotFoundException("No User found with id " + _guid);
+            }
+
+            context.Users.Remove(existingUser);
+            context.SaveChanges();
+        }
     }
 
     public void DeleteEvent(Guid _guid)
     {
-        throw new NotImplementedException();
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            Event existingUser = context.Events.First(e => e.id == _guid);
+            if (existingUser == null)
+            {
+                throw new EventNotFoundException("No Event found with id " + _guid);
+            }
+
+            context.Events.Remove(existingUser);
+            context.SaveChanges();
+        }
     }
 
     public List<Participant> getEventWithMeal(Guid _guid)
@@ -298,5 +319,14 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         }
 
         return new LoginResponse(input.email, "");
+    }
+
+    public long getRegistrationsCount(Guid eventId)
+    {
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            return context.Participants.Where(p => p._event.id == eventId).ToList().Count;
+        }
+
     }
 }
