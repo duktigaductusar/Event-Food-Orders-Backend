@@ -7,16 +7,16 @@ public class User
 {
     public User()
     {
-        if (user_id == Guid.Empty)
+        if (id == Guid.Empty)
         {
-            user_id = Guid.NewGuid();
+            id = Guid.NewGuid();
         }
     }
 
     [Key]
     [Required]
     [Column("user_id")]
-    public Guid user_id { get; set; }
+    public Guid id { get; set; }
 
     [Column("name")]
     [Required]
