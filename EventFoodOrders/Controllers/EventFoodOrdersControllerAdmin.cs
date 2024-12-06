@@ -59,7 +59,18 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     [Route("/admin/users/{id}")]
     public IActionResult DeleteUsers(String id)
     {
-        _api.DeleteUser(new Guid(id));
+        Guid _id;
+
+        try
+        {
+            _id = new Guid(id);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+        _api.DeleteUser(_id);
 
         return Ok();
     }
@@ -81,7 +92,10 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     {
         Event existingEvent = _api.GetEvent(new Guid(id));
 
-        //TODO Map _event -> existingEvent
+        existingEvent.Active = _event.Active;
+        existingEvent.EventDate = _event.EventDate;
+        existingEvent.EventName = _event.EventName;
+
 
         Event retVal = _api.UpdateEvent(existingEvent);
 
@@ -93,7 +107,14 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     [Route("/admin/events/{id}")]
     public IActionResult DeleteEvent(string id)
     {
-        _api.DeleteEvent(new Guid(id));
+        try
+        {
+            _api.DeleteEvent(new Guid(id));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
 
         return Ok();
     }
@@ -109,6 +130,21 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         }
 
         return Ok(participants);
+    }
+
+    // TODO Get /admin/events/{eventId}/participants-with-meal
+    [HttpGet]
+    [Route("/{eventId}/registrations-count")]
+    public IActionResult getRegistrationsCount(String eventId)
+    {
+        try
+        {
+            long count = _api.getRegistrationsCount(new Guid(eventId));
+            if (count == 0) { return NotFound(); }
+
+            return Ok(count);
+        }
+        catch (Exception ex) { return BadRequest(ex); }
     }
 
 }
