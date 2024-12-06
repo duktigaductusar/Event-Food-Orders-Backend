@@ -8,9 +8,9 @@ public class Event
 {
     public Event()
     {
-        if (Event_id == Guid.Empty)
+        if (id == Guid.Empty)
         {
-            Event_id = Guid.NewGuid();
+            id = Guid.NewGuid();
         }
         Active = false;
         EventName = "";
@@ -18,14 +18,14 @@ public class Event
 
     public Event(Guid guid)
     {
-        this.Event_id = guid;
+        this.id = guid;
         this.EventName = "";
     }
 
     [Key]
     [Column("event_id")]
     [Required]
-    public Guid Event_id { get; set; }
+    public Guid id { get; set; }
 
 
     [Required]
