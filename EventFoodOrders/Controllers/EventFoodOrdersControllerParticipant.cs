@@ -1,4 +1,5 @@
 using EventFoodOrders.Api;
+using EventFoodOrders.Dto;
 using EventFoodOrders.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -71,4 +72,26 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
         throw new NotImplementedException();
         //        return Ok();
     }
+
+    // TODO new method, getParticipantIdByUserIdAndEventId. Check java impl
+    /*
+    @GetMapping("/get-participant/{userId}/{eventId}")
+    public ResponseEntity<Map<String, UUID>> getParticipantIdByUserIdAndEventId(@PathVariable UUID userId, @PathVariable UUID eventId)
+    {
+        return participantService.findParticipantIdByUserIdAndEventId(userId, eventId)
+                .map(participantId->ResponseEntity.ok(Collections.singletonMap("participantId", participantId)))
+                .orElse(ResponseEntity.status(404).body(Collections.singletonMap("participantId", null)));
+    }
+    */
+
+    // TODO new method, getParticipantDetails. Check java impl
+    /*
+    @GetMapping("/details/{participantId}")
+    public ResponseEntity<ParticipantDTO> getParticipantDetails(@PathVariable UUID participantId)
+    {
+        ParticipantDTO participantDetails = participantService.getParticipantDetails(participantId);
+        return ResponseEntity.ok(participantDetails);
+    }
+
+    */
 }

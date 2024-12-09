@@ -58,6 +58,30 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
         return Ok(retVal);
     }
 
+    // TODO new method, generateRegistrationLink. Check java impl
+    /*    @GetMapping("/registration-link/{id}")
+    public ResponseEntity<String> generateRegistrationLink(@PathVariable UUID id)
+        {
+            String registrationLink = REGISTRATION_BASE_URL + "?id=" + id;
+            return ResponseEntity.ok(registrationLink);
+        }
+    */
+
+
+    // TODO Get /admin/events/{eventId}/participants-with-meal
+    [HttpGet]
+    [Route("/user/{eventId}/registrations-count")]
+    public IActionResult getRegistrationsCount(String eventId)
+    {
+        try
+        {
+            long count = _api.getRegistrationsCount(new Guid(eventId));
+            if (count == 0) { return NotFound(); }
+
+            return Ok(count);
+        }
+        catch (Exception ex) { return BadRequest(ex); }
+    }
 
 
 }
