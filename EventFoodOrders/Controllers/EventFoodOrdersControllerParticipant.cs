@@ -16,23 +16,23 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
     // TODO Post /participants/register
     [HttpPost]
     [Route("/participants/register")]
-    public IActionResult RegisterForEvent(ParticipantRegistrationRequest ParticipantRegistrationRequest)
+    public IActionResult RegisterForEvent(ParticipantRegistrationRequestDTO _participantRegistrationRequest)
     {
-        if (ParticipantRegistrationRequest == null)
+        if (_participantRegistrationRequest == null)
         {
             return BadRequest();
         }
 
-        User User = _api.GetUser(ParticipantRegistrationRequest.UserId);
-        if (User == null)
+        User user = _api.GetUser(_participantRegistrationRequest.userId);
+        if (user == null)
         {
-            return BadRequest("User not found with ID: " + ParticipantRegistrationRequest.UserId.ToString());
+            return BadRequest("User not found with ID: " + _participantRegistrationRequest.userId.ToString());
         }
 
-        Event _event = _api.GetEvent(ParticipantRegistrationRequest.EventId);
+        Models.Event _event = _api.GetEvent(_participantRegistrationRequest.eventId);
         if (_event == null)
         {
-            return BadRequest("Event not found with ID: " + ParticipantRegistrationRequest.EventId.ToString());
+            return BadRequest("Event not found with ID: " + _participantRegistrationRequest.eventId.ToString());
         }
 
 
@@ -43,9 +43,9 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
     // TODO Put /participants/update/{id}
     [HttpPut]
     [Route("/participants/update/{id}")]
-    public IActionResult UpdateParticipants(ParticipantUpdateRequest ParticipantUpdateRequest)
+    public IActionResult UpdateParticipants(ParticipantUpdateRequestDTO _participantRegistrationRequest)
     {
-        if (ParticipantUpdateRequest == null)
+        if (_participantRegistrationRequest == null)
         {
             return BadRequest();
         }

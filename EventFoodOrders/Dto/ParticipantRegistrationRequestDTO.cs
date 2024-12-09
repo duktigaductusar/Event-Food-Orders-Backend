@@ -1,6 +1,6 @@
 ﻿namespace EventFoodOrders.Dto;
 
-public class ParticipantRegistrationRequest
+public class ParticipantRegistrationRequestDTO
 {
     public Guid userId { get; set; }
     public Guid eventId { get; set; }
