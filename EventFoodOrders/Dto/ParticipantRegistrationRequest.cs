@@ -2,7 +2,7 @@
 
 public class ParticipantRegistrationRequest
 {
-    private Guid UserId { get; set; }
-    private Guid EventId { get; set; }
-    private bool WantsMeal { get; set; }
+    public Guid userId { get; set; }
+    public Guid eventId { get; set; }
+    public bool wantsMeal { get; set; }
 }
