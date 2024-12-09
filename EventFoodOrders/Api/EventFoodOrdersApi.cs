@@ -333,8 +333,10 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
     }
 
-    public Event UpdateEvent(String id, Event _event)
+    public Event UpdateEvent(string id, Event _event)
     {
+        Event retVal;
+
         Guid _id;
 
         try
@@ -346,8 +348,8 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             throw new Exception("id is not a in a correct formated guid", ex);
         }
 
-        Event existingEvent = GetEvent(_id);
 
+        Event existingEvent = GetEvent(_id);
         existingEvent.Active = _event.Active;
         existingEvent.EventDate = _event.EventDate;
         existingEvent.EventName = _event.EventName;
@@ -356,8 +358,14 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            return context.Events.Update(existingEvent).Entity;
+            retVal = context.Events.Update(existingEvent).Entity;
+            context.SaveChanges();
+            return retVal;
+
         }
     }
-
 }
+
+
+
+
