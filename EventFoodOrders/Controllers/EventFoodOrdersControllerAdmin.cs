@@ -90,22 +90,7 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     [Route("/admin/events/{id}")]
     public IActionResult UpdateEvent(string id, Event _event)
     {
-        Event existingEvent = _api.GetEvent(new Guid(id));
-
-        existingEvent.Active = _event.Active;
-        existingEvent.EventDate = _event.EventDate;
-        existingEvent.EventName = _event.EventName;
-
-        Event retVal;
-
-        try
-        {
-            retVal = _api.UpdateEvent(id, existingEvent);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Failed to update the event: " + _event, ex);
-        }
+        Event retVal = _api.UpdateEvent(id, _event);
 
         return Ok(retVal);
     }

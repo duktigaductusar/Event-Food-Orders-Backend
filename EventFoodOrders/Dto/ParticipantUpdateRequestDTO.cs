@@ -1,11 +1,11 @@
 ﻿namespace EventFoodOrders.Dto;
 
-public class ParticipantUpdateRequest
+public class ParticipantUpdateRequestDTO
 {
     private bool wantsMeal { get; set; }
     private string allergies { get; set; }
 
-    public ParticipantUpdateRequest()
+    public ParticipantUpdateRequestDTO()
     {
         if (allergies == null)
         {

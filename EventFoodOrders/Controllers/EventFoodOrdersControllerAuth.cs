@@ -36,8 +36,7 @@ public class EventFoodOrdersControllerAuth(ILogger<EventFoodOrdersControllerAuth
         }
         catch (AccessDeniedException e)
         {
-            // TODO Fix to add exception e to log
-            _logger.LogWarning("Only admins are allowed to login for " + userLoginDTO.email);
+            _logger.LogWarning("Only admins are allowed to login for " + userLoginDTO.email, e);
             return Unauthorized("Only admins are allowed to login");
         }
         catch (UserNotFoundException e)
