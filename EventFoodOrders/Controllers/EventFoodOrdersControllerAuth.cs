@@ -50,24 +50,5 @@ public class EventFoodOrdersControllerAuth(ILogger<EventFoodOrdersControllerAuth
             _logger.LogError("Failed to login for email " + userLoginDTO.email, e);
             return StatusCode(500, "An unexpected error occurred.");
         }
-
-
-
-
-
-        throw new NotImplementedException();
-        //        return Ok();
     }
-    // TODO Post /change-password  --- Check Java impl for url
-    [HttpPost]
-    [Route("/auth/change-password")]
-    public LoginResponse changePassword(UserLoginDTO userLoginDTO)
-    {
-        throw new NotImplementedException();
-        //        return Ok();
-    }
-    // Auth End
-
-
-
 }

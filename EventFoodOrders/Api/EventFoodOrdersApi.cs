@@ -56,10 +56,10 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            User tmp = context.Users.Find(_id)!;
-            if (tmp != null)
+            retVal = context.Users.First(u => u.id == _id);
+            if (retVal == null)
             {
-                retVal = tmp;
+                throw new UserNotFoundException("No user for id " + _id.ToString());
             }
         }
 
@@ -74,6 +74,10 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             retVal = context.Events.First(e => e.id == _id);
+            if (retVal == null)
+            {
+                throw new EventNotFoundException("No event for id " + _id.ToString());
+            }
         }
 
         return retVal;
@@ -142,8 +146,12 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
     public Event SaveEvent(EventDTO _event)
     {
         Event retVal = new();
-        Event toSave = new Event(_event.getEventId());
+        Event toSave = new Event(_event.eventId);
         // TODO Map between EventDTO to Event
+        toSave.description = _event.Description;
+        toSave.EventDate = _event.EventDate;
+        toSave.EventName = _event.EventName;
+        toSave.Active = _event.Action;
 
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
@@ -192,11 +200,6 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             context.SaveChanges();
         }
         return retVal;
-    }
-
-    public Event UpdateEvent(Event _event)
-    {
-        throw new NotImplementedException();
     }
 
     public Participant UpdateParticipant(Participant _participant)
@@ -329,4 +332,32 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         }
 
     }
+
+    public Event UpdateEvent(String id, Event _event)
+    {
+        Guid _id;
+
+        try
+        {
+            _id = new Guid(id);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("id is not a in a correct formated guid", ex);
+        }
+
+        Event existingEvent = GetEvent(_id);
+
+        existingEvent.Active = _event.Active;
+        existingEvent.EventDate = _event.EventDate;
+        existingEvent.EventName = _event.EventName;
+        existingEvent.description = _event.description;
+
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            return context.Events.Update(existingEvent).Entity;
+        }
+    }
+
 }

@@ -40,5 +40,11 @@ public class Event
     [Column("active")]
     public bool Active { get; set; }
 
+    [Column("description")]
+    public string? description { get; set; }
 
+    public override string? ToString()
+    {
+        return base.ToString();
+    }
 }

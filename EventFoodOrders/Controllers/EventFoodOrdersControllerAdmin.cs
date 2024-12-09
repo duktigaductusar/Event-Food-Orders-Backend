@@ -96,8 +96,16 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         existingEvent.EventDate = _event.EventDate;
         existingEvent.EventName = _event.EventName;
 
+        Event retVal;
 
-        Event retVal = _api.UpdateEvent(existingEvent);
+        try
+        {
+            retVal = _api.UpdateEvent(id, existingEvent);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Failed to update the event: " + _event, ex);
+        }
 
         return Ok(retVal);
     }
@@ -131,20 +139,4 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
 
         return Ok(participants);
     }
-
-    // TODO Get /admin/events/{eventId}/participants-with-meal
-    [HttpGet]
-    [Route("/{eventId}/registrations-count")]
-    public IActionResult getRegistrationsCount(String eventId)
-    {
-        try
-        {
-            long count = _api.getRegistrationsCount(new Guid(eventId));
-            if (count == 0) { return NotFound(); }
-
-            return Ok(count);
-        }
-        catch (Exception ex) { return BadRequest(ex); }
-    }
-
 }
