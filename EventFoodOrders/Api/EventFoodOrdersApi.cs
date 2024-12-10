@@ -267,7 +267,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
     }
 
 
-    public User signup(UserDTO input)
+    public User signup(User input)
     {
         if (findByEmail(input.Email).Count > 0)
         {
@@ -277,7 +277,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         User user = new User();
         user.Email = input.Email;
         user.Name = input.Name;
-        user.allergies = input.Allergies;
+        user.allergies = input.allergies;
         user.Role = input.Role.ToString();
 
         User retVal;
@@ -285,6 +285,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             retVal = context.Users.Add(user).Entity;
+            context.SaveChanges();
         }
 
         return retVal;
@@ -361,6 +362,19 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             retVal = context.Events.Update(existingEvent).Entity;
             context.SaveChanges();
             return retVal;
+
+        }
+    }
+
+    internal List<Event> GetAvailableEvents()
+    {
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            List<Event> retVal = context.Events.Where(e => e.Active).ToList();
+
+            return retVal;
+
 
         }
     }

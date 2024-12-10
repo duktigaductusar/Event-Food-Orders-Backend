@@ -29,7 +29,7 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
             return BadRequest("User not found with ID: " + _participantRegistrationRequest.userId.ToString());
         }
 
-        Models.Event _event = _api.GetEvent(_participantRegistrationRequest.eventId);
+        Event _event = _api.GetEvent(_participantRegistrationRequest.eventId);
         if (_event == null)
         {
             return BadRequest("Event not found with ID: " + _participantRegistrationRequest.eventId.ToString());
@@ -60,8 +60,19 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
     [Route("/participants/events")]
     public IActionResult GetAvailableEvents()
     {
-        throw new NotImplementedException();
-        //        return Ok();
+        List<Event> retVal = null;
+
+        try
+        {
+            retVal = _api.GetAvailableEvents();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+
+        return Ok(retVal);
+
     }
 
     // TODO Delete /participants/cancel/{id}

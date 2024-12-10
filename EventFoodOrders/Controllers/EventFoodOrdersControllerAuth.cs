@@ -1,8 +1,7 @@
-
-
 using EventFoodOrders.Api;
 using EventFoodOrders.Dto;
 using EventFoodOrders.Exceptions;
+using EventFoodOrders.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventFoodOrders.Controllers;
@@ -17,10 +16,32 @@ public class EventFoodOrdersControllerAuth(ILogger<EventFoodOrdersControllerAuth
     // TODO Post /signup
     [HttpPost]
     [Route("/auth/signup")]
-    public Object signup(Guid id)
+    public IActionResult signup(User _user)
     {
-        throw new NotImplementedException();
-        //        return Ok();
+        User user;
+        try
+        {
+            user = _api.signup(_user);
+        }
+        catch (EmailAlreadyExistsException e)
+        {
+            return BadRequest("User with email: " + _user.Email + " already exists");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
+
+        CookieOptions co = new CookieOptions();
+        co.HttpOnly = true;
+        co.Expires = DateTime.UtcNow.AddYears(2);
+        co.Secure = true;
+        co.Path = "/";
+        co.SameSite = SameSiteMode.None;
+
+        Response.Cookies.Append("userId", user.id.ToString(), co);
+
+        return Created(string.Empty, user);
     }
 
     // TODO Post /login
