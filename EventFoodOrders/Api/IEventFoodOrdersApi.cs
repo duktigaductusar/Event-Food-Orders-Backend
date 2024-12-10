@@ -24,7 +24,7 @@ namespace EventFoodOrders.Api
         LoginResponse Login(UserLoginDTO input);
         Event SaveEvent(Event _event);
         Event SaveEvent(EventDTO _event);
-        User signup(UserDTO input);
+        User signup(User input);
         Event UpdateEvent(string id, Event _event);
         Participant UpdateParticipant(Participant _participant);
         User UpdateUser(string id, User _user);
