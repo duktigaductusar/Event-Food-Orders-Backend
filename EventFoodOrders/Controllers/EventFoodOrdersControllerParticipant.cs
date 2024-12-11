@@ -1,5 +1,6 @@
 using EventFoodOrders.Api;
 using EventFoodOrders.Dto;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,26 +19,18 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
     [Route("/participants/register")]
     public IActionResult RegisterForEvent(ParticipantRegistrationRequestDTO _participantRegistrationRequest)
     {
-        if (_participantRegistrationRequest == null)
+
+        ParticipantDTO retVal;
+        try
         {
-            return BadRequest();
+            retVal = _api.RegisterForEvent(_participantRegistrationRequest);
+        }
+        catch (Exception ex) when (ex is BadRequestException || ex is ArgumentException)
+        {
+            return BadRequest(ex.Message);
         }
 
-        User user = _api.GetUser(_participantRegistrationRequest.userId);
-        if (user == null)
-        {
-            return BadRequest("User not found with ID: " + _participantRegistrationRequest.userId.ToString());
-        }
-
-        Event _event = _api.GetEvent(_participantRegistrationRequest.eventId);
-        if (_event == null)
-        {
-            return BadRequest("Event not found with ID: " + _participantRegistrationRequest.eventId.ToString());
-        }
-
-
-        // TODO Fix implementation
-        return Ok();
+        return Ok(retVal);
     }
 
     // TODO Put /participants/update/{id}
@@ -80,8 +73,8 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
     [Route("/participants/cancel/{id}")]
     public IActionResult cancelRegistration(Guid id)
     {
-        throw new NotImplementedException();
-        //        return Ok();
+        _api.cancelRegistration(id);
+        return Ok();
     }
 
     // TODO new method, getParticipantIdByUserIdAndEventId. Check java impl

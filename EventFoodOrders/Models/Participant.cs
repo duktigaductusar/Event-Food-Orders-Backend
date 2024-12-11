@@ -24,16 +24,18 @@ public class Participant
     //@JoinColumn(name = "user_id", nullable = false)
     [Column("user_id")]
     [Required]
-    public User user { get; set; }
+    public Guid _user { get; set; }
 
     //@ManyToOne
     //@JoinColumn(name = "event_id", nullable = false)
     [Column("event_id")]
     [Required]
-    public Event _event { get; set; }
+    public Guid _event { get; set; }
 
-    public bool wantsMeal { get; set; }
+    [Column("wants_meal")]
+    public bool _wantsMeal { get; set; }
 
-    public String allergies { get; set; }
+    [Column("allergies")]
+    public String _allergies { get; set; }
 
 }
