@@ -23,7 +23,7 @@ public class EventFoodOrdersControllerAuth(ILogger<EventFoodOrdersControllerAuth
         {
             user = _api.signup(_user);
         }
-        catch (EmailAlreadyExistsException e)
+        catch (EmailAlreadyExistsException)
         {
             return BadRequest("User with email: " + _user.Email + " already exists");
         }
