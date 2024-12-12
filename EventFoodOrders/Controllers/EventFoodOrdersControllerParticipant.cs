@@ -78,24 +78,31 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
     }
 
     // TODO new method, getParticipantIdByUserIdAndEventId. Check java impl
-    /*
-    @GetMapping("/get-participant/{userId}/{eventId}")
-    public ResponseEntity<Map<String, UUID>> getParticipantIdByUserIdAndEventId(@PathVariable UUID userId, @PathVariable UUID eventId)
-    {
-        return participantService.findParticipantIdByUserIdAndEventId(userId, eventId)
-                .map(participantId->ResponseEntity.ok(Collections.singletonMap("participantId", participantId)))
-                .orElse(ResponseEntity.status(404).body(Collections.singletonMap("participantId", null)));
-    }
-    */
 
-    // TODO new method, getParticipantDetails. Check java impl
-    /*
-    @GetMapping("/details/{participantId}")
-    public ResponseEntity<ParticipantDTO> getParticipantDetails(@PathVariable UUID participantId)
+    [HttpGet]
+    [Route("/participants/get-participant/{userId}/{eventId}")]
+    public IActionResult getParticipantIdByUserIdAndEventId(Guid userId, Guid eventId)
     {
-        ParticipantDTO participantDetails = participantService.getParticipantDetails(participantId);
-        return ResponseEntity.ok(participantDetails);
+        var participantId = _api.findParticipantByUserIdAndEventId(userId, eventId);
+        if (participantId != null)
+        {
+            var dict = new Dictionary<string, Guid>();
+            dict.Add("participantId", participantId.participant_id);
+            var retVal = Ok(participantId.participant_id);
+            return retVal;
+        }
+        else
+        {
+            return StatusCode(404);
+        }
     }
 
-    */
+    [HttpGet]
+    [Route("/participants/details/{participantId}")]
+    public IActionResult getParticipantDetails(Guid participantId)
+    {
+        return Ok(_api.getParticipantDetails(participantId));
+    }
+
+
 }

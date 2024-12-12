@@ -120,7 +120,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
     public Participant? CreateParticipant(Participant _participant)
     {
-        Participant retVal = new Participant();
+        Participant retVal = new();
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
@@ -133,7 +133,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
     public User? AddUser(User _user)
     {
-        User retVal = new User();
+        User retVal = new();
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
@@ -304,7 +304,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             throw new UserNotFoundException("input email is null or empty");
         }
 
-        User user = findByEmail(input.email).FirstOrDefault();
+        User? user = findByEmail(input.email).FirstOrDefault();
         if (user == null)
         {
             throw new UserNotFoundException("User not found with email: " + input.email);
@@ -389,14 +389,13 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         throw new NotImplementedException();
     }
 
-    private Participant findParticipantByUserIdAndEventId(Guid userId, Guid eventId)
+    public Participant findParticipantByUserIdAndEventId(Guid userId, Guid eventId)
     {
         if (userId == null || eventId == null)
         {
             throw new BadRequestException("Failed to Participand with null values");
         }
 
-        //  var userIdString = userId. == null ? "" : userId.ToString();
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
@@ -448,6 +447,32 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         ParticipantDTO retVal = new ParticipantDTO(returnParticipant.participant_id, _user.id, _event.id, dateTime, _participantRegistrationRequest.wantsMeal, _user.allergies);
 
         return retVal;
+    }
+
+    public ParticipantDTO getParticipantDetails(Guid participantId)
+    {
+
+        Participant? participant;
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            participant = context.Participants.Where(p => p.participant_id == participantId).FirstOrDefault();
+        }
+
+        if (participant == null)
+        {
+            throw new ParticipantNotFoundException("Participant not found with ID: " + participantId);
+        }
+
+        Event tmpEvent = GetEvent(participant._event);
+
+        return new ParticipantDTO(
+                participant.participant_id,
+                participant._user,
+                participant._event,
+                new DateTime(tmpEvent.EventDate.Ticks),
+                participant._wantsMeal,
+                participant._allergies
+        );
     }
 }
 
