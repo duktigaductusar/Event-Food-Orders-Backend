@@ -51,7 +51,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
     public User GetUser(Guid _id)
     {
-        User retVal = new();
+        User? retVal = null;
 
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
@@ -172,9 +172,8 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         }
         catch (Exception ex)
         {
-            //TODO: Create own custom exception and thorw that exception
             _logger.LogError("id not a valid guid: " + ex.Message, ex);
-            throw;
+            throw new BadRequestException("Wrong format on id: " + id, ex);
         }
 
 
@@ -183,7 +182,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         if (existingUser == null)
         {
             _logger.LogError("Could not find a user with id " + id);
-            throw new Exception("Could not find a user with id " + id);
+            throw new UserNotFoundException("Could not find a user with id " + id);
         }
 
         existingUser.allergies = _user.allergies;
@@ -191,7 +190,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         existingUser.Email = _user.Email;
         existingUser.Name = _user.Name;
 
-        User retVal = new();
+        User? retVal = null;
 
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
