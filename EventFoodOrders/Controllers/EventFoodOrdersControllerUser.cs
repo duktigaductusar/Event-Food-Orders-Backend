@@ -1,6 +1,7 @@
 
 
 using EventFoodOrders.Api;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,28 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
     [Route("/user/users/{id}")]
     public IActionResult UpdateUsers(String id, [FromBody] User _user)
     {
-        User user = _api.UpdateUser(id, _user);
+        User? user = null;
+        try
+        {
+            user = _api.UpdateUser(id, _user);
+        }
+        catch (BadRequestException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (UserNotFoundException ex)
+        {
+            return StatusCode(404, ex);
+        }
+        catch
+        {
+            return StatusCode(500);
+        }
+        if (user == null)
+        {
+            return StatusCode(404);
+
+        }
 
         return Ok(user);
     }
