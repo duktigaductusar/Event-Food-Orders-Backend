@@ -388,7 +388,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         throw new NotImplementedException();
     }
 
-    public Participant findParticipantByUserIdAndEventId(Guid userId, Guid eventId)
+    public Participant? findParticipantByUserIdAndEventId(Guid userId, Guid eventId)
     {
         if (userId == null || eventId == null)
         {
