@@ -47,8 +47,6 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
         return Ok(user);
     }
 
-    // Keep
-    // TODO Get /user/users
     [HttpGet]
     [Route("/user/users")]
     public IActionResult GetUsers()
@@ -58,8 +56,6 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
         return Ok(users);
     }
 
-    // Keep
-    // TODO Get /user/events
     [HttpGet]
     [Route("/user/events")]
     public IActionResult GetEvents()
@@ -69,8 +65,6 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
         return Ok(events);
     }
 
-
-    // TODO Get /user/events/{id}
     [HttpGet]
     [Route("/user/events/{id}")]
     public IActionResult getEventById(string id)
@@ -89,8 +83,6 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
         }
     */
 
-
-    // TODO Get /admin/events/{eventId}/participants-with-meal
     [HttpGet]
     [Route("/user/{eventId}/registrations-count")]
     public IActionResult getRegistrationsCount(String eventId)

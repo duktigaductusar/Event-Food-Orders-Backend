@@ -12,14 +12,13 @@ public class Event
         {
             id = Guid.NewGuid();
         }
-        Active = false;
-        EventName = "";
+        eventName = "";
     }
 
     public Event(Guid guid)
     {
         this.id = guid;
-        this.EventName = "";
+        this.eventName = "";
     }
 
     [Key]
@@ -30,15 +29,15 @@ public class Event
 
     [Required]
     [Column("event_name")]
-    public string EventName { get; set; }
+    public string eventName { get; set; }
 
     [Required]
     [Column("event_date")]
-    public DateTimeOffset EventDate { get; set; }
+    public DateTimeOffset eventDate { get; set; }
 
     [Required]
     [Column("active")]
-    public bool Active { get; set; }
+    public bool eventActive { get; set; }
 
     [Column("description")]
     public string? description { get; set; }

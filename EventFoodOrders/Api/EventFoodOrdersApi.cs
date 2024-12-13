@@ -149,9 +149,9 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         Event toSave = new Event(_event.eventId);
         // TODO Map between EventDTO to Event
         toSave.description = _event.Description;
-        toSave.EventDate = _event.EventDate;
-        toSave.EventName = _event.EventName;
-        toSave.Active = _event.Action;
+        toSave.eventDate = _event.EventDate;
+        toSave.eventName = _event.EventName;
+        toSave.eventActive = _event.Action;
 
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
@@ -321,9 +321,8 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            return context.Participants.Where(p => p._event == eventId).ToList().Count;
+            return context.Set<Participant>().AsQueryable().Where(p => p._event == eventId).ToList().Count;
         }
-
     }
 
     public Event UpdateEvent(string id, Event _event)
@@ -343,9 +342,9 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
 
         Event existingEvent = GetEvent(_id);
-        existingEvent.Active = _event.Active;
-        existingEvent.EventDate = _event.EventDate;
-        existingEvent.EventName = _event.EventName;
+        existingEvent.eventActive = _event.eventActive;
+        existingEvent.eventDate = _event.eventDate;
+        existingEvent.eventName = _event.eventName;
         existingEvent.description = _event.description;
 
 
@@ -362,7 +361,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            List<Event> retVal = context.Events.Where(e => e.Active).ToList();
+            List<Event> retVal = context.Events.Where(e => e.eventActive).ToList();
 
             return retVal;
         }
@@ -390,7 +389,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
     public Participant? findParticipantByUserIdAndEventId(Guid userId, Guid eventId)
     {
-        if (userId == null || eventId == null)
+        if (userId == Guid.Empty || eventId == Guid.Empty)
         {
             throw new BadRequestException("Failed to Participand with null values");
         }
@@ -441,7 +440,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             context.SaveChanges();
         }
 
-        DateTime dateTime = new DateTime(_event.EventDate.Ticks);
+        DateTime dateTime = new DateTime(_event.eventDate.Ticks);
 
         ParticipantDTO retVal = new ParticipantDTO(returnParticipant.participant_id, _user.id, _event.id, dateTime, _participantRegistrationRequest.wantsMeal, _user.allergies);
 
@@ -468,7 +467,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
                 participant.participant_id,
                 participant._user,
                 participant._event,
-                new DateTime(tmpEvent.EventDate.Ticks),
+                new DateTime(tmpEvent.eventDate.Ticks),
                 participant._wantsMeal,
                 participant._allergies
         );
