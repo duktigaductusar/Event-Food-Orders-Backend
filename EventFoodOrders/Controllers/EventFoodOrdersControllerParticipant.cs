@@ -12,9 +12,6 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
     private readonly ILogger<EventFoodOrdersControllerParticipant> _logger = logger;
     private readonly EventFoodOrdersApi _api = (EventFoodOrdersApi)api;
 
-
-    // Participant Start
-    // TODO Post /participants/register
     [HttpPost]
     [Route("/participants/register")]
     public IActionResult RegisterForEvent(ParticipantRegistrationRequestDTO _participantRegistrationRequest)
@@ -33,7 +30,6 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
         return Ok(retVal);
     }
 
-    // TODO Put /participants/update/{id}
     [HttpPut]
     [Route("/participants/update/{id}")]
     public IActionResult UpdateParticipants(ParticipantUpdateRequestDTO _participantRegistrationRequest)
@@ -48,12 +44,11 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
         return Ok();
     }
 
-    // TODO Get /participants/events
     [HttpGet]
     [Route("/participants/events")]
     public IActionResult GetAvailableEvents()
     {
-        List<Event> retVal = null;
+        List<Event> retVal = new();
 
         try
         {
@@ -68,7 +63,6 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
 
     }
 
-    // TODO Delete /participants/cancel/{id}
     [HttpDelete]
     [Route("/participants/cancel/{id}")]
     public IActionResult cancelRegistration(Guid id)
@@ -76,8 +70,6 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
         _api.cancelRegistration(id);
         return Ok();
     }
-
-    // TODO new method, getParticipantIdByUserIdAndEventId. Check java impl
 
     [HttpGet]
     [Route("/participants/get-participant/{userId}/{eventId}")]
@@ -103,6 +95,4 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
     {
         return Ok(_api.getParticipantDetails(participantId));
     }
-
-
 }
