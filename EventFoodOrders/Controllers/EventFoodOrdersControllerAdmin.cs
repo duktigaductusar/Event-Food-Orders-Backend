@@ -13,10 +13,6 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     private readonly ILogger<EventFoodOrdersControllerAdmin> _logger = logger;
     private readonly EventFoodOrdersApi _api = (EventFoodOrdersApi)api;
 
-
-
-
-    // TODO Post /admin/users
     [HttpPost]
     [Route("/admin/users")]
     public IActionResult AddUsers(UserDTO _user)
@@ -38,23 +34,6 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         return Ok(user);
     }
 
-
-    // TODO Get /admin/search ? String name. Inte säker på att det behövs. Filtrering/Sök går att göra i frontend.
-    [HttpGet]
-    [Route("/admin/search")]
-    public IActionResult searchUsersByName()
-    {
-        String Name = "";
-
-        //String Name =  Request.QueryString["fullname"]; FÅR INTE ATT FUNGERA
-
-        List<User> users = _api.FindByName(Name);
-
-        return Ok(users);
-    }
-
-
-    // TODO Delete /admin/users/{id}
     [HttpDelete]
     [Route("/admin/users/{id}")]
     public IActionResult DeleteUsers(String id)

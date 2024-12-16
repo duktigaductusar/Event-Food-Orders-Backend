@@ -32,17 +32,12 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
 
     [HttpPut]
     [Route("/participants/update/{id}")]
-    public IActionResult UpdateParticipants(ParticipantUpdateRequestDTO _participantRegistrationRequest)
+    public IActionResult UpdateParticipants(Guid id, ParticipantUpdateRequestDTO _participantRegistrationRequest)
     {
-        if (_participantRegistrationRequest == null)
-        {
-            return BadRequest();
-        }
-
-
-        // TODO Fix implementation
-        return Ok();
+        Participant retVal = _api.UpdateParticipant(id, _participantRegistrationRequest);
+        return Ok(retVal);
     }
+
 
     [HttpGet]
     [Route("/participants/events")]

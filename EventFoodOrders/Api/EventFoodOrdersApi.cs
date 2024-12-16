@@ -82,16 +82,99 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         return retVal;
     }
-
     public Participant GetParticipant(Guid id)
     {
-        throw new NotImplementedException();
+
+        Participant? participant;
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            participant = context.Participants.Where(p => p.participant_id == id).FirstOrDefault();
+        }
+
+        if (participant == null)
+        {
+            throw new ParticipantNotFoundException("Participant not found with ID: " + id);
+        }
+
+        return participant;
     }
 
-    public User createUser(User _user)
+    public Participant UpdateParticipant(Guid id, ParticipantUpdateRequestDTO _participantRegistrationRequest)
     {
-        throw new NotImplementedException();
+
+        if (_participantRegistrationRequest == null)
+        {
+            throw new BadRequestException("Can not update participant with null argument");
+        }
+
+        Participant existingParticipant = GetParticipant(id);
+
+        if (existingParticipant == null)
+        {
+            throw new ParticipantNotFoundException("Could not find participant with id: " + id);
+        }
+
+        existingParticipant.wantsMeal = _participantRegistrationRequest.wantsMeal;
+
+        if (_participantRegistrationRequest.allergies != null)
+        {
+            existingParticipant.allergies = _participantRegistrationRequest.allergies;
+        }
+
+
+
+        Participant? newParticipant = null;
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            newParticipant = context.Participants.Update(existingParticipant).Entity;
+            context.SaveChanges();
+        }
+
+        if (newParticipant == null)
+        {
+            throw new ParticipantNotFoundException("Failed to update participant");
+        }
+
+
+        User? user = null;
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            user = context.Users.Where(u => u.id == newParticipant._user).FirstOrDefault();
+        }
+
+        if (user != null)
+        {
+            user.allergies = _participantRegistrationRequest.allergies == null ? "" : _participantRegistrationRequest.allergies;
+            using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+            {
+                user = context.Users.Update(user).Entity;
+                context.SaveChanges();
+            }
+        }
+        else
+        {
+
+            throw new UserNotFoundException("Failed to update participant");
+        }
+
+        Event? newEvent = null;
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            newEvent = context.Events.Where(e => e.id == newParticipant._event).FirstOrDefault();
+        }
+
+        if (newEvent == null)
+        {
+            throw new EventNotFoundException("Failed to update participant");
+        }
+
+        ParticipantDTO participantDTO = new ParticipantDTO(newParticipant.participant_id, user.id, newEvent.id, new DateTime(newEvent.eventDate.Ticks), newParticipant.wantsMeal, newParticipant.allergies);
+
+        return newParticipant;
+
     }
+
+
 
     public Event createEvent(Event _event)
     {
@@ -147,7 +230,6 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
     {
         Event retVal = new();
         Event toSave = new Event(_event.eventId);
-        // TODO Map between EventDTO to Event
         toSave.description = _event.Description;
         toSave.eventDate = _event.EventDate;
         toSave.eventName = _event.EventName;
@@ -201,16 +283,6 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         return retVal;
     }
 
-    public Participant UpdateParticipant(Participant _participant)
-    {
-        throw new NotImplementedException();
-    }
-
-    public List<User> FindByName(string _name)
-    {
-        throw new NotImplementedException();
-    }
-
     public void DeleteUser(Guid _guid)
     {
 
@@ -231,13 +303,13 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            Event existingUser = context.Events.First(e => e.id == _guid);
-            if (existingUser == null)
+            Event existingEvent = context.Events.First(e => e.id == _guid);
+            if (existingEvent == null)
             {
                 throw new EventNotFoundException("No Event found with id " + _guid);
             }
 
-            context.Events.Remove(existingUser);
+            context.Events.Remove(existingEvent);
             context.SaveChanges();
         }
     }
@@ -249,16 +321,12 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Participants.Where(p => p._wantsMeal && p.participant_id == _guid).ToList();
+            retVal = context.Set<Participant>().AsQueryable().Where(p => p._event == _guid).ToList();
         }
 
         return retVal;
     }
 
-    public Event SaveEvent(Event _event)
-    {
-        throw new NotImplementedException();
-    }
     public User signup(User input)
     {
         if (findByEmail(input.Email).Count > 0)
@@ -430,8 +498,8 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         Participant participant = new Participant();
         participant._user = _user.id;
         participant._event = _event.id;
-        participant._wantsMeal = _participantRegistrationRequest.wantsMeal;
-        participant._allergies = _user.allergies;
+        participant.wantsMeal = _participantRegistrationRequest.wantsMeal;
+        participant.allergies = _user.allergies;
 
         Participant returnParticipant;
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
@@ -447,9 +515,8 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         return retVal;
     }
 
-    public ParticipantDTO getParticipantDetails(Guid participantId)
+    public Participant getParticipantDetails(Guid participantId)
     {
-
         Participant? participant;
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
@@ -461,17 +528,10 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             throw new ParticipantNotFoundException("Participant not found with ID: " + participantId);
         }
 
-        Event tmpEvent = GetEvent(participant._event);
+        return participant;
 
-        return new ParticipantDTO(
-                participant.participant_id,
-                participant._user,
-                participant._event,
-                new DateTime(tmpEvent.eventDate.Ticks),
-                participant._wantsMeal,
-                participant._allergies
-        );
     }
+
 }
 
 

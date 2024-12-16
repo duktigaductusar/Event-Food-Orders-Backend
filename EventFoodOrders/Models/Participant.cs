@@ -12,8 +12,8 @@ public class Participant
         {
             participant_id = Guid.NewGuid();
         }
+        allergies = "";
     }
-
 
     [Key]
     [Column("participant_id")]
@@ -33,9 +33,9 @@ public class Participant
     public Guid _event { get; set; }
 
     [Column("wants_meal")]
-    public bool _wantsMeal { get; set; }
+    public bool wantsMeal { get; set; }
 
     [Column("allergies")]
-    public String _allergies { get; set; }
+    public String allergies { get; set; }
 
 }

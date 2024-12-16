@@ -13,10 +13,6 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
     private readonly ILogger<EventFoodOrdersControllerUser> _logger = logger;
     private readonly EventFoodOrdersApi _api = (EventFoodOrdersApi)api;
 
-
-
-    // Keep
-    // TODO Put /user/users/{id}
     [HttpPut]
     [Route("/user/users/{id}")]
     public IActionResult UpdateUsers(String id, [FromBody] User _user)
@@ -74,14 +70,16 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
         return Ok(retVal);
     }
 
-    // TODO new method, generateRegistrationLink. Check java impl
-    /*    @GetMapping("/registration-link/{id}")
-    public ResponseEntity<String> generateRegistrationLink(@PathVariable UUID id)
-        {
-            String registrationLink = REGISTRATION_BASE_URL + "?id=" + id;
-            return ResponseEntity.ok(registrationLink);
-        }
-    */
+    [HttpGet]
+    [Route("/user/registration-link/{id}")]
+    public IActionResult generateRegistrationLink(string id)
+    {
+        //  String registrationLink = REGISTRATION_BASE_URL + "?id=" + id;
+        //  return ResponseEntity.ok(registrationLink);
+
+        throw new NotImplementedException();
+
+    }
 
     [HttpGet]
     [Route("/user/{eventId}/registrations-count")]
@@ -96,6 +94,4 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
         }
         catch (Exception ex) { return BadRequest(ex); }
     }
-
-
 }
