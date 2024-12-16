@@ -6,22 +6,22 @@ public class ParticipantDTO
     private Guid userId { get; set; }
     private Guid eventId { get; set; }
     private DateTime EventDate { get; set; }
-    private bool WantsMeal { get; set; }
-    private String Allergies { get; set; }
+    private bool wantsMeal { get; set; }
+    private String allergies { get; set; }
 
-    public ParticipantDTO(Guid participantId, Guid userId, Guid eventId, DateTime eventDate, bool wantsMeal, string allergies)
+    public ParticipantDTO(Guid participantId, Guid userId, Guid eventId, DateTime eventDate, bool wantsMeal, string Allergies)
     {
 
         this.participantId = participantId;
         this.userId = userId;
         this.eventId = eventId;
         EventDate = eventDate;
-        WantsMeal = wantsMeal;
-        Allergies = allergies;
+        this.wantsMeal = wantsMeal;
+        allergies = Allergies;
 
-        if (Allergies == null)
+        if (allergies == null)
         {
-            Allergies = String.Empty;
+            allergies = string.Empty;
         }
 
     }

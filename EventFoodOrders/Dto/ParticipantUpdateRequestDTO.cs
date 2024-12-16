@@ -2,8 +2,8 @@
 
 public class ParticipantUpdateRequestDTO
 {
-    private bool wantsMeal { get; set; }
-    private string allergies { get; set; }
+    public bool wantsMeal { get; set; }
+    public string allergies { get; set; }
 
     public ParticipantUpdateRequestDTO()
     {
