@@ -303,13 +303,13 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            Event existingUser = context.Events.First(e => e.id == _guid);
-            if (existingUser == null)
+            Event existingEvent = context.Events.First(e => e.id == _guid);
+            if (existingEvent == null)
             {
                 throw new EventNotFoundException("No Event found with id " + _guid);
             }
 
-            context.Events.Remove(existingUser);
+            context.Events.Remove(existingEvent);
             context.SaveChanges();
         }
     }
@@ -327,10 +327,6 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         return retVal;
     }
 
-    public Event SaveEvent(Event _event)
-    {
-        throw new NotImplementedException();
-    }
     public User signup(User input)
     {
         if (findByEmail(input.Email).Count > 0)
