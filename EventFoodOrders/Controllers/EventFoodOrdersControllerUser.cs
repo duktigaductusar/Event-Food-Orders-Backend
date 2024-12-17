@@ -76,19 +76,17 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
     [Route("/user/registration-link/{id}")]
     public IActionResult generateRegistrationLink(string id)
     {
-        String registrationLink = REGISTRATION_BASE_URL + "?id=" + id;
+        string registrationLink = REGISTRATION_BASE_URL + "?id=" + id;
         return Ok(registrationLink);
     }
 
     [HttpGet]
     [Route("/user/{eventId}/registrations-count")]
-    public IActionResult getRegistrationsCount(String eventId)
+    public IActionResult getRegistrationsCount(string eventId)
     {
         try
         {
             long count = _api.getRegistrationsCount(new Guid(eventId));
-            if (count == 0) { return NotFound(); }
-
             return Ok(count);
         }
         catch (Exception ex) { return BadRequest(ex); }
