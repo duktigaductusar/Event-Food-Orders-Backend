@@ -26,6 +26,5 @@ namespace EventFoodOrders.Api
         Event UpdateEvent(string id, Event _event);
         Participant UpdateParticipant(Guid id, ParticipantUpdateRequestDTO _participantRegistrationRequest);
         User UpdateUser(string id, User _user);
-        User UpdateUser(User _user);
     }
 }

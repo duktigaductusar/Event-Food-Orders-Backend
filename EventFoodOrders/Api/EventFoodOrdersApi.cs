@@ -450,11 +450,6 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         }
     }
 
-    public User UpdateUser(User _user)
-    {
-        throw new NotImplementedException();
-    }
-
     public Participant? findParticipantByUserIdAndEventId(Guid userId, Guid eventId)
     {
         if (userId == Guid.Empty || eventId == Guid.Empty)
