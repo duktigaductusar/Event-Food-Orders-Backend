@@ -12,8 +12,6 @@ public class EventFoodOrdersControllerAuth(ILogger<EventFoodOrdersControllerAuth
     private readonly ILogger<EventFoodOrdersControllerAuth> _logger = logger;
     private readonly EventFoodOrdersApi _api = (EventFoodOrdersApi)api;
 
-    // Auth Start
-    // TODO Post /signup
     [HttpPost]
     [Route("/auth/signup")]
     public IActionResult signup(User _user)
@@ -44,7 +42,6 @@ public class EventFoodOrdersControllerAuth(ILogger<EventFoodOrdersControllerAuth
         return Created(string.Empty, user);
     }
 
-    // TODO Post /login
     [HttpPost]
     [Route("/auth/login")]
     public IActionResult Login(UserLoginDTO userLoginDTO)

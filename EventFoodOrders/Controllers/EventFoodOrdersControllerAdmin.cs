@@ -24,13 +24,6 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
 
         User user = new();
 
-
-        // TODO fix mapping or let API fix it.
-
-
-
-        //   User user = _api.AddUser(_user);
-
         return Ok(user);
     }
 
@@ -54,7 +47,6 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         return Ok();
     }
 
-    // TODO Post /admin/events 
     [HttpPost]
     [Route("/admin/events")]
     public IActionResult AddEvent(EventDTO _event)
@@ -64,7 +56,6 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         return Ok(retVal);
     }
 
-    // TODO Put /admin/events/{id}
     [HttpPut]
     [Route("/admin/events/{id}")]
     public IActionResult UpdateEvent(string id, Event _event)
@@ -74,7 +65,6 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
         return Ok(retVal);
     }
 
-    // TODO Delete /admin/events/{id}
     [HttpDelete]
     [Route("/admin/events/{id}")]
     public IActionResult DeleteEvent(string id)
@@ -90,7 +80,7 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
 
         return Ok();
     }
-    // TODO Get /admin/events/{eventId}/participants-with-meal
+
     [HttpGet]
     [Route("/admin/events/{eventId}/participants-with-meal")]
     public IActionResult getEventWithMeal(string eventId)
