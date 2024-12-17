@@ -12,8 +12,6 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
 {
     private readonly ILogger<EventFoodOrdersControllerUser> _logger = logger;
     private readonly EventFoodOrdersApi _api = (EventFoodOrdersApi)api;
-    // TODO MUST fix this with a setting.
-    private readonly static String REGISTRATION_BASE_URL = "http://localhost:4200/register-event";
 
     [HttpPut]
     [Route("/user/users/{id}")]
