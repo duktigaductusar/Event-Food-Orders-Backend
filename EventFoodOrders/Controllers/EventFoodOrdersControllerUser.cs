@@ -12,6 +12,8 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
 {
     private readonly ILogger<EventFoodOrdersControllerUser> _logger = logger;
     private readonly EventFoodOrdersApi _api = (EventFoodOrdersApi)api;
+    // TODO MUST fix this with a setting.
+    private readonly static String REGISTRATION_BASE_URL = "http://localhost:4200/register-event";
 
     [HttpPut]
     [Route("/user/users/{id}")]
@@ -71,25 +73,12 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
     }
 
     [HttpGet]
-    [Route("/user/registration-link/{id}")]
-    public IActionResult generateRegistrationLink(string id)
-    {
-        //  String registrationLink = REGISTRATION_BASE_URL + "?id=" + id;
-        //  return ResponseEntity.ok(registrationLink);
-
-        throw new NotImplementedException();
-
-    }
-
-    [HttpGet]
     [Route("/user/{eventId}/registrations-count")]
-    public IActionResult getRegistrationsCount(String eventId)
+    public IActionResult getRegistrationsCount(string eventId)
     {
         try
         {
             long count = _api.getRegistrationsCount(new Guid(eventId));
-            if (count == 0) { return NotFound(); }
-
             return Ok(count);
         }
         catch (Exception ex) { return BadRequest(ex); }
