@@ -73,14 +73,6 @@ public class EventFoodOrdersControllerUser(ILogger<EventFoodOrdersControllerUser
     }
 
     [HttpGet]
-    [Route("/user/registration-link/{id}")]
-    public IActionResult generateRegistrationLink(string id)
-    {
-        string registrationLink = REGISTRATION_BASE_URL + "?id=" + id;
-        return Ok(registrationLink);
-    }
-
-    [HttpGet]
     [Route("/user/{eventId}/registrations-count")]
     public IActionResult getRegistrationsCount(string eventId)
     {
