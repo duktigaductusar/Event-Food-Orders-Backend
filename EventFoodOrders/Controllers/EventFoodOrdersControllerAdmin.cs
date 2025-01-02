@@ -86,7 +86,7 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
     public IActionResult getEventWithMeal(string eventId)
     {
         List<Participant> participants = _api.getEventWithMeal(new Guid(eventId));
-        if (participants == null || participants.Count > 0)
+        if (participants == null || participants.Count <= 0)
         {
             return NotFound();
         }
