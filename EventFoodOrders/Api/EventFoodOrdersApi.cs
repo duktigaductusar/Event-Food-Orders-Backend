@@ -139,7 +139,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         User? user = null;
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            user = context.Users.Where(u => u.id == newParticipant._user).FirstOrDefault();
+            user = context.Users.Where(u => newParticipant != null && u == newParticipant.user).FirstOrDefault();
         }
 
         if (user != null)
@@ -345,14 +345,14 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         }
     }
 
-    public List<Participant> getEventWithMeal(Guid _guid)
+    public List<Participant> getEventWithMeal(Guid eventGuid)
     {
         List<Participant> retVal = new List<Participant>();
 
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Set<Participant>().AsQueryable().Where(p => p._event == _guid).ToList();
+            retVal = context.Set<Participant>().AsQueryable().Where(p => p._event == eventGuid).Include(p => p.user).ToList();
         }
 
         return retVal;
@@ -481,9 +481,9 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         }
     }
 
-    public Participant? findParticipantByUserIdAndEventId(Guid userId, Guid eventId)
+    public Participant? findParticipantByUserIdAndEventId(User user, Guid eventId)
     {
-        if (userId == Guid.Empty || eventId == Guid.Empty)
+        if (user == null || eventId == Guid.Empty)
         {
             throw new BadRequestException("Failed to Participand with null values");
         }
@@ -491,7 +491,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            return context.Participants.Where(p => p._user == userId && p._event == eventId).FirstOrDefault();
+            return context.Participants.Where(p => p.user.id == user.id && p._event == eventId).FirstOrDefault();
         }
     }
 
@@ -503,8 +503,8 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             throw new BadRequestException("Parameter can not be null");
         }
 
-        User _user = GetUser(_participantRegistrationRequest.userId);
-        if (_user == null)
+        User user = GetUser(_participantRegistrationRequest.userId);
+        if (user == null)
         {
             throw new BadRequestException("User not found with ID: " + _participantRegistrationRequest.userId.ToString());
         }
@@ -515,17 +515,17 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             throw new BadRequestException("Event not found with ID: " + _participantRegistrationRequest.eventId.ToString());
         }
 
-        var _participant = findParticipantByUserIdAndEventId(_user.id, _event.id);
+        var _participant = findParticipantByUserIdAndEventId(user, _event.id);
         if (_participant != null)
         {
             throw new ArgumentException("User is already registered for this event.");
         }
 
         Participant participant = new Participant();
-        participant._user = _user.id;
+        participant.user = user;
         participant._event = _event.id;
         participant.wantsMeal = _participantRegistrationRequest.wantsMeal;
-        participant.allergies = _user.allergies;
+        participant.allergies = user.allergies;
 
         Participant returnParticipant;
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
@@ -536,7 +536,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         DateTime dateTime = new DateTime(_event.eventDate.Ticks);
 
-        ParticipantDTO retVal = new ParticipantDTO(returnParticipant.participant_id, _user.id, _event.id, dateTime, _participantRegistrationRequest.wantsMeal, _user.allergies);
+        ParticipantDTO retVal = new ParticipantDTO(returnParticipant.participant_id, user.id, _event.id, dateTime, _participantRegistrationRequest.wantsMeal, user.allergies);
 
         return retVal;
     }
