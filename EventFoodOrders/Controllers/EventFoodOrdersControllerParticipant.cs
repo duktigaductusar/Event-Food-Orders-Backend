@@ -68,7 +68,7 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
 
     [HttpGet]
     [Route("/participants/get-participant/{userId}/{eventId}")]
-    public IActionResult getParticipantIdByUserIdAndEventId(Guid userId, Guid eventId)
+    public IActionResult getParticipantIdByUserIdAndEventId(User userId, Guid eventId)
     {
         var participantId = _api.findParticipantByUserIdAndEventId(userId, eventId);
         if (participantId != null)

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EventFoodOrders.Models;
 
@@ -13,6 +14,7 @@ public class Participant
             participant_id = Guid.NewGuid();
         }
         allergies = "";
+        user = new User();
     }
 
     [Key]
@@ -22,9 +24,16 @@ public class Participant
 
     //@ManyToOne
     //@JoinColumn(name = "user_id", nullable = false)
-    [Column("user_id")]
+    //[Column("user_id")
+    //[Required]
+    //Guid user_id;
+
+    [ForeignKey("user_id")]
+    //[Column("user_id")]
     [Required]
-    public Guid _user { get; set; }
+    [NotNull]
+    public User user { get; set; }
+
 
     //@ManyToOne
     //@JoinColumn(name = "event_id", nullable = false)
