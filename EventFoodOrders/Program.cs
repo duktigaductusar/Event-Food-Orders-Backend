@@ -50,7 +50,7 @@ public class Program
 
         app.UseAuthorization();
 
-        app.UsePathBase("/mealoderingsystem");
+        app.UsePathBase("/efo");
 
         app.MapControllers();
 
