@@ -50,7 +50,7 @@ public class Program
 
         app.UseAuthorization();
 
-        app.UsePathBase("/efo");
+        app.UsePathBase("/efobackend");
 
         app.MapControllers();
 
