@@ -352,7 +352,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Set<Participant>().AsQueryable().Where(p => p._event == eventGuid).Include(p => p.user).ToList();
+            retVal = context.Set<Participant>().AsQueryable().Where(p => p._event == eventGuid && p.wantsMeal).Include(p => p.user).ToList();
         }
 
         return retVal;
@@ -521,15 +521,17 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             throw new ArgumentException("User is already registered for this event.");
         }
 
-        Participant participant = new Participant();
-        participant.user = user;
-        participant._event = _event.id;
-        participant.wantsMeal = _participantRegistrationRequest.wantsMeal;
-        participant.allergies = user.allergies;
-
         Participant returnParticipant;
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
+            User _user = context.Users.Where<User>(u => user.id == u.id).ToList().First<User>();
+
+            Participant participant = new Participant();
+            participant.user = _user;
+            participant._event = _event.id;
+            participant.wantsMeal = _participantRegistrationRequest.wantsMeal;
+            participant.allergies = _user.allergies;
+
             returnParticipant = context.Participants.Add(participant).Entity;
             context.SaveChanges();
         }
