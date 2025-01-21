@@ -128,7 +128,12 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
 
-            User _user = context.Users.Where<User>(u => existingParticipant.user.id == u.id).ToList().First<User>();
+            var uid = existingParticipant.user.id;
+
+            var uq = context.Users.Where<User>(u => uid == u.id).ToList().First<User>();
+
+            User _user = u;
+            //.ToList().First<User>();
 
             Participant participant = new Participant();
             participant.user = _user;
@@ -500,7 +505,8 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            return context.Participants.Where(p => p.user.id == userId && p._event == eventId).FirstOrDefault();
+            var retVal = context.Participants.Where(p => p.user.id == userId && p._event == eventId).FirstOrDefault();
+            return retVal;
         }
     }
 

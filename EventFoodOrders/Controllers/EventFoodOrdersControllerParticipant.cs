@@ -31,10 +31,10 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
     }
 
     [HttpPut]
-    [Route("/participants/update/{id}")]
-    public IActionResult UpdateParticipants(Guid id, ParticipantUpdateRequestDTO _participantRegistrationRequest)
+    [Route("/participants/update/{partId}")]
+    public IActionResult UpdateParticipants(Guid partId, ParticipantUpdateRequestDTO _participantRegistrationRequest)
     {
-        Participant retVal = _api.UpdateParticipant(id, _participantRegistrationRequest);
+        Participant retVal = _api.UpdateParticipant(partId, _participantRegistrationRequest);
         return Ok(retVal);
     }
 
@@ -68,7 +68,7 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
 
     [HttpGet]
     [Route("/participants/get-participant/{userId}/{eventId}")]
-    public IActionResult getParticipantIdByUserIdAndEventId(User userId, Guid eventId)
+    public IActionResult getParticipantIdByUserIdAndEventId(Guid userId, Guid eventId)
     {
         var participantId = _api.findParticipantByUserIdAndEventId(userId, eventId);
         if (participantId != null)
