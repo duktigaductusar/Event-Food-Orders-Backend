@@ -11,7 +11,7 @@ namespace EventFoodOrders.Api
         Participant? CreateParticipant(Participant _participant);
         void DeleteEvent(Guid _guid);
         void DeleteUser(Guid _guid);
-        Participant? findParticipantByUserIdAndEventId(User user, Guid eventId);
+        Participant? findParticipantByUserIdAndEventId(Guid userId, Guid eventId);
         Event GetEvent(Guid _id);
         List<Event> GetEvents();
         List<Participant> getEventWithMeal(Guid _guid);
