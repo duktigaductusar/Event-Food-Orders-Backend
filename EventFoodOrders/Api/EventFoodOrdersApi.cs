@@ -88,7 +88,6 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         Participant? participant;
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            //            participant = context.Participants.Where(p => p.participant_id == partId).Include(p => p.user).FirstOrDefault();
             participant = context.Participants.Where(p => p.participant_id == partId).Include(participant => participant.user).FirstOrDefault();
         }
 
