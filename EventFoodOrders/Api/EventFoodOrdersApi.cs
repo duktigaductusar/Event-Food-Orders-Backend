@@ -130,12 +130,13 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             User _user = context.Users.Where<User>(u => existingParticipant.user.id == u.id).ToList().First<User>();
 
             Participant participant = new Participant();
+            participant.participant_id = partId;
             participant.user = _user;
             participant._event = existingParticipant._event;
             participant.wantsMeal = _participantRegistrationRequest.wantsMeal;
             participant.allergies = _user.allergies;
 
-            newParticipant = context.Participants.Add(participant).Entity;
+            newParticipant = context.Participants.Update(participant).Entity;
             context.SaveChanges();
         }
 
