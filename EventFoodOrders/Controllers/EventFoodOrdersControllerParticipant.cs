@@ -73,10 +73,7 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
         var participantId = _api.findParticipantByUserIdAndEventId(userId, eventId);
         if (participantId != null)
         {
-            var dict = new Dictionary<string, Guid>();
-            dict.Add("participantId", participantId.participant_id);
-            var retVal = Ok(participantId.participant_id);
-            return retVal;
+            return Ok(participantId.participant_id);
         }
         else
         {
