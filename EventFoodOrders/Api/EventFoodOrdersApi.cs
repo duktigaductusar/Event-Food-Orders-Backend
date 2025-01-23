@@ -499,7 +499,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            return context.Participants.Where(p => p.user.id == userId && p._event == eventId).FirstOrDefault();
+            return context.Participants.Where(p => p.user.id == userId && p._event == eventId).Include(p => p.user).FirstOrDefault();
         }
     }
 
