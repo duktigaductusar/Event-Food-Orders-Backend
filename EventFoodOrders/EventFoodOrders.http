@@ -1,6 +1,0 @@
-@EventFoodOrders_HostAddress = http://localhost:8080
-
-GET {{EventFoodOrders_HostAddress}}
-Accept: application/json
-
-###

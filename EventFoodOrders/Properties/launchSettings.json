@@ -37,5 +37,15 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
+  },
+  "IIS Prod": {
+    "commandName": "IIS Prod",
+    "launchBrowser": true,
+    "launchUrl": "",
+    "applicationUrl": "https://localhost:8080;http://localhost:8080",
+    "environmentVariables": {
+      "ASPNETCORE_ENVIRONMENT": "Development"
+    }
   }
+}
 }
