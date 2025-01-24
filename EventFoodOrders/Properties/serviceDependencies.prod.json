@@ -4,7 +4,7 @@
       "serviceConnectorResourceId": "",
       "secretStore": "LocalSecretsFile",
       "type": "mssql.onprem",
-      "connectionId": "ConnectionStrings:EventFoodOrders",
+      "connectionId": "ConnectionStrings:EventFoodOrdersProd",
       "dynamicId": null
     },
     "secrets1": {
