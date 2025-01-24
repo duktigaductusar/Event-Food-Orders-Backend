@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>fa2bf96b-bdba-457c-92e6-5b11da81bb0a</UserSecretsId>
     <StartupObject></StartupObject>
+    <Configurations>Debug;Release;EFO-Prod;EFO-Dev</Configurations>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,13 +19,20 @@
 
   <ItemGroup>
     <Content Remove="Properties\serviceDependencies.prod.json" />
+    <Content Remove="Properties\serviceDependencies.server.prod.json" />
   </ItemGroup>
 
   <ItemGroup>
     <_WebToolingArtifacts Remove="Properties\serviceDependencies.prod.json" />
+    <_WebToolingArtifacts Remove="Properties\serviceDependencies.server.prod.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Properties\serviceDependencies.server.prod.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
     <None Include="Properties\serviceDependencies.prod.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
