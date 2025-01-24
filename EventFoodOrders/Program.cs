@@ -19,7 +19,7 @@ public class Program
 
         builder.Services.AddControllers();
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
-        opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
+        opt.UseSqlServer(builder.Configuration.GetConnectionString("EventFoodOrdersProd")));
         builder.Services.AddTransient<IEventFoodOrdersApi, EventFoodOrdersApi>();
 
         //TODO Adjust for prod.
