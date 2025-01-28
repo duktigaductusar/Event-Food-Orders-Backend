@@ -226,15 +226,15 @@ GO
 -- CREATE LOGIN IIS APPPOOL\EFO with password = "Vet inte"
 
 /****** Object:  User [IIS APPPOOL\EFO]    Script Date: 2025-01-14 13:04:42 ******/
-CREATE USER [IIS APPPOOL\EFO] FOR LOGIN [IIS APPPOOL\EFO] WITH DEFAULT_SCHEMA=[dbo]
-GO
+--CREATE USER [IIS APPPOOL\EFO] FOR LOGIN [IIS APPPOOL\EFO] WITH DEFAULT_SCHEMA=[dbo]
+--GO
 
 
 -- Nedan är för dev miljö. För prod ska man nog dra ner på rättigheter.
 USE [EFO]
 GO
 
-CREATE LOGIN efo_dbo_user with password = 'catSniff!ngKey'
+CREATE LOGIN efo_db_user with password = 'catSniff!ngKey'
 
 /****** Object:  User [efo_db_user]    Script Date: 2025-01-14 19:16:12 ******/
 CREATE USER [efo_db_user] FOR LOGIN [efo_db_user] WITH DEFAULT_SCHEMA=[dbo]

@@ -9,12 +9,18 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddSwaggerGen(c =>
+
+        var builder = WebApplication.CreateBuilder(args);
+        var isDevelopment = builder.Environment.IsDevelopment();
+
+        if (isDevelopment)
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-        });
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });
+        }
 
 
         builder.Services.AddControllers();
@@ -22,27 +28,51 @@ public class Program
         opt.UseSqlServer(builder.Configuration.GetConnectionString("EventFoodOrdersProdServer")));
         builder.Services.AddTransient<IEventFoodOrdersApi, EventFoodOrdersApi>();
 
-        //TODO Adjust for prod.
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AngularFontendDEV", policyBuilder =>
-            {
-                policyBuilder.AllowAnyOrigin();
-                policyBuilder.AllowAnyHeader();
-                policyBuilder.AllowAnyMethod();
-                //policyBuilder.AllowCredentials();
-            });
-        });
 
+        if (isDevelopment)
+        {
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AngularFontendDEV", policyBuilder =>
+                {
+                    policyBuilder.AllowAnyOrigin();
+                    policyBuilder.AllowAnyHeader();
+                    policyBuilder.AllowAnyMethod();
+                    //policyBuilder.AllowCredentials();
+                });
+            });
+        }
+        else
+        {
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AngularFontendProd", policyBuilder =>
+                {
+                    policyBuilder.AllowAnyOrigin();
+                    policyBuilder.AllowAnyHeader();
+                    policyBuilder.AllowAnyMethod();
+                    //policyBuilder.AllowCredentials();
+                });
+            });
+        }
 
         var app = builder.Build();
 
-        app.UseCors("AngularFontendDEV");
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
+        if (isDevelopment)
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        });
+            app.UseCors("AngularFontendDEV");
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+        }
+        else
+        {
+            app.UseCors("AngularFontendProd");
+        }
+
 
         // Configure the HTTP request pipeline.
 
@@ -50,7 +80,14 @@ public class Program
 
         app.UseAuthorization();
 
-        app.UsePathBase("/efobackend");
+        if (isDevelopment)
+        {
+            app.UsePathBase("/efobackend");
+        }
+        else
+        {
+            app.UsePathBase("");
+        }
 
         app.MapControllers();
 
