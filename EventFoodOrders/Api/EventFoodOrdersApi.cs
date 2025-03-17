@@ -1,5 +1,6 @@
 ﻿using EventFoodOrders.Data;
 using EventFoodOrders.Dto;
+using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Exceptions;
 using EventFoodOrders.Models;
 using Microsoft.EntityFrameworkCore;
@@ -235,7 +236,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         return retVal;
     }
 
-    public Event SaveEvent(EventDTO? _event)
+    public Event SaveEvent(EventForResponseDTO? _event)
     {
         Event retVal = new();
         Event toSave = new Event(_event.eventId);

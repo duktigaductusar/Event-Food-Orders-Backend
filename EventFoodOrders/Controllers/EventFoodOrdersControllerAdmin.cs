@@ -2,6 +2,7 @@
 
 using EventFoodOrders.Api;
 using EventFoodOrders.Dto;
+using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,7 +50,7 @@ public class EventFoodOrdersControllerAdmin(ILogger<EventFoodOrdersControllerAdm
 
     [HttpPost]
     [Route("/admin/events")]
-    public IActionResult AddEvent(EventDTO _event)
+    public IActionResult AddEvent(EventForResponseDTO _event)
     {
         Event retVal = _api.SaveEvent(_event);
 
