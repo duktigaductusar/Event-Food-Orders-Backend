@@ -24,18 +24,36 @@ public class EventController(ILogger<EventFoodOrdersControllerAdmin> logger, Eve
     [Route("/update/{eventId}")]
     public ActionResult<EventForResponseDTO> UpdateEvent(string eventId, EventForUpdateDto eventToUpdate)
     {
-        EventForResponseDTO response = _service.UpdateEvent(eventId, eventToUpdate);
+        try { Guid.Parse(eventId); }
+        catch { return BadRequest("Id not valid Guid."); }
 
-        return Ok(response);
+        try
+        {
+            EventForResponseDTO response = _service.UpdateEvent(eventId, eventToUpdate);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpDelete]
     [Route("/delete/{eventId}")]
     public ActionResult<bool> DeleteEvent(string eventId)
     {
-        bool response = _service.DeleteEvent(eventId);
+        try { Guid.Parse(eventId); }
+        catch { return BadRequest("Id not valid Guid."); }
 
-        return Ok(response);
+        try
+        {
+            bool response = _service.DeleteEvent(eventId);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]
@@ -45,9 +63,20 @@ public class EventController(ILogger<EventFoodOrdersControllerAdmin> logger, Eve
     {
         //ToDo: Update how the controller gets the user id, this is a temp Guid as string
         string userId = "4aa80da1-69dc-449f-bf4c-be8daafcef2a";
-        EventForResponseDTO response = _service.GetEventForUser(userId, eventId);
 
-        return Ok(response);
+        try{Guid.Parse(eventId);}
+        catch{return BadRequest("Id not valid Guid.");}
+
+        try
+        {
+            EventForResponseDTO response = _service.GetEventForUser(userId, eventId);
+            return Ok(response);
+        }
+        
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]

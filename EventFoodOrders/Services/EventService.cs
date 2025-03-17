@@ -25,12 +25,7 @@ namespace EventFoodOrders.Services
         {
             Event updatedEvent = _mapper.Map<Event>(updatedEventDto);
 
-            try
-            {
-                updatedEvent = _repository.UpdateEvent(eventId, updatedEvent);
-            }
-            catch (Exception ex)
-            { }
+            updatedEvent = _repository.UpdateEvent(eventId, updatedEvent);
 
             return _mapper.Map<EventForResponseDTO>(updatedEvent);
         }
