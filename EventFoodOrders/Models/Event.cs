@@ -8,39 +8,39 @@ public class Event
 {
     public Event()
     {
-        if (id == Guid.Empty)
+        if (EventId == Guid.Empty)
         {
-            id = Guid.NewGuid();
+            EventId = Guid.NewGuid();
         }
-        eventName = "";
+        EventName = "";
     }
 
     public Event(Guid guid)
     {
-        this.id = guid;
-        this.eventName = "";
+        EventId = guid;
+        EventName = "";
     }
 
     [Key]
     [Column("event_id")]
     [Required]
-    public Guid id { get; set; }
+    public Guid EventId { get; set; }
 
 
     [Required]
     [Column("event_name")]
-    public string eventName { get; set; }
+    public string EventName { get; set; }
 
     [Required]
     [Column("event_date")]
-    public DateTimeOffset eventDate { get; set; }
+    public DateTimeOffset EventDate { get; set; }
 
     [Required]
     [Column("active")]
-    public bool eventActive { get; set; }
+    public bool EventActive { get; set; }
 
     [Column("description")]
-    public string? description { get; set; }
+    public string? Description { get; set; }
 
     public override string? ToString()
     {

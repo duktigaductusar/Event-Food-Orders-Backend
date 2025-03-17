@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
+using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Models;
 using EventFoodOrders.Repositories;
-using Microsoft.Extensions.Logging;
 
 namespace EventFoodOrders.Services
 {
-    public class EventService(EventRepository repository, IMapper mapper)
+    public class EventService(EventRepository repository, CustomAutoMapper mapper)
     {
         private readonly EventRepository _repository = repository;
-        private readonly IMapper _mapper = mapper;
+        private readonly IMapper _mapper = mapper.Mapper;
 
         public EventForResponseDTO CreateEvent(EventForCreationDto eventForCreation)
         {

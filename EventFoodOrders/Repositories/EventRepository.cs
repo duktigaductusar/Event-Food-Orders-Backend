@@ -26,12 +26,12 @@ namespace EventFoodOrders.Repositories
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
             {
                 Event? eventToUpdate = context.Events
-                    .Where(e => e.id == id)
+                    .Where(e => e.EventId == id)
                     .FirstOrDefault();
 
                 if (eventToUpdate is Event)
                 {
-                    eventToUpdate = updatedEvent;
+                    UpdateEventEntity(updatedEvent, eventToUpdate);
                 }
                 else throw new NullReferenceException($"The event with id {eventId} does not exist.");
 
@@ -48,7 +48,7 @@ namespace EventFoodOrders.Repositories
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
             {
                 Event? eventToUpdate = context.Events
-                    .Where(e => e.id == id)
+                    .Where(e => e.EventId == id)
                     .FirstOrDefault();
 
                 if (eventToUpdate is Event)
@@ -68,7 +68,8 @@ namespace EventFoodOrders.Repositories
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
             {
                 Event? eventToFind = context.Events
-                    .Where(e => e.id == id)
+                    .Where(e => e.EventId == id)
+                    .AsNoTracking()
                     .FirstOrDefault();
 
                 if (eventToFind is Event)
@@ -86,6 +87,7 @@ namespace EventFoodOrders.Repositories
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
             {
                 IEnumerable<Event> events = context.Events
+                    .AsNoTracking()
                     //.Where(e => e.id == id)
                     .ToList();
 
@@ -95,6 +97,15 @@ namespace EventFoodOrders.Repositories
                 }
                 else throw new NullReferenceException($"No events were found.");
             }
+        }
+
+        private void UpdateEventEntity(Event source, Event destination)
+        {
+            destination.EventId = source.EventId;
+            destination.EventName = source.EventName;
+            destination.EventDate = source.EventDate;
+            destination.Description = source.Description;
+            destination.EventActive = source.EventActive;
         }
     }
 }
