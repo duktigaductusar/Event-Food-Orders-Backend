@@ -37,14 +37,18 @@ public class Participant
 
     //@ManyToOne
     //@JoinColumn(name = "event_id", nullable = false)
-    [Column("event_id")]
-    [Required]
-    public Guid _event { get; set; }
+    //[Column("event_id")]
+    //[Required]
+    //public Guid _event { get; set; }
 
     [Column("wants_meal")]
     public bool wantsMeal { get; set; }
 
     [Column("allergies")]
     public String allergies { get; set; }
+
+    [Column("event_id")]
+    [Required]
+    public Guid EventId { get; set; }
 
 }

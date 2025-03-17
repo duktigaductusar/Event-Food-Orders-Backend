@@ -10,7 +10,7 @@ namespace EventFoodOrders.AutoMapper
         {
             CreateMap<EventForCreationDto, Event>();
             CreateMap<EventForUpdateDto, Event>();
-            CreateMap<Event, EventForResponseDTO>();
+            CreateMap<Event, EventForResponseDto>();
         }
     }
 }

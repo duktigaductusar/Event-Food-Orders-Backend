@@ -28,11 +28,15 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
-        builder.Services.AddTransient<IEventFoodOrdersApi, EventFoodOrdersApi>();
+        
+        //Todo: Remove references to old Api class
+        //builder.Services.AddTransient<IEventFoodOrdersApi, EventFoodOrdersApi>();
 
+        builder.Services.AddTransient<CustomAutoMapper>();
         builder.Services.AddTransient<EventService>();
         builder.Services.AddTransient<EventRepository>();
-        builder.Services.AddTransient<CustomAutoMapper>();
+        builder.Services.AddTransient<ParticipantService>();
+        builder.Services.AddTransient<ParticipantRepository>();
 
 
         if (isDevelopment)

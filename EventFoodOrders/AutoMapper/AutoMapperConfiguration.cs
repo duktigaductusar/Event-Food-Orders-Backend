@@ -8,6 +8,7 @@ namespace EventFoodOrders.AutoMapper
         {
             return new MapperConfiguration(config =>
             {
+                config.AddProfile<AutoMapperParticipantProfile>();
                 config.AddProfile<AutoMapperEventProfile>();
             });
         }

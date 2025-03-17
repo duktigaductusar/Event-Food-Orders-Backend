@@ -1,5 +1,5 @@
 ﻿using EventFoodOrders.Dto;
-using EventFoodOrders.Dto.EventDTOs;
+using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Models;
 
 namespace EventFoodOrders.Api
@@ -24,11 +24,11 @@ namespace EventFoodOrders.Api
         User GetUser(Guid _id);
         List<User> GetUsers();
         LoginResponse Login(UserLoginDTO input);
-        ParticipantDTO RegisterForEvent(ParticipantRegistrationRequestDTO _participantRegistrationRequest);
-        Event SaveEvent(EventForResponseDTO _event);
+        ParticipantForResponseDto RegisterForEvent(ParticipantForCreationDto _participantRegistrationRequest);
+        //Event SaveEvent(EventDTO _event);
         User signup(User input);
         Event UpdateEvent(string id, Event _event);
-        Participant UpdateParticipant(Guid id, ParticipantUpdateRequestDTO _participantRegistrationRequest);
+        Participant UpdateParticipant(Guid id, ParticipantForUpdateDto _participantRegistrationRequest);
         User UpdateUser(string id, User _user);
     }
 }

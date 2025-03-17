@@ -1,6 +1,6 @@
 ﻿namespace EventFoodOrders.Dto.EventDTOs
 {
-    public record EventForResponseDTO
+    public record EventForResponseDto
     {
         public Guid EventId { get; init; }
         public string EventName { get; init; }

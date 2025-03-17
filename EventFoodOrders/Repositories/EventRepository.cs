@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Repositories
 {
-    public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory)
+    public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : RepositoryBase<Event>(contextFactory)
     {
         private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
-        public Event CreateEvent(Event newEvent)
+        public Event AddEvent(Event newEvent)
         {
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
             {

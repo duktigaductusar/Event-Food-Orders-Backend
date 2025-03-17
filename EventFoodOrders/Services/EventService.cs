@@ -11,23 +11,23 @@ namespace EventFoodOrders.Services
         private readonly EventRepository _repository = repository;
         private readonly IMapper _mapper = mapper.Mapper;
 
-        public EventForResponseDTO CreateEvent(EventForCreationDto eventForCreation)
+        public EventForResponseDto CreateEvent(EventForCreationDto eventForCreation)
         {
             Event newEvent = _mapper.Map<Event>(eventForCreation);
             newEvent.EventId = Guid.NewGuid();
 
-            newEvent = _repository.CreateEvent(newEvent);
+            newEvent = _repository.AddEvent(newEvent);
 
-            return _mapper.Map<EventForResponseDTO>(newEvent);
+            return _mapper.Map<EventForResponseDto>(newEvent);
         }
 
-        public EventForResponseDTO UpdateEvent(string eventId, EventForUpdateDto updatedEventDto)
+        public EventForResponseDto UpdateEvent(string eventId, EventForUpdateDto updatedEventDto)
         {
             Event updatedEvent = _mapper.Map<Event>(updatedEventDto);
 
             updatedEvent = _repository.UpdateEvent(eventId, updatedEvent);
 
-            return _mapper.Map<EventForResponseDTO>(updatedEvent);
+            return _mapper.Map<EventForResponseDto>(updatedEvent);
         }
 
         public bool DeleteEvent(string eventId)
@@ -44,18 +44,18 @@ namespace EventFoodOrders.Services
             return true;
         }
 
-        public EventForResponseDTO GetEventForUser(string userId, string eventId)
+        public EventForResponseDto GetEventForUser(string userId, string eventId)
         {
             Event returnEvent = _repository.GetEventForUser(userId, eventId);
 
-            return _mapper.Map<EventForResponseDTO>(returnEvent);
+            return _mapper.Map<EventForResponseDto>(returnEvent);
         }
 
-        public IEnumerable<EventForResponseDTO> GetAllEventsForUser(string userId)
+        public IEnumerable<EventForResponseDto> GetAllEventsForUser(string userId)
         {
             IEnumerable<Event> returnEvents = _repository.GetAllEventsForUser(userId);
 
-            return _mapper.Map<IEnumerable<EventForResponseDTO>>(returnEvents);
+            return _mapper.Map<IEnumerable<EventForResponseDto>>(returnEvents);
         }
     }
 }

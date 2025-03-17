@@ -5,7 +5,7 @@ using EventFoodOrders.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventFoodOrders.Controllers;
-
+/*
 [ApiController]
 public class EventFoodOrdersControllerAuth(ILogger<EventFoodOrdersControllerAuth> logger, IEventFoodOrdersApi api) : ControllerBase
 {
@@ -69,3 +69,4 @@ public class EventFoodOrdersControllerAuth(ILogger<EventFoodOrdersControllerAuth
         }
     }
 }
+*/
