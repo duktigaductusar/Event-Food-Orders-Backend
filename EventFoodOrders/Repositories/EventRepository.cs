@@ -105,7 +105,6 @@ namespace EventFoodOrders.Repositories
 
         private void UpdateEventEntity(Event source, Event destination)
         {
-            destination.EventId = source.EventId;
             destination.EventName = source.EventName;
             destination.EventDate = source.EventDate;
             destination.Description = source.Description;

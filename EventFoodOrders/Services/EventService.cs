@@ -14,6 +14,7 @@ namespace EventFoodOrders.Services
         public EventForResponseDTO CreateEvent(EventForCreationDto eventForCreation)
         {
             Event newEvent = _mapper.Map<Event>(eventForCreation);
+            newEvent.EventId = Guid.NewGuid();
 
             newEvent = _repository.CreateEvent(newEvent);
 

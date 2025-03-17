@@ -2,11 +2,11 @@
 {
     public record EventForResponseDTO
     {
-        public Guid EventId { get; set; }
-        public string EventName { get; set; }
-        public DateTimeOffset EventDate { get; set; }
-        public string Description { get; set; }
-        public bool EventActive { get; set; }
+        public Guid EventId { get; init; }
+        public string EventName { get; init; }
+        public DateTimeOffset EventDate { get; init; }
+        public string Description { get; init; }
+        public bool EventActive { get; init; }
 
     }
 }
