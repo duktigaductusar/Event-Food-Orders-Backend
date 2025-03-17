@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventFoodOrders.AutoMapper;
+using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Models;
 using EventFoodOrders.Repositories;
@@ -12,7 +13,7 @@ namespace EventFoodOrders.Services
         private readonly EventRepository _eventRepository = eventRepository;
         private readonly IMapper _mapper = mapper.Mapper;
 
-        internal ParticipantForResponseDto AddParticipantToEvent(string eventId, ParticipantForCreationDto newParticipant)
+        public ParticipantForResponseDto AddParticipantToEvent(string eventId, ParticipantForCreationDto newParticipant)
         {
             Guid id = Guid.Parse(eventId);
 
@@ -24,6 +25,15 @@ namespace EventFoodOrders.Services
             _participantRepository.AddParticipant(participant);
 
             return _mapper.Map<ParticipantForResponseDto>(participant);
+        }
+
+        public ParticipantForResponseDto UpdateParticipant(string participantId, ParticipantForUpdateDto updatedParticipantDto)
+        {
+            Participant updatedParticipant = _mapper.Map<Participant>(updatedParticipantDto);
+
+            updatedParticipant = _participantRepository.UpdateParticipant(participantId, updatedParticipant);
+
+            return _mapper.Map<ParticipantForResponseDto>(updatedParticipant);
         }
     }
 }

@@ -2,6 +2,7 @@ using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace EventFoodOrders.Controllers;
 
@@ -15,9 +16,9 @@ public class ParticipantController(ILogger logger, ParticipantService participan
 
     [HttpPost]
     [Route("/{eventId}/new")]
-    public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(string eventId, ParticipantForCreationDto newEvent)
+    public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(string eventId, ParticipantForCreationDto newParticipant)
     {
-        ParticipantForResponseDto response = _participantService.AddParticipantToEvent(eventId, newEvent);
+        ParticipantForResponseDto response = _participantService.AddParticipantToEvent(eventId, newParticipant);
 
         return Ok(response);
     }
@@ -26,33 +27,31 @@ public class ParticipantController(ILogger logger, ParticipantService participan
     [Route("/update/{participantId}")]
     public ActionResult<ParticipantForResponseDto> UpdateParticipant(string participantId, ParticipantForUpdateDto participantToUpdate)
     {
-
+        ParticipantForResponseDto response = _participantService.UpdateParticipant(participantId, participantToUpdate);
 
         return Ok();
     }
 
     [HttpDelete]
-    [Route("/delete/{eventId}/8888")]
-    public ActionResult<bool> DeleteEvent(string eventId)
+    [Route("/delete/{eventId}/{participantId}")]
+    public ActionResult<bool> DeleteParticipant(string eventId, string participantId)
     {
         return Ok();
     }
 
     [HttpGet]
     //[Route("/get/{userId}/{eventId}")]
-    [Route("/get/{eventId}/5555")]
-    public ActionResult<EventForResponseDto> GetSingleEventForUser(string eventId)
+    [Route("/get/{eventId}/{participantId}")]
+    public ActionResult<EventForResponseDto> GetSingleParticipantInEvent(string eventId, string participantId)
     {
         return Ok();
     }
 
     [HttpGet]
     //[Route("/get/{userId}/all")]
-    [Route("/get/all/7777")]
-    public ActionResult<IEnumerable<EventForResponseDto>> GetAllEventsForUser()
+    [Route("/get/{eventId}/all")]
+    public ActionResult<IEnumerable<EventForResponseDto>> GetAllParticipantsInEvent(string eventId)
     {
-        
-
         return Ok();
     }
 }
