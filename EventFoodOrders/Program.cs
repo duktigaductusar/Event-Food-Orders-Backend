@@ -1,5 +1,9 @@
+using AutoMapper;
 using EventFoodOrders.Api;
+using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Data;
+using EventFoodOrders.Repositories;
+using EventFoodOrders.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -9,8 +13,6 @@ public class Program
 {
     public static void Main(string[] args)
     {
-
-
         var builder = WebApplication.CreateBuilder(args);
         var isDevelopment = builder.Environment.IsDevelopment();
 
@@ -27,6 +29,10 @@ public class Program
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
         builder.Services.AddTransient<IEventFoodOrdersApi, EventFoodOrdersApi>();
+
+        builder.Services.AddTransient<EventService>();
+        builder.Services.AddTransient<EventRepository>();
+        builder.Services.AddTransient<CustomAutoMapper>();
 
 
         if (isDevelopment)
