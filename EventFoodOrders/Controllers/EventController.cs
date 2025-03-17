@@ -21,36 +21,42 @@ public class EventController(ILogger<EventFoodOrdersControllerAdmin> logger, Eve
     }
 
     [HttpPut]
-    [Route("/update/{id}")]
-    public ActionResult<EventForResponseDTO> UpdateEvent(string id, EventForUpdateDto eventToUpdate)
+    [Route("/update/{eventId}")]
+    public ActionResult<EventForResponseDTO> UpdateEvent(string eventId, EventForUpdateDto eventToUpdate)
     {
-        EventForResponseDTO response = _service.UpdateEvent(id, eventToUpdate);
+        EventForResponseDTO response = _service.UpdateEvent(eventId, eventToUpdate);
 
         return Ok(response);
     }
 
     [HttpDelete]
-    [Route("/delete/{id}")]
-    public ActionResult<bool> DeleteEvent(string id)
+    [Route("/delete/{eventId}")]
+    public ActionResult<bool> DeleteEvent(string eventId)
     {
-        bool response = _service.DeleteEvent(id);
+        bool response = _service.DeleteEvent(eventId);
 
         return Ok(response);
     }
 
     [HttpGet]
-    [Route("/get/{userId}/{eventId}")]
-    public ActionResult<EventForResponseDTO> GetSingleEventForUser(string userId, string eventId)
+    //[Route("/get/{userId}/{eventId}")]
+    [Route("/get/{eventId}")]
+    public ActionResult<EventForResponseDTO> GetSingleEventForUser(string eventId)
     {
+        //ToDo: Update how the controller gets the user id, this is a temp Guid as string
+        string userId = "4aa80da1-69dc-449f-bf4c-be8daafcef2a";
         EventForResponseDTO response = _service.GetEventForUser(userId, eventId);
 
         return Ok(response);
     }
 
     [HttpGet]
-    [Route("/get/{userId}/all")]
-    public ActionResult<IEnumerable<EventForResponseDTO>> GetAllEventsForUser(string userId)
+    //[Route("/get/{userId}/all")]
+    [Route("/get/all")]
+    public ActionResult<IEnumerable<EventForResponseDTO>> GetAllEventsForUser()
     {
+        //ToDo: Update how the controller gets the user id, this is a temp Guid as string
+        string userId = "4aa80da1-69dc-449f-bf4c-be8daafcef2a";
         IEnumerable<EventForResponseDTO> response = _service.GetAllEventsForUser(userId);
 
         return Ok(response);

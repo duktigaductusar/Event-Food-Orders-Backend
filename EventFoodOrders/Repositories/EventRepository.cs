@@ -21,6 +21,7 @@ namespace EventFoodOrders.Repositories
 
         public Event UpdateEvent(string eventId, Event updatedEvent)
         {
+            //ToDo: Update ID method
             Guid id = Guid.Parse(eventId);
 
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
@@ -43,6 +44,7 @@ namespace EventFoodOrders.Repositories
 
         public void DeleteEvent(string eventId)
         {
+            //ToDo: Update ID method
             Guid id = Guid.Parse(eventId);
 
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
@@ -63,6 +65,7 @@ namespace EventFoodOrders.Repositories
 
         public Event GetEventForUser(string userId, string eventId)
         {
+            //ToDo: Update ID method
             Guid id = Guid.Parse(eventId);
 
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
@@ -82,6 +85,7 @@ namespace EventFoodOrders.Repositories
 
         public IEnumerable<Event> GetAllEventsForUser(string userId)
         {
+            //ToDo: Update ID method
             Guid id = Guid.Parse(userId);
 
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
