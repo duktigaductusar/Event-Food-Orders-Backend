@@ -2,9 +2,23 @@
 
 public class EventNotFoundException : Exception
 {
-    private EventNotFoundException() { }
+    private EventNotFoundException() :
+        base("Event not found.")
+    { }
 
-    public EventNotFoundException(string message) : base(message) { }
+    public EventNotFoundException(Guid eventId) :
+        base($"Event with id {eventId} not found.")
+    { }
 
-    public EventNotFoundException(string message, Exception innerException) : base(message, innerException) { }
+    public EventNotFoundException(string eventId) :
+        base($"Event with id {eventId} not found.")
+    { }
+
+    public EventNotFoundException(Guid eventId, Exception innerException) :
+        base($"Event with id {eventId} not found.", innerException)
+    { }
+
+    public EventNotFoundException(string eventId, Exception innerException) :
+        base($"Event with id {eventId} not found.", innerException)
+    { }
 }
