@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using EventFoodOrders.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using IAuthorizationService = EventFoodOrders.Interfaces.IAuthorizationService;
 
 namespace EventFoodOrders.Controllers;
 
@@ -18,13 +20,15 @@ public class AuthorizationController : ControllerBase
     [HttpGet("[controller]/login")]
     public IActionResult Login()
     {
-        throw new NotImplementedException();
+        var loginUrl = _authService.GetLoginUrl();
+        return Redirect(loginUrl);
     }
 
     [HttpGet("[controller]/callback")]
     public async Task<IActionResult> Callback([FromQuery] string code)
     {
-        throw new NotImplementedException();
+        var authResponse = await _authService.ExchangeCodeForTokenAsync(code);
+        return Ok(authResponse);
     }
 
     [HttpGet("[controller]/logout")]
