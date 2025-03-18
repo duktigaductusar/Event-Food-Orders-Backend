@@ -4,7 +4,6 @@ using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Models;
 using EventFoodOrders.Repositories;
-using Microsoft.Extensions.Logging;
 
 namespace EventFoodOrders.Services
 {
@@ -49,6 +48,33 @@ namespace EventFoodOrders.Services
             }
 
             return true;
+        }
+
+        public ParticipantForResponseDto GetParticipant(string userId, string eventId)
+        {
+            Guid participantId = Guid.Parse(userId);
+
+            Event participantsEvent = _eventRepository.GetEventForUser(userId, eventId);
+            Participant? participant = participantsEvent.Participants
+                .Where(p => p.participant_id == participantId)
+                .FirstOrDefault();
+
+            if (participant is null)
+            {
+                throw new ArgumentException($"No participant with id {userId} exists for event with id {eventId}.");
+            }
+
+            return _mapper.Map<ParticipantForResponseDto>(participant);
+        }
+
+        public IEnumerable<ParticipantForResponseDto> GetAllParticipantsForEvent(string eventId)
+        {
+            Guid id = Guid.Parse(eventId);
+
+            Event participantsEvent = _eventRepository.GetSingleEventWithCondition(e => e.EventId == id);
+            IEnumerable<Participant> participants = [.. participantsEvent.Participants];
+
+            return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants);
         }
     }
 }

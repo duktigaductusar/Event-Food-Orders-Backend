@@ -42,6 +42,9 @@ public class Event
     [Column("description")]
     public string? Description { get; set; }
 
+    // Navigation properties
+    public IEnumerable<Participant> Participants { get; set; }
+
     public override string? ToString()
     {
         return base.ToString();

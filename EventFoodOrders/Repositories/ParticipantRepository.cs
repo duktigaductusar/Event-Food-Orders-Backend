@@ -62,6 +62,25 @@ namespace EventFoodOrders.Repositories
             }
         }
 
+        internal Participant GetParticipant(string participantId)
+        {
+            Guid id = Guid.Parse(participantId);
+
+            using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+            {
+                Participant? participant = context.Participants
+                    .Where(e => e.participant_id == id)
+                    .AsNoTracking()
+                    .FirstOrDefault();
+
+                if (participant is Participant)
+                {
+                    return participant;
+                }
+                else throw new NullReferenceException($"A participant with id {participantId} does not exist.");
+            }
+        }
+
         private void UpdateParticipantEntity(Participant source, Participant destination)
         {
             destination.participant_id = source.participant_id;

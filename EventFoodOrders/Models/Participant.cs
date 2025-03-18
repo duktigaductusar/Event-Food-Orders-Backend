@@ -45,9 +45,9 @@ public class Participant
     public bool wantsMeal { get; set; }
 
     [Column("allergies")]
-    public String allergies { get; set; }
+    public string allergies { get; set; }
 
-    [Column("event_id")]
+    [ForeignKey("event_id")]
     [Required]
     public Guid EventId { get; set; }
 
