@@ -67,11 +67,9 @@ namespace EventFoodOrders.Services
             return _mapper.Map<ParticipantForResponseDto>(participant);
         }
 
-        public IEnumerable<ParticipantForResponseDto> GetAllParticipantsForEvent(string eventId)
+        public IEnumerable<ParticipantForResponseDto> GetAllParticipantsForEvent(string userId, string eventId)
         {
-            Guid id = Guid.Parse(eventId);
-
-            Event participantsEvent = _eventRepository.GetSingleEventWithCondition(e => e.EventId == id);
+            Event participantsEvent = _eventRepository.GetEventForUser(userId, eventId);
             IEnumerable<Participant> participants = [.. participantsEvent.Participants];
 
             return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants);

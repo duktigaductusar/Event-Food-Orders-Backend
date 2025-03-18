@@ -72,7 +72,6 @@ public class EventController(ILogger logger, EventService service) : ControllerB
             EventForResponseDto response = _service.GetEventForUser(userId, eventId);
             return Ok(response);
         }
-        
         catch (Exception ex)
         {
             return BadRequest(ex.Message);

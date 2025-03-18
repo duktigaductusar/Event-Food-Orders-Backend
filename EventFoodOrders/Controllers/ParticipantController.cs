@@ -1,8 +1,7 @@
-using EventFoodOrders.Dto.EventDTOs;
+using System.Collections.Generic;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace EventFoodOrders.Controllers;
 
@@ -44,16 +43,26 @@ public class ParticipantController(ILogger logger, ParticipantService participan
     [HttpGet]
     //[Route("/get/{userId}/{eventId}")]
     [Route("/get/{eventId}/{participantId}")]
-    public ActionResult<EventForResponseDto> GetSingleParticipantInEvent(string eventId, string participantId)
+    public ActionResult<ParticipantForResponseDto> GetSingleParticipantInEvent(string eventId, string participantId)
     {
+        try
+        {
+            ParticipantForResponseDto response = _participantService.GetParticipant(participantId, eventId);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
         return Ok();
     }
 
     [HttpGet]
     //[Route("/get/{userId}/all")]
     [Route("/get/{eventId}/all")]
-    public ActionResult<IEnumerable<EventForResponseDto>> GetAllParticipantsInEvent(string eventId)
+    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(string eventId)
     {
-        return Ok();
+        IEnumerable <ParticipantForResponseDto> participants = _participantService.GetAllParticipantsForEvent(eventId);
+        return Ok(participants);
     }
 }
