@@ -34,12 +34,32 @@ namespace EventFoodOrders.Repositories
                 {
                     UpdateParticipantEntity(participantToUpdate, updatedParticipant);
                 }
-                else throw new NullReferenceException($"The participant with id {participantId} does not exist.");
+                else throw new NullReferenceException($"A participant with id {participantId} does not exist.");
 
                 context.SaveChanges();
             }
 
             return updatedParticipant;
+        }
+
+        public void DeleteParticipant(string participantId)
+        {
+            Guid id = Guid.Parse(participantId);
+
+            using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+            {
+                Participant? participantToUpdate = context.Participants
+                    .Where(e => e.participant_id == id)
+                    .FirstOrDefault();
+
+                if (participantToUpdate is Participant)
+                {
+                    context.Remove(participantToUpdate);
+                }
+                else throw new NullReferenceException($"A participant with id {participantId} does not exist.");
+
+                context.SaveChanges();
+            }
         }
 
         private void UpdateParticipantEntity(Participant source, Participant destination)

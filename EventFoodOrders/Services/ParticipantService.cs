@@ -4,6 +4,7 @@ using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Models;
 using EventFoodOrders.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace EventFoodOrders.Services
 {
@@ -34,6 +35,20 @@ namespace EventFoodOrders.Services
             updatedParticipant = _participantRepository.UpdateParticipant(participantId, updatedParticipant);
 
             return _mapper.Map<ParticipantForResponseDto>(updatedParticipant);
+        }
+
+        public bool DeleteParticipant(string participantId)
+        {
+            try
+            {
+                _participantRepository.DeleteParticipant(participantId);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

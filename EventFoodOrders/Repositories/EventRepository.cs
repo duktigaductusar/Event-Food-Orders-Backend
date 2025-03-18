@@ -34,7 +34,7 @@ namespace EventFoodOrders.Repositories
                 {
                     UpdateEventEntity(updatedEvent, eventToUpdate);
                 }
-                else throw new NullReferenceException($"The event with id {eventId} does not exist.");
+                else throw new NullReferenceException($"An event with id {eventId} does not exist.");
 
                 context.SaveChanges();
             }
@@ -57,7 +57,7 @@ namespace EventFoodOrders.Repositories
                 {
                     context.Remove(eventToUpdate);
                 }
-                else throw new NullReferenceException($"The event with id {eventId} does not exist.");
+                else throw new NullReferenceException($"An event with id {eventId} does not exist.");
 
                 context.SaveChanges();
             }
@@ -79,7 +79,7 @@ namespace EventFoodOrders.Repositories
                 {
                     return eventToFind;
                 }
-                else throw new NullReferenceException($"The event with id {eventId} does not exist.");
+                else throw new NullReferenceException($"An event with id {eventId} does not exist.");
             }
         }
 

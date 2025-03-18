@@ -1,6 +1,5 @@
 ﻿using EventFoodOrders.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace EventFoodOrders.Repositories
 {
