@@ -59,10 +59,10 @@ public class ParticipantController(ILogger logger, ParticipantService participan
 
     [HttpGet]
     //[Route("/get/{userId}/all")]
-    [Route("/get/{eventId}/all")]
-    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(string eventId)
+    [Route("/get/{userId}/{eventId}/all")]
+    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(string userId, string eventId)
     {
-        IEnumerable <ParticipantForResponseDto> participants = _participantService.GetAllParticipantsForEvent(eventId);
+        IEnumerable <ParticipantForResponseDto> participants = _participantService.GetAllParticipantsForEvent(userId, eventId);
         return Ok(participants);
     }
 }
