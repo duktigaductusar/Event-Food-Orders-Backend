@@ -4,51 +4,50 @@ using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Models;
 using EventFoodOrders.Repositories;
 
-namespace EventFoodOrders.Services
+namespace EventFoodOrders.Services;
+
+public class EventService(EventRepository repository, CustomAutoMapper mapper)
 {
-    public class EventService(EventRepository repository, CustomAutoMapper mapper)
+    private readonly EventRepository _repository = repository;
+    private readonly IMapper _mapper = mapper.Mapper;
+
+    public EventForResponseDto CreateEvent(EventForCreationDto eventForCreation)
     {
-        private readonly EventRepository _repository = repository;
-        private readonly IMapper _mapper = mapper.Mapper;
+        Event newEvent = _mapper.Map<Event>(eventForCreation);
+        newEvent.EventId = Guid.NewGuid();
 
-        public EventForResponseDto CreateEvent(EventForCreationDto eventForCreation)
-        {
-            Event newEvent = _mapper.Map<Event>(eventForCreation);
-            newEvent.EventId = Guid.NewGuid();
+        newEvent = _repository.AddEvent(newEvent);
 
-            newEvent = _repository.AddEvent(newEvent);
+        return _mapper.Map<EventForResponseDto>(newEvent);
+    }
 
-            return _mapper.Map<EventForResponseDto>(newEvent);
-        }
+    public EventForResponseDto UpdateEvent(string eventId, EventForUpdateDto updatedEventDto)
+    {
+        Event updatedEvent = _mapper.Map<Event>(updatedEventDto);
 
-        public EventForResponseDto UpdateEvent(string eventId, EventForUpdateDto updatedEventDto)
-        {
-            Event updatedEvent = _mapper.Map<Event>(updatedEventDto);
+        updatedEvent = _repository.UpdateEvent(eventId, updatedEvent);
 
-            updatedEvent = _repository.UpdateEvent(eventId, updatedEvent);
+        return _mapper.Map<EventForResponseDto>(updatedEvent);
+    }
 
-            return _mapper.Map<EventForResponseDto>(updatedEvent);
-        }
+    public bool DeleteEvent(string eventId)
+    {
+        _repository.DeleteEvent(eventId);
 
-        public bool DeleteEvent(string eventId)
-        {
-            _repository.DeleteEvent(eventId);
+        return true;
+    }
 
-            return true;
-        }
+    public EventForResponseDto GetEventForUser(string userId, string eventId)
+    {
+        Event returnEvent = _repository.GetEventForUser(userId, eventId);
 
-        public EventForResponseDto GetEventForUser(string userId, string eventId)
-        {
-            Event returnEvent = _repository.GetEventForUser(userId, eventId);
+        return _mapper.Map<EventForResponseDto>(returnEvent);
+    }
 
-            return _mapper.Map<EventForResponseDto>(returnEvent);
-        }
+    public IEnumerable<EventForResponseDto> GetAllEventsForUser(string userId)
+    {
+        IEnumerable<Event> returnEvents = _repository.GetAllEventsForUser(userId);
 
-        public IEnumerable<EventForResponseDto> GetAllEventsForUser(string userId)
-        {
-            IEnumerable<Event> returnEvents = _repository.GetAllEventsForUser(userId);
-
-            return _mapper.Map<IEnumerable<EventForResponseDto>>(returnEvents);
-        }
+        return _mapper.Map<IEnumerable<EventForResponseDto>>(returnEvents);
     }
 }

@@ -6,7 +6,7 @@ namespace EventFoodOrders.Api
 {
     public interface IEventFoodOrdersApi
     {
-        User? AddUser(User _user);
+        //User? AddUser(User _user);
         void cancelRegistration(Guid _id);
         Event createEvent(Event _event);
         Participant? CreateParticipant(Participant _participant);
@@ -21,14 +21,14 @@ namespace EventFoodOrders.Api
         Participant getParticipantDetails(Guid participantId);
         List<Participant> GetParticipants();
         long getRegistrationsCount(Guid eventId);
-        User GetUser(Guid _id);
-        List<User> GetUsers();
-        LoginResponse Login(UserLoginDTO input);
+        //User GetUser(Guid _id);
+        //List<User> GetUsers();
+        //LoginResponse Login(UserLoginDTO input);
         ParticipantForResponseDto RegisterForEvent(ParticipantForCreationDto _participantRegistrationRequest);
         //Event SaveEvent(EventDTO _event);
-        User signup(User input);
+        //User signup(User input);
         Event UpdateEvent(string id, Event _event);
         Participant UpdateParticipant(Guid id, ParticipantForUpdateDto _participantRegistrationRequest);
-        User UpdateUser(string id, User _user);
+        //User UpdateUser(string id, User _user);
     }
 }
