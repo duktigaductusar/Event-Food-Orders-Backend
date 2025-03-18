@@ -9,7 +9,5 @@ public class EventFoodOrdersDbContext : DbContext
     public DbSet<Participant> Participants { get; set; }
 
     public EventFoodOrdersDbContext(DbContextOptions options) : base(options)
-    {
-
-    }
+    { }
 }

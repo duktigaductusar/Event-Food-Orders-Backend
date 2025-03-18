@@ -1,4 +1,3 @@
-using Azure;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -68,7 +67,7 @@ public class EventController(ILogger<EventController> logger, EventService servi
         //ToDo: Update how the controller gets the user id, this is a temp Guid as string
         string userId = "4aa80da1-69dc-449f-bf4c-be8daafcef2a";
 
-        try{Guid.Parse(eventId);}
+        try { Guid.Parse(eventId); }
         catch{return BadRequest("Id not valid Guid.");}
 
         try

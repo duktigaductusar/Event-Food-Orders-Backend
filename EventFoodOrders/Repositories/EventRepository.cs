@@ -1,10 +1,12 @@
 ﻿using EventFoodOrders.Data;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Repositories;
 
-public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : RepositoryBase<Event>()
+public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) :
+    RepositoryBase<Event, EventNotFoundException>
 {
     private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
@@ -34,7 +36,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
             {
                 UpdateEventEntity(updatedEvent, eventToUpdate);
             }
-            else throw new NullReferenceException($"An event with id {eventId} does not exist.");
+            else throw new EventNotFoundException(eventId);
 
             context.SaveChanges();
         }
@@ -57,7 +59,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
             {
                 context.Remove(eventToUpdate);
             }
-            else throw new NullReferenceException($"An event with id {eventId} does not exist.");
+            else throw new EventNotFoundException(eventId);
 
             context.SaveChanges();
         }
@@ -84,8 +86,8 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
                     return eventToFind;
                 }
             }
-            
-            throw new NullReferenceException($"An event with id {eventId} does not exist.");
+
+            throw new EventNotFoundException(eventId);
         }
     }
 
@@ -102,11 +104,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
                 //.Where(e => e.id == id)
                 .ToList();
 
-            if (events.Any())
-            {
-                return events;
-            }
-            else throw new NullReferenceException($"No events were found.");
+            return events;
         }
     }
 

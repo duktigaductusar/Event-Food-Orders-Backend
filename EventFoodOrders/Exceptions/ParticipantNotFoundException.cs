@@ -2,7 +2,7 @@
 
 public class ParticipantNotFoundException : Exception
 {
-    private ParticipantNotFoundException() :
+    public ParticipantNotFoundException() :
         base("Participant not found.")
     { }
 

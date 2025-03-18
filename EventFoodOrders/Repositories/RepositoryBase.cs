@@ -1,10 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EventFoodOrders.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Repositories;
 
-public class RepositoryBase<T> where T : class
+public class RepositoryBase<T, Q>()
+    where T : class
+    where Q : Exception, new()
 {
-    internal static T GetSingleWithCondition(DbSet<T> dbSet, Func<T, bool> condition)
+    private readonly ExceptionStandIn<Q> _exceptionFactory = new();
+
+    internal T GetSingleWithCondition(DbSet<T> dbSet, Func<T, bool> condition)
     {
         T? result;
 
@@ -12,10 +17,10 @@ public class RepositoryBase<T> where T : class
 
         if (result is null)
         {
-            throw new ArgumentException("Instance not found.");
+            _exceptionFactory.ThrowDefaultException();
         }
 
-        return result;
+        return result!;
     }
 
     internal static IEnumerable<T> GetAllWithCondition(DbSet<T> dbSet, Func<T, bool> condition)

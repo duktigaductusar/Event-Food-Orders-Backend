@@ -2,7 +2,7 @@
 
 public class EventNotFoundException : Exception
 {
-    private EventNotFoundException() :
+    public EventNotFoundException() :
         base("Event not found.")
     { }
 

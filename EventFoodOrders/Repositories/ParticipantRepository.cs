@@ -1,10 +1,12 @@
 ﻿using EventFoodOrders.Data;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Repositories;
 
-public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : RepositoryBase<Participant>()
+public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) :
+    RepositoryBase<Participant, ParticipantNotFoundException>
 {
     private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
