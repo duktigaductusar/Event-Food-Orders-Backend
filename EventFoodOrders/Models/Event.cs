@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EventFoodOrders.Models;
@@ -13,6 +14,7 @@ public class Event
             EventId = Guid.NewGuid();
         }
         EventName = "";
+        Participants = [];
     }
 
     public Event(Guid guid)
@@ -43,7 +45,7 @@ public class Event
     public string? Description { get; set; }
 
     // Navigation properties
-    public IEnumerable<Participant> Participants { get; set; }
+    public Collection<Participant> Participants { get; set; }
 
     public override string? ToString()
     {

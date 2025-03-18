@@ -21,6 +21,7 @@ namespace EventFoodOrders.Services
 
             Participant participant = _mapper.Map<Participant>(newParticipant);
             participant.EventId = desiredEvent.EventId;
+            participant.participant_id = Guid.NewGuid();
 
             _participantRepository.AddParticipant(participant);
 
@@ -29,7 +30,8 @@ namespace EventFoodOrders.Services
 
         public ParticipantForResponseDto UpdateParticipant(string participantId, ParticipantForUpdateDto updatedParticipantDto)
         {
-            Participant updatedParticipant = _mapper.Map<Participant>(updatedParticipantDto);
+            Participant updatedParticipant = _participantRepository.GetParticipant(participantId);
+            updatedParticipant = _mapper.Map(updatedParticipantDto, updatedParticipant);
 
             updatedParticipant = _participantRepository.UpdateParticipant(participantId, updatedParticipant);
 
@@ -72,7 +74,7 @@ namespace EventFoodOrders.Services
             Event participantsEvent = _eventRepository.GetEventForUser(userId, eventId);
             IEnumerable<Participant> participants = [.. participantsEvent.Participants];
 
-            return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants);
+            return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants); ;
         }
     }
 }

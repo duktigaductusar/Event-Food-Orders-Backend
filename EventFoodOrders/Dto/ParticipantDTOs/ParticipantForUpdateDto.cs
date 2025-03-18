@@ -12,5 +12,4 @@ public class ParticipantForUpdateDto
             allergies = string.Empty;
         }
     }
-
 }

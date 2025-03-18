@@ -81,13 +81,14 @@ namespace EventFoodOrders.Repositories
             }
         }
 
-        private void UpdateParticipantEntity(Participant source, Participant destination)
+        private void UpdateParticipantEntity(Participant destination, Participant source)
         {
             destination.participant_id = source.participant_id;
             destination.EventId = source.EventId;
             destination.wantsMeal = source.wantsMeal;
             destination.allergies = source.allergies;
-            destination.user = source.user;
+            // ToDo: Look over how to handle user data
+            //destination.user = source.user;
         }
     }
 }

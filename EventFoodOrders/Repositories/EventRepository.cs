@@ -73,6 +73,7 @@ namespace EventFoodOrders.Repositories
                 Event? eventToFind = context.Events
                     .Where(e => e.EventId == id)
                     .AsNoTracking()
+                    .Include(e => e.Participants)
                     .FirstOrDefault();
 
                 if (eventToFind is Event)
@@ -92,6 +93,7 @@ namespace EventFoodOrders.Repositories
             {
                 IEnumerable<Event> events = context.Events
                     .AsNoTracking()
+                    .Include(e => e.Participants)
                     //.Where(e => e.id == id)
                     .ToList();
 

@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace EventFoodOrders.Controllers;
 
 [ApiController]
-[Route("/event")]
-public class EventController(ILogger logger, EventService service) : ControllerBase
+[Route("/api/")]
+public class EventController(ILogger<EventController> logger, EventService service) : ControllerBase
 {
-    private readonly ILogger _logger = logger;
+    private readonly ILogger<EventController> _logger = logger;
     private readonly EventService _service = service;
 
     [HttpPost]
-    [Route("/new")]
+    [Route("[controller]/new")]
     public ActionResult<EventForResponseDto> CreateEvent(EventForCreationDto newEvent)
     {
         EventForResponseDto response = _service.CreateEvent(newEvent);
@@ -21,7 +21,7 @@ public class EventController(ILogger logger, EventService service) : ControllerB
     }
 
     [HttpPut]
-    [Route("/update/{eventId}")]
+    [Route("[controller]/update/{eventId}")]
     public ActionResult<EventForResponseDto> UpdateEvent(string eventId, EventForUpdateDto eventToUpdate)
     {
         try { Guid.Parse(eventId); }
@@ -39,7 +39,7 @@ public class EventController(ILogger logger, EventService service) : ControllerB
     }
 
     [HttpDelete]
-    [Route("/delete/{eventId}")]
+    [Route("[controller]/delete/{eventId}")]
     public ActionResult<bool> DeleteEvent(string eventId)
     {
         try { Guid.Parse(eventId); }
@@ -58,7 +58,7 @@ public class EventController(ILogger logger, EventService service) : ControllerB
 
     [HttpGet]
     //[Route("/get/{userId}/{eventId}")]
-    [Route("/get/{eventId}")]
+    [Route("[controller]/get/{eventId}")]
     public ActionResult<EventForResponseDto> GetSingleEventForUser(string eventId)
     {
         //ToDo: Update how the controller gets the user id, this is a temp Guid as string
@@ -80,7 +80,7 @@ public class EventController(ILogger logger, EventService service) : ControllerB
 
     [HttpGet]
     //[Route("/get/{userId}/all")]
-    [Route("/get/all")]
+    [Route("[controller]/get/all")]
     public ActionResult<IEnumerable<EventForResponseDto>> GetAllEventsForUser()
     {
         //ToDo: Update how the controller gets the user id, this is a temp Guid as string

@@ -2,13 +2,15 @@
 
 public class ParticipantForResponseDto
 {
-    private Guid participantId { get; set; }
-    private Guid userId { get; set; }
-    private Guid eventId { get; set; }
-    private DateTime EventDate { get; set; }
-    private bool wantsMeal { get; set; }
-    private string allergies { get; set; }
+    public Guid participant_Id { get; set; }
+    public Guid userId { get; set; }
+    public Guid eventId { get; set; }
+    public DateTime EventDate { get; set; }
+    public bool wantsMeal { get; set; }
+    public string allergies { get; set; }
 
+    //ToDo: Update assignment to response dto ?
+    /*
     public ParticipantForResponseDto(Guid participantId, Guid userId, Guid eventId, DateTime eventDate, bool wantsMeal, string Allergies)
     {
 
@@ -25,4 +27,5 @@ public class ParticipantForResponseDto
         }
 
     }
+    */
 }

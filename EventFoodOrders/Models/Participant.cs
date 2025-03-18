@@ -14,7 +14,8 @@ public class Participant
             participant_id = Guid.NewGuid();
         }
         allergies = "";
-        user = new User();
+        // ToDo: Look over how to handle user data
+        //user = new User();
     }
 
     [Key]
@@ -28,11 +29,16 @@ public class Participant
     //[Required]
     //Guid user_id;
 
+
+    // ToDo: Look over how to handle user data
+    /*
     [ForeignKey("user_id")]
     //[Column("user_id")]
     [Required]
     [NotNull]
     public User user { get; set; }
+    */
+
 
 
     //@ManyToOne
