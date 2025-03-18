@@ -1,11 +1,24 @@
-﻿namespace EventFoodOrders.Exceptions
+﻿namespace EventFoodOrders.Exceptions;
+
+public class ParticipantNotFoundException : Exception
 {
-    public class ParticipantNotFoundException : Exception
-    {
-        private ParticipantNotFoundException() { }
+    public ParticipantNotFoundException() :
+        base("Participant not found.")
+    { }
 
-        public ParticipantNotFoundException(string message) : base(message) { }
+    public ParticipantNotFoundException(Guid participantId) :
+        base($"Participant with id {participantId} not found.")
+    { }
 
-        public ParticipantNotFoundException(string message, Exception innerException) : base(message, innerException) { }
-    }
+    public ParticipantNotFoundException(string participantId) :
+        base($"Participant with id {participantId} not found.")
+    { }
+
+    public ParticipantNotFoundException(Guid participantId, Exception innerException) :
+        base($"Participant with id {participantId} not found.", innerException)
+    { }
+
+    public ParticipantNotFoundException(string participantId, Exception innerException) :
+        base($"Participant with id {participantId} not found.", innerException)
+    { }
 }

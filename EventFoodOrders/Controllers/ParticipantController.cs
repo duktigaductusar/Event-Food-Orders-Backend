@@ -1,6 +1,4 @@
-using Azure;
 using EventFoodOrders.Dto.ParticipantDTOs;
-using EventFoodOrders.Models;
 using EventFoodOrders.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +16,16 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
     [Route("[controller]/{eventId}/new")]
     public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(string eventId, ParticipantForCreationDto newParticipant)
     {
-        ParticipantForResponseDto response = _participantService.AddParticipantToEvent(eventId, newParticipant);
+        ParticipantForResponseDto response;
+
+        try
+        {
+            response = _participantService.AddParticipantToEvent(eventId, newParticipant);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
 
         return Ok(response);
     }

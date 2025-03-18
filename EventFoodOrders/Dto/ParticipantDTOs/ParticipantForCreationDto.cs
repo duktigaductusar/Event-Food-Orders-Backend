@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace EventFoodOrders.Dto.ParticipantDTOs;
+﻿namespace EventFoodOrders.Dto.ParticipantDTOs;
 
 public class ParticipantForCreationDto
 {

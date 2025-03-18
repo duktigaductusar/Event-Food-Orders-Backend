@@ -2,15 +2,14 @@
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Models;
 
-namespace EventFoodOrders.AutoMapper
+namespace EventFoodOrders.AutoMapper;
+
+public class AutoMapperEventProfile: Profile
 {
-    public class AutoMapperEventProfile: Profile
+    public AutoMapperEventProfile()
     {
-        public AutoMapperEventProfile()
-        {
-            CreateMap<EventForCreationDto, Event>();
-            CreateMap<EventForUpdateDto, Event>();
-            CreateMap<Event, EventForResponseDto>();
-        }
+        CreateMap<EventForCreationDto, Event>();
+        CreateMap<EventForUpdateDto, Event>();
+        CreateMap<Event, EventForResponseDto>();
     }
 }

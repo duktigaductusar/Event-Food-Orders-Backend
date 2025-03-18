@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
 
-namespace EventFoodOrders.AutoMapper
+namespace EventFoodOrders.AutoMapper;
+
+internal static class AutoMapperConfiguration
 {
-    internal static class AutoMapperConfiguration
+    internal static MapperConfiguration GetConfiguration()
     {
-        internal static MapperConfiguration GetConfiguration()
+        return new MapperConfiguration(config =>
         {
-            return new MapperConfiguration(config =>
-            {
-                config.AddProfile<AutoMapperParticipantProfile>();
-                config.AddProfile<AutoMapperEventProfile>();
-            });
-        }
+            config.AddProfile<AutoMapperParticipantProfile>();
+            config.AddProfile<AutoMapperEventProfile>();
+        });
     }
 }
