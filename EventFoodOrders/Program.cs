@@ -2,6 +2,7 @@ using AutoMapper;
 using EventFoodOrders.Api;
 using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Data;
+using EventFoodOrders.Interfaces;
 using EventFoodOrders.Repositories;
 using EventFoodOrders.Services;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,11 @@ public class Program
             });
         }
 
-
+        //Auth thingies
+        builder.Services.AddHttpClient();
+        builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+        
+        
         builder.Services.AddControllers();
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
@@ -65,6 +70,13 @@ public class Program
 
         var app = builder.Build();
 
+        app.UseRouting();
+        app.UseAuthorization();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+        
         if (isDevelopment)
         {
             app.UseCors("AngularFontendDEV");
@@ -84,7 +96,6 @@ public class Program
 
         app.UseHttpsRedirection();
 
-        app.UseAuthorization();
 
         if (isDevelopment)
         {

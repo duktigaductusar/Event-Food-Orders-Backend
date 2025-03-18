@@ -13,10 +13,16 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "launchUrl": "",
+      "launchUrl": "swagger/index.html",
       "applicationUrl": "http://localhost:8080",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "AzureAd": {
+        "TenantId": "CONFIG_FILE_CALL_HERE",
+        "ClientId": "CONFIG_FILE_CALL_HERE",
+        "ClientSecret": "CONFIG_FILE_CALL_HERE",
+        "RedirectUri": "https://localhost:{CONFIG_PORT}/api/auth/callback"
       }
     },
     "https": {
@@ -47,5 +53,4 @@
       "ASPNETCORE_ENVIRONMENT": "Production"
     }
   }
-}
 }
