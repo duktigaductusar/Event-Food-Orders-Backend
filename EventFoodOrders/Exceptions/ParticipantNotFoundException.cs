@@ -1,11 +1,10 @@
-﻿namespace EventFoodOrders.Exceptions
+﻿namespace EventFoodOrders.Exceptions;
+
+public class ParticipantNotFoundException : Exception
 {
-    public class ParticipantNotFoundException : Exception
-    {
-        private ParticipantNotFoundException() { }
+    private ParticipantNotFoundException() { }
 
-        public ParticipantNotFoundException(string message) : base(message) { }
+    public ParticipantNotFoundException(string message) : base(message) { }
 
-        public ParticipantNotFoundException(string message, Exception innerException) : base(message, innerException) { }
-    }
+    public ParticipantNotFoundException(string message, Exception innerException) : base(message, innerException) { }
 }
