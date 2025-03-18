@@ -14,7 +14,8 @@ public class Participant
             participant_id = Guid.NewGuid();
         }
         allergies = "";
-        user = new User();
+        // ToDo: Look over how to handle user data
+        //user = new User();
     }
 
     [Key]
@@ -28,23 +29,32 @@ public class Participant
     //[Required]
     //Guid user_id;
 
+
+    // ToDo: Look over how to handle user data
+    /*
     [ForeignKey("user_id")]
     //[Column("user_id")]
     [Required]
     [NotNull]
     public User user { get; set; }
+    */
+
 
 
     //@ManyToOne
     //@JoinColumn(name = "event_id", nullable = false)
-    [Column("event_id")]
-    [Required]
-    public Guid _event { get; set; }
+    //[Column("event_id")]
+    //[Required]
+    //public Guid _event { get; set; }
 
     [Column("wants_meal")]
     public bool wantsMeal { get; set; }
 
     [Column("allergies")]
-    public String allergies { get; set; }
+    public string allergies { get; set; }
+
+    [ForeignKey("event_id")]
+    [Required]
+    public Guid EventId { get; set; }
 
 }

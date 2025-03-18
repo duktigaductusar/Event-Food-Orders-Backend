@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Repositories
 {
-    public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory)
+    public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : RepositoryBase<Event>()
     {
         private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
-        public Event CreateEvent(Event newEvent)
+        public Event AddEvent(Event newEvent)
         {
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
             {
@@ -34,7 +34,7 @@ namespace EventFoodOrders.Repositories
                 {
                     UpdateEventEntity(updatedEvent, eventToUpdate);
                 }
-                else throw new NullReferenceException($"The event with id {eventId} does not exist.");
+                else throw new NullReferenceException($"An event with id {eventId} does not exist.");
 
                 context.SaveChanges();
             }
@@ -57,7 +57,7 @@ namespace EventFoodOrders.Repositories
                 {
                     context.Remove(eventToUpdate);
                 }
-                else throw new NullReferenceException($"The event with id {eventId} does not exist.");
+                else throw new NullReferenceException($"An event with id {eventId} does not exist.");
 
                 context.SaveChanges();
             }
@@ -67,19 +67,25 @@ namespace EventFoodOrders.Repositories
         {
             //ToDo: Update ID method
             Guid id = Guid.Parse(eventId);
+            Guid uId = Guid.Parse(userId);
 
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
             {
                 Event? eventToFind = context.Events
                     .Where(e => e.EventId == id)
                     .AsNoTracking()
+                    .Include(e => e.Participants)
                     .FirstOrDefault();
 
                 if (eventToFind is Event)
                 {
-                    return eventToFind;
+                    if (eventToFind.Participants.Where(p => p.participant_id == uId).Any())
+                    {
+                        return eventToFind;
+                    }
                 }
-                else throw new NullReferenceException($"The event with id {eventId} does not exist.");
+                
+                throw new NullReferenceException($"An event with id {eventId} does not exist.");
             }
         }
 
@@ -92,6 +98,7 @@ namespace EventFoodOrders.Repositories
             {
                 IEnumerable<Event> events = context.Events
                     .AsNoTracking()
+                    .Include(e => e.Participants)
                     //.Where(e => e.id == id)
                     .ToList();
 
@@ -103,7 +110,19 @@ namespace EventFoodOrders.Repositories
             }
         }
 
-        private void UpdateEventEntity(Event source, Event destination)
+        internal Event GetSingleEventWithCondition(Func<Event, bool> condition)
+        {
+            Event result;
+
+            using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+            {
+                result = GetSingleWithCondition(context.Events, condition);
+            }
+
+            return result;
+        }
+
+        private static void UpdateEventEntity(Event source, Event destination)
         {
             destination.EventName = source.EventName;
             destination.EventDate = source.EventDate;

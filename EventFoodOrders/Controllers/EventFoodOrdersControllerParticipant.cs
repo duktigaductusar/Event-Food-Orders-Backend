@@ -1,11 +1,11 @@
 using EventFoodOrders.Api;
-using EventFoodOrders.Dto;
+using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Exceptions;
 using EventFoodOrders.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventFoodOrders.Controllers;
-
+/*
 [ApiController]
 public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControllerParticipant> logger, IEventFoodOrdersApi api) : ControllerBase
 {
@@ -14,10 +14,10 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
 
     [HttpPost]
     [Route("/participants/register")]
-    public IActionResult RegisterForEvent(ParticipantRegistrationRequestDTO _participantRegistrationRequest)
+    public IActionResult RegisterForEvent(ParticipantForCreationDto _participantRegistrationRequest)
     {
 
-        ParticipantDTO retVal;
+        ParticipantForResponseDto retVal;
         try
         {
             retVal = _api.RegisterForEvent(_participantRegistrationRequest);
@@ -32,7 +32,7 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
 
     [HttpPut]
     [Route("/participants/update/{partId}")]
-    public IActionResult UpdateParticipants(Guid partId, ParticipantUpdateRequestDTO _participantRegistrationRequest)
+    public IActionResult UpdateParticipants(Guid partId, ParticipantForUpdateDto _participantRegistrationRequest)
     {
         Participant retVal = _api.UpdateParticipant(partId, _participantRegistrationRequest);
         return Ok(retVal);
@@ -88,3 +88,4 @@ public class EventFoodOrdersControllerParticipant(ILogger<EventFoodOrdersControl
         return Ok(_api.getParticipantDetails(participantId));
     }
 }
+*/
