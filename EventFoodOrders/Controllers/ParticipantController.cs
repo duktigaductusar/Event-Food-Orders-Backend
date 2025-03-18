@@ -1,5 +1,6 @@
 using Azure;
 using EventFoodOrders.Dto.ParticipantDTOs;
+using EventFoodOrders.Models;
 using EventFoodOrders.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +29,7 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
     {
         ParticipantForResponseDto response = _participantService.UpdateParticipant(participantId, participantToUpdate);
 
-        return Ok();
+        return Ok(response);
     }
 
     [HttpDelete]
@@ -37,7 +38,7 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
     {
         bool response = _participantService.DeleteParticipant(participantId);
 
-        return Ok();
+        return Ok(response);
     }
 
     [HttpGet]
@@ -64,7 +65,17 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
     [Route("[controller]/get/{userId}/{eventId}/all")]
     public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(string userId, string eventId)
     {
-        IEnumerable <ParticipantForResponseDto> participants = _participantService.GetAllParticipantsForEvent(userId, eventId);
-        return Ok(participants);
+        IEnumerable <ParticipantForResponseDto> response;
+
+        try
+        {
+            response = _participantService.GetAllParticipantsForEvent(userId, eventId);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+        return Ok(response);
     }
 }

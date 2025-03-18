@@ -40,14 +40,7 @@ namespace EventFoodOrders.Services
 
         public bool DeleteParticipant(string participantId)
         {
-            try
-            {
-                _participantRepository.DeleteParticipant(participantId);
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            _participantRepository.DeleteParticipant(participantId);
 
             return true;
         }

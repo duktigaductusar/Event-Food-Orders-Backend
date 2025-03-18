@@ -32,14 +32,7 @@ namespace EventFoodOrders.Services
 
         public bool DeleteEvent(string eventId)
         {
-            try
-            {
-                _repository.DeleteEvent(eventId);
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            _repository.DeleteEvent(eventId);
 
             return true;
         }

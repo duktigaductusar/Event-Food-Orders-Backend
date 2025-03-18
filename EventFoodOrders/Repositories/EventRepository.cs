@@ -67,6 +67,7 @@ namespace EventFoodOrders.Repositories
         {
             //ToDo: Update ID method
             Guid id = Guid.Parse(eventId);
+            Guid uId = Guid.Parse(userId);
 
             using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
             {
@@ -78,9 +79,13 @@ namespace EventFoodOrders.Repositories
 
                 if (eventToFind is Event)
                 {
-                    return eventToFind;
+                    if (eventToFind.Participants.Where(p => p.participant_id == uId).Any())
+                    {
+                        return eventToFind;
+                    }
                 }
-                else throw new NullReferenceException($"An event with id {eventId} does not exist.");
+                
+                throw new NullReferenceException($"An event with id {eventId} does not exist.");
             }
         }
 
