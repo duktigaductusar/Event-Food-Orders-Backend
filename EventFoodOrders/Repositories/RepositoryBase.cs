@@ -3,18 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Repositories
 {
-    public class RepositoryBase<T>(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) where T : class
+    public class RepositoryBase<T> where T : class
     {
-        private readonly IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
-
-        internal T GetSingle(Func<T, bool> condition)
+        internal static T GetSingleWithCondition(DbSet<T> dbSet, Func<T, bool> condition)
         {
             T? result;
 
-            using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
-            {
-                result = context.Find<T>(condition);
-            }
+            result = dbSet.Where(condition).FirstOrDefault();
 
             if (result is null)
             {
@@ -22,6 +17,11 @@ namespace EventFoodOrders.Repositories
             }
 
             return result;
+        }
+
+        internal static IEnumerable<T> GetAllWithCondition(DbSet<T> dbSet, Func<T, bool> condition)
+        {
+            return [.. dbSet.Where(condition)]; ;
         }
     }
 }

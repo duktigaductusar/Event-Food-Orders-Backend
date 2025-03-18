@@ -18,7 +18,7 @@ namespace EventFoodOrders.Services
         {
             Guid id = Guid.Parse(eventId);
 
-            Event desiredEvent = _eventRepository.GetSingle(e => e.EventId == id);
+            Event desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.EventId == id);
 
             Participant participant = _mapper.Map<Participant>(newParticipant);
             participant.EventId = desiredEvent.EventId;

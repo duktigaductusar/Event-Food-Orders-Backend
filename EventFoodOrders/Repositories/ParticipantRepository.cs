@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EventFoodOrders.Repositories
 {
-    public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : RepositoryBase<Participant>(contextFactory)
+    public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : RepositoryBase<Participant>()
     {
         private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 

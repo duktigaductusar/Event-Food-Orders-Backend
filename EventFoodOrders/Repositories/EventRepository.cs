@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Repositories
 {
-    public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : RepositoryBase<Event>(contextFactory)
+    public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : RepositoryBase<Event>()
     {
         private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
@@ -103,7 +103,19 @@ namespace EventFoodOrders.Repositories
             }
         }
 
-        private void UpdateEventEntity(Event source, Event destination)
+        internal Event GetSingleEventWithCondition(Func<Event, bool> condition)
+        {
+            Event result;
+
+            using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+            {
+                result = GetSingleWithCondition(context.Events, condition);
+            }
+
+            return result;
+        }
+
+        private static void UpdateEventEntity(Event source, Event destination)
         {
             destination.EventName = source.EventName;
             destination.EventDate = source.EventDate;

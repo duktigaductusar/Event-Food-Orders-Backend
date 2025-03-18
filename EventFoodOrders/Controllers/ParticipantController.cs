@@ -36,6 +36,8 @@ public class ParticipantController(ILogger logger, ParticipantService participan
     [Route("/delete/{eventId}/{participantId}")]
     public ActionResult<bool> DeleteParticipant(string eventId, string participantId)
     {
+        bool response = _participantService.DeleteParticipant(participantId);
+
         return Ok();
     }
 

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Models;
 
