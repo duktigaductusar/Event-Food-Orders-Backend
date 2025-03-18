@@ -1,3 +1,4 @@
+using Azure;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -44,16 +45,18 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
     [Route("[controller]/get/{eventId}/{participantId}")]
     public ActionResult<ParticipantForResponseDto> GetSingleParticipantInEvent(string eventId, string participantId)
     {
+        ParticipantForResponseDto response;
+
         try
         {
-            ParticipantForResponseDto response = _participantService.GetParticipant(participantId, eventId);
+            response = _participantService.GetParticipant(participantId, eventId);
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
 
-        return Ok();
+        return Ok(response);
     }
 
     [HttpGet]
