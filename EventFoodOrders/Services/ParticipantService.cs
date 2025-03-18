@@ -16,10 +16,10 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
     {
         Guid id = Guid.Parse(eventId);
 
-        Event desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.EventId == id);
+        Event desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == id);
 
         Participant participant = _mapper.Map<Participant>(newParticipant);
-        participant.EventId = desiredEvent.EventId;
+        participant.EventId = desiredEvent.Id;
         participant.participant_id = Guid.NewGuid();
 
         _participantRepository.AddParticipant(participant);

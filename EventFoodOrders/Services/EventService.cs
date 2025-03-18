@@ -14,7 +14,7 @@ public class EventService(EventRepository repository, CustomAutoMapper mapper)
     public EventForResponseDto CreateEvent(EventForCreationDto eventForCreation)
     {
         Event newEvent = _mapper.Map<Event>(eventForCreation);
-        newEvent.EventId = Guid.NewGuid();
+        newEvent.Id = Guid.NewGuid();
 
         newEvent = _repository.AddEvent(newEvent);
 

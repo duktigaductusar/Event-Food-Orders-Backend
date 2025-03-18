@@ -29,7 +29,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToUpdate = context.Events
-                .Where(e => e.EventId == id)
+                .Where(e => e.Id == id)
                 .FirstOrDefault();
 
             if (eventToUpdate is Event)
@@ -52,7 +52,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToUpdate = context.Events
-                .Where(e => e.EventId == id)
+                .Where(e => e.Id == id)
                 .FirstOrDefault();
 
             if (eventToUpdate is Event)
@@ -74,7 +74,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToFind = context.Events
-                .Where(e => e.EventId == id)
+                .Where(e => e.Id == id)
                 .AsNoTracking()
                 .Include(e => e.Participants)
                 .FirstOrDefault();
@@ -122,7 +122,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
 
     private static void UpdateEventEntity(Event source, Event destination)
     {
-        destination.EventName = source.EventName;
+        destination.Title = source.Title;
         destination.EventDate = source.EventDate;
         destination.Description = source.Description;
         destination.EventActive = source.EventActive;
