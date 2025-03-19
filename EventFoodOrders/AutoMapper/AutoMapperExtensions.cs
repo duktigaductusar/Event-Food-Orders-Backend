@@ -14,32 +14,18 @@ public static class AutoMapperExtensions
             throw new EventNotFoundException(srcEvent.Id);
         }
 
-        return mapper.Map<EventForResponseDto>(srcEvent, opt =>
-        {
+        EventForResponseDto dto = mapper.Map<EventForResponseDto>(srcEvent, opt =>
             opt.AfterMap((src, dest) =>
             {
                 dest.ParticipantID = srcParticipant.Id.ToString();
-            });
-            opt.AfterMap((src, dest) =>
-            {
-                dest.IsOwner = srcParticipant.UserId == srcEvent.OwnerId;
-            });
-            opt.AfterMap((src, dest) =>
-            {
+                dest.IsOwner = srcParticipant.Id == srcEvent.OwnerId;
                 dest.ParticipantResponseType = srcParticipant.Response;
-            });
-            opt.AfterMap((src, dest) =>
-            {
                 dest.WantsMeal = srcParticipant.WantsMeal;
-            });
-            opt.AfterMap((src, dest) =>
-            {
-                dest.Allergies = srcParticipant.Allergies;
-            });
-            opt.AfterMap((src, dest) =>
-            {
-                dest.Preferences = srcParticipant.Preferences;
-            });
-        });
+                dest.Allergies = srcParticipant.Allergies ?? [""];
+                dest.Preferences = srcParticipant.Preferences ?? [""];
+            })
+        );
+
+        return dto;
     }
 }
