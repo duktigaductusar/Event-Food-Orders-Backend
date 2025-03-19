@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EventFoodOrders.Models;
+namespace EventFoodOrders.Entities;
 
 [Table("events")]
 public class Event

@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using EventFoodOrders.AutoMapper;
+using EventFoodOrders.Builders;
 using EventFoodOrders.Dto.ParticipantDTOs;
-using EventFoodOrders.Models;
+using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories;
 using EventFoodOrders.Utilities;
 
@@ -20,9 +21,11 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
         Event desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == id);
 
         Participant participant = _mapper.Map<Participant>(newParticipant);
-        participant.EventId = desiredEvent.Id;
-        participant.Id = Guid.NewGuid();
-        participant.Response = ReType.Pending;
+
+        ParticipantBuilder participantBuilder = new(participant);
+        participantBuilder.SetEvent(desiredEvent);
+        participantBuilder.SetResponse(ReType.Pending);
+        participant = participantBuilder.BuildParticipant();
 
         _participantRepository.AddParticipant(participant);
 

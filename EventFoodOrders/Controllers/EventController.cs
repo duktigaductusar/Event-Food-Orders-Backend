@@ -13,9 +13,9 @@ public class EventController(ILogger<EventController> logger, EventService servi
 
     [HttpPost]
     [Route("[controller]/new")]
-    public ActionResult<EventForResponseDto> CreateEvent(EventForCreationDto newEvent)
+    public ActionResult<EventForResponseDto> CreateEvent(string userdId, EventForCreationDto newEvent)
     {
-        EventForResponseDto response = _service.CreateEvent(newEvent);
+        EventForResponseDto response = _service.CreateEvent(userId, newEvent);
 
         return Ok(response);
     }

@@ -2,7 +2,7 @@
 using EventFoodOrders.Dto;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Exceptions;
-using EventFoodOrders.Models;
+using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 

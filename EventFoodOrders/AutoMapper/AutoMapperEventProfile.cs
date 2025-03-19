@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using EventFoodOrders.Dto.EventDTOs;
-using EventFoodOrders.Models;
+using EventFoodOrders.Entities;
 
 namespace EventFoodOrders.AutoMapper;
 

@@ -1,6 +1,6 @@
 ﻿using EventFoodOrders.Data;
 using EventFoodOrders.Exceptions;
-using EventFoodOrders.Models;
+using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Repositories;

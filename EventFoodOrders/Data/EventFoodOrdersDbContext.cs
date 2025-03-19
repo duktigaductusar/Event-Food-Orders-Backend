@@ -1,4 +1,4 @@
-﻿using EventFoodOrders.Models;
+﻿using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Data;
