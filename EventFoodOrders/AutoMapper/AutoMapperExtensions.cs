@@ -2,6 +2,7 @@
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Exceptions;
 using EventFoodOrders.Entities;
+using System.Collections.Generic;
 
 namespace EventFoodOrders.AutoMapper;
 
@@ -23,6 +24,17 @@ public static class AutoMapperExtensions
         );
 
         return dto;
+    }
+
+    public static IEnumerable<EventForResponseDto> MapEnumerableToEventForResponseDto(this IMapper mapper, IEnumerable<Event> srcEvents, IEnumerable<Participant> srcParticipants)
+    {
+        IEnumerable<EventForResponseDto> dtos = [];
+
+        if (srcEvents.Count() == srcParticipants.Count())
+        {
+            
+        }
+        return [];
     }
 
     public static EventForResponseWithDetailsDto MapToEventForResponseWithDetailsDto(this IMapper mapper, Event srcEvent, Participant srcParticipant)
