@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventFoodOrders.AutoMapper;
+using EventFoodOrders.Builders;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories;
@@ -16,12 +17,14 @@ public class EventService(EventRepository eventRepository, ParticipantRepository
     {
         Event newEvent = _mapper.Map<Event>(eventForCreation);
         newEvent.Id = Guid.NewGuid();
-
         newEvent = _eventRepository.AddEvent(newEvent);
 
-        Participant owner = new Participant();
+        ParticipantBuilder builder = new();
+        builder.SetEvent(newEvent);
+        Participant owner = builder.BuildParticipant();
+        owner = _participantRepository.AddParticipant(owner);
 
-        return _mapper.Map<EventForResponseDto>(newEvent);
+        return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
 
     public EventForResponseDto UpdateEvent(string eventId, EventForUpdateDto updatedEventDto)

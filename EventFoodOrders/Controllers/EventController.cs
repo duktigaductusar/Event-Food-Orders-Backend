@@ -13,7 +13,7 @@ public class EventController(ILogger<EventController> logger, EventService servi
 
     [HttpPost]
     [Route("[controller]/new")]
-    public ActionResult<EventForResponseDto> CreateEvent(string userdId, EventForCreationDto newEvent)
+    public ActionResult<EventForResponseDto> CreateEvent(string userId, EventForCreationDto newEvent)
     {
         EventForResponseDto response = _service.CreateEvent(userId, newEvent);
 

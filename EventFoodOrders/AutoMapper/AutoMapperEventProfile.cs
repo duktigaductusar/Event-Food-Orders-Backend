@@ -10,6 +10,7 @@ public class AutoMapperEventProfile: Profile
     {
         CreateMap<EventForCreationDto, Event>();
         CreateMap<EventForUpdateDto, Event>();
+        CreateMap<Event, EventForResponseDto>();
         CreateMap<Event, EventForResponseWithDetailsDto>();
     }
 }

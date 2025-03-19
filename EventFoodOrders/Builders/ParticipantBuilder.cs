@@ -38,7 +38,6 @@ namespace EventFoodOrders.Builders
         public Participant SetEvent(Event e)
         {
             _participant.EventId = e.Id;
-            _participant.Event = e;
             return _participant;
         }
 
