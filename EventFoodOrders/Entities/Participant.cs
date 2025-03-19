@@ -23,6 +23,10 @@ public class Participant
     [Required]
     public Guid UserId { get; set; }
 
+    [ForeignKey("event_id")]
+    [Required]
+    public Guid EventId { get; set; }
+
     [Column("response")]
     [Required]
     public string Response { get; set; }
@@ -35,10 +39,6 @@ public class Participant
 
     [Column("preferences")]
     public string[]? Preferences { get; set; }
-
-    [ForeignKey("event_id")]
-    [Required]
-    public Guid EventId { get; set; }
 
     [Required]
     public Event Event { get; set; }

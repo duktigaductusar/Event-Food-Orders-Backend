@@ -12,23 +12,23 @@ public class EventService(EventRepository eventRepository, ParticipantRepository
     private readonly ParticipantRepository _participantRepository = participantRepository;
     private readonly IMapper _mapper = mapper.Mapper;
 
-    public EventForResponseDto CreateEvent(EventForCreationDto eventForCreation)
+    public EventForResponseWithDetailsDto CreateEvent(EventForCreationDto eventForCreation)
     {
         Event newEvent = _mapper.Map<Event>(eventForCreation);
         newEvent.Id = Guid.NewGuid();
 
         newEvent = _eventRepository.AddEvent(newEvent);
 
-        return _mapper.Map<EventForResponseDto>(newEvent);
+        return _mapper.Map<EventForResponseWithDetailsDto>(newEvent);
     }
 
-    public EventForResponseDto UpdateEvent(string eventId, EventForUpdateDto updatedEventDto)
+    public EventForResponseWithDetailsDto UpdateEvent(string eventId, EventForUpdateDto updatedEventDto)
     {
         Event updatedEvent = _mapper.Map<Event>(updatedEventDto);
 
         updatedEvent = _eventRepository.UpdateEvent(eventId, updatedEvent);
 
-        return _mapper.Map<EventForResponseDto>(updatedEvent);
+        return _mapper.Map<EventForResponseWithDetailsDto>(updatedEvent);
     }
 
     public bool DeleteEvent(string eventId)
@@ -38,7 +38,7 @@ public class EventService(EventRepository eventRepository, ParticipantRepository
         return true;
     }
 
-    public EventForResponseDto GetEventForUser(string userId, string eventId)
+    public EventForResponseWithDetailsDto GetEventForUser(string userId, string eventId)
     {
         Event returnEvent = _eventRepository.GetEventForUser(userId, eventId);
         Participant eventParticipant = _participantRepository.GetParticipant(userId);
@@ -46,10 +46,10 @@ public class EventService(EventRepository eventRepository, ParticipantRepository
         return _mapper.MapToEventForResponseDto(returnEvent, eventParticipant);
     }
 
-    public IEnumerable<EventForResponseDto> GetAllEventsForUser(string userId)
+    public IEnumerable<EventForResponseWithDetailsDto> GetAllEventsForUser(string userId)
     {
         IEnumerable<Event> returnEvents = _eventRepository.GetAllEventsForUser(userId);
 
-        return _mapper.Map<IEnumerable<EventForResponseDto>>(returnEvents);
+        return _mapper.Map<IEnumerable<EventForResponseWithDetailsDto>>(returnEvents);
     }
 }

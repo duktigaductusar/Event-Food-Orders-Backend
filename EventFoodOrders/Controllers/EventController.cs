@@ -13,23 +13,23 @@ public class EventController(ILogger<EventController> logger, EventService servi
 
     [HttpPost]
     [Route("[controller]/new")]
-    public ActionResult<EventForResponseDto> CreateEvent(EventForCreationDto newEvent)
+    public ActionResult<EventForResponseWithDetailsDto> CreateEvent(EventForCreationDto newEvent)
     {
-        EventForResponseDto response = _service.CreateEvent(newEvent);
+        EventForResponseWithDetailsDto response = _service.CreateEvent(newEvent);
 
         return Ok(response);
     }
 
     [HttpPut]
     [Route("[controller]/update/{eventId}")]
-    public ActionResult<EventForResponseDto> UpdateEvent(string eventId, EventForUpdateDto eventToUpdate)
+    public ActionResult<EventForResponseWithDetailsDto> UpdateEvent(string eventId, EventForUpdateDto eventToUpdate)
     {
         try { Guid.Parse(eventId); }
         catch { return BadRequest("Id not valid Guid."); }
 
         try
         {
-            EventForResponseDto response = _service.UpdateEvent(eventId, eventToUpdate);
+            EventForResponseWithDetailsDto response = _service.UpdateEvent(eventId, eventToUpdate);
             return Ok(response);
         }
         catch (Exception ex)
@@ -62,7 +62,7 @@ public class EventController(ILogger<EventController> logger, EventService servi
     [HttpGet]
     //[Route("/get/{userId}/{eventId}")]
     [Route("[controller]/get/{eventId}")]
-    public ActionResult<EventForResponseDto> GetSingleEventForUser(string eventId, string userId)
+    public ActionResult<EventForResponseWithDetailsDto> GetSingleEventForUser(string eventId, string userId)
     {
         try { Guid.Parse(userId); }
         catch { return BadRequest("Id not valid Guid."); }
@@ -72,7 +72,7 @@ public class EventController(ILogger<EventController> logger, EventService servi
 
         try
         {
-            EventForResponseDto response = _service.GetEventForUser(userId, eventId);
+            EventForResponseWithDetailsDto response = _service.GetEventForUser(userId, eventId);
             return Ok(response);
         }
         catch (Exception ex)
@@ -84,11 +84,11 @@ public class EventController(ILogger<EventController> logger, EventService servi
     [HttpGet]
     //[Route("/get/{userId}/all")]
     [Route("[controller]/get/all")]
-    public ActionResult<IEnumerable<EventForResponseDto>> GetAllEventsForUser()
+    public ActionResult<IEnumerable<EventForResponseWithDetailsDto>> GetAllEventsForUser()
     {
         //ToDo: Update how the controller gets the user id, this is a temp Guid as string
         string userId = "4aa80da1-69dc-449f-bf4c-be8daafcef2a";
-        IEnumerable<EventForResponseDto> response = _service.GetAllEventsForUser(userId);
+        IEnumerable<EventForResponseWithDetailsDto> response = _service.GetAllEventsForUser(userId);
 
         return Ok(response);
     }
