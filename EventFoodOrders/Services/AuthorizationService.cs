@@ -1,9 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using EventFoodOrders.security;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
+﻿using EventFoodOrders.security;
 using Newtonsoft.Json;
 using IAuthorizationService = EventFoodOrders.Interfaces.IAuthorizationService;
 
@@ -11,44 +6,42 @@ namespace EventFoodOrders.Services;
 
 public class AuthorizationService : IAuthorizationService
 {
-    private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
+    private readonly string _tenantId;
+    private readonly string _clientId;
+    private readonly string _clientSecret;
+    private readonly string _redirectUri;
 
-    public AuthorizationService(IConfiguration configuration, HttpClient httpClient)
+    public AuthorizationService(HttpClient httpClient)
     {
-        _configuration = configuration;
         _httpClient = httpClient;
+        _tenantId = Environment.GetEnvironmentVariable("AzureAd__TenantId") ?? throw new ArgumentNullException("TENANT_ID not set in environment variable");
+        _clientId = Environment.GetEnvironmentVariable("AzureAd__ClientId") ?? throw new ArgumentNullException("CLIENT_ID not set in environment variable");
+        _clientSecret = Environment.GetEnvironmentVariable("AzureAd__ClientSecret") ?? throw new ArgumentNullException("CLIENT_SECRET not set in environment variable");
+        _redirectUri = Environment.GetEnvironmentVariable("AzureAd__RedirectUri") ?? throw new ArgumentNullException("REDIRECT_URI not set in environment variable");
     }
 
     public string GetLoginUrl()
     {
-        string tenantId = _configuration["AzureAd:TenantId"]!;
-        string clientId = _configuration["AzureAd:ClientId"]!;
-        string redirectUri = _configuration["AzureAd:RedirectUri"]!;
         var scope = "openid profile email https://graph.microsoft.com/Mail.Send";
         
-        return $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize?" + $"client_id={clientId}&response_type=code&redirect_uri={redirectUri}&scope={scope}&response_mode=query";
+        return $"https://login.microsoftonline.com/{_tenantId}/oauth2/v2.0/authorize?" + $"client_id={_clientId}&response_type=code&redirect_uri={_redirectUri}&scope={scope}&response_mode=query";
     }
 
     public async Task<AuthResponse> ExchangeCodeForTokenAsync(string code)
     {
-        var tenantId = _configuration["AzureAd:TenantId"];
-        var clientId = _configuration["AzureAd:ClientId"];
-        var clientSecret = _configuration["AzureAd:ClientSecret"];
-        var redirectUri = _configuration["AzureAd:RedirectUri"];
 
-        var formData = new FormUrlEncodedContent(new[]
-        {
-            new KeyValuePair<string, string>("client_id", clientId),
-            new KeyValuePair<string, string>("client_secret", clientSecret),
-            new KeyValuePair<string, string>("redirect_uri", redirectUri),
+        var formData = new FormUrlEncodedContent([
+            new KeyValuePair<string, string>("client_id", _clientId),
+            new KeyValuePair<string, string>("client_secret", _clientSecret),
+            new KeyValuePair<string, string>("redirect_uri", _redirectUri),
             new KeyValuePair<string, string>("grant_type", "authorization_code"),
             new KeyValuePair<string, string>("code", code),
-            new KeyValuePair<string, string>("scope", "https://graph.microsoft.com/.default"),
-        });
+            new KeyValuePair<string, string>("scope", "openid profile email https://graph.microsoft.com/.default")
+        ]);
 
         var response = await _httpClient.PostAsync(
-            $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", formData);
+            $"https://login.microsoftonline.com/{_tenantId}/oauth2/v2.0/token", formData);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -56,6 +49,11 @@ public class AuthorizationService : IAuthorizationService
         }
         
         var content = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<AuthResponse>(content);
+        var res = JsonConvert.DeserializeObject<AuthResponse>(content);
+        if (res == null)
+        {
+            throw new NullReferenceException("JSON Deserialization return null.");
+        }
+        return res;
     }
 }

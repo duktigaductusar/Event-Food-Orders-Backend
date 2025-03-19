@@ -23,7 +23,7 @@ namespace EventFoodOrders.Api
         long getRegistrationsCount(Guid eventId);
         User GetUser(Guid _id);
         List<User> GetUsers();
-        LoginResponse Login(UserLoginDTO input);
+        // LoginResponse Login(UserLoginDTO input);
         ParticipantDTO RegisterForEvent(ParticipantRegistrationRequestDTO _participantRegistrationRequest);
         Event SaveEvent(EventForResponseDTO _event);
         User signup(User input);

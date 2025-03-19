@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using EventFoodOrders.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using IAuthorizationService = EventFoodOrders.Interfaces.IAuthorizationService;
 
 namespace EventFoodOrders.Controllers;
 
 [ApiController]
-[Route("api/auth")]
+[Route("api/")]
 public class AuthorizationController : ControllerBase
 {
     private readonly IAuthorizationService _authService;
@@ -20,7 +21,7 @@ public class AuthorizationController : ControllerBase
     [HttpGet("[controller]/login")]
     public IActionResult Login()
     {
-        var loginUrl = _authService.GetLoginUrl();
+        string loginUrl = _authService.GetLoginUrl();
         return Redirect(loginUrl);
     }
 
@@ -32,8 +33,25 @@ public class AuthorizationController : ControllerBase
     }
 
     [HttpGet("[controller]/logout")]
-    public async Task<IActionResult> Logout()
+    public IActionResult Logout()
     {
-        throw new NotImplementedException();
+        return SignOut(new AuthenticationProperties { RedirectUri = "/login" },
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            OpenIdConnectDefaults.AuthenticationScheme);
+    }
+
+    [HttpGet("[controller]/status")]
+    public IActionResult Status()
+    {
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            return Ok(new
+            {
+                IsAuthenticated = true,
+                Name = User.Identity.Name,
+                Email = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value
+            });
+        }
+        return Unauthorized(new {IsAuthenticated = false});
     }
 }
