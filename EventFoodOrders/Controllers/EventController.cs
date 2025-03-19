@@ -13,23 +13,23 @@ public class EventController(ILogger<EventController> logger, EventService servi
 
     [HttpPost]
     [Route("[controller]/new")]
-    public ActionResult<EventForResponseWithDetailsDto> CreateEvent(EventForCreationDto newEvent)
+    public ActionResult<EventForResponseDto> CreateEvent(EventForCreationDto newEvent)
     {
-        EventForResponseWithDetailsDto response = _service.CreateEvent(newEvent);
+        EventForResponseDto response = _service.CreateEvent(newEvent);
 
         return Ok(response);
     }
 
     [HttpPut]
     [Route("[controller]/update/{eventId}")]
-    public ActionResult<EventForResponseWithDetailsDto> UpdateEvent(string eventId, EventForUpdateDto eventToUpdate)
+    public ActionResult<EventForResponseDto> UpdateEvent(string eventId, EventForUpdateDto eventToUpdate)
     {
         try { Guid.Parse(eventId); }
         catch { return BadRequest("Id not valid Guid."); }
 
         try
         {
-            EventForResponseWithDetailsDto response = _service.UpdateEvent(eventId, eventToUpdate);
+            EventForResponseDto response = _service.UpdateEvent(eventId, eventToUpdate);
             return Ok(response);
         }
         catch (Exception ex)
@@ -84,11 +84,11 @@ public class EventController(ILogger<EventController> logger, EventService servi
     [HttpGet]
     //[Route("/get/{userId}/all")]
     [Route("[controller]/get/all")]
-    public ActionResult<IEnumerable<EventForResponseWithDetailsDto>> GetAllEventsForUser()
+    public ActionResult<IEnumerable<EventForResponseDto>> GetAllEventsForUser()
     {
         //ToDo: Update how the controller gets the user id, this is a temp Guid as string
         string userId = "4aa80da1-69dc-449f-bf4c-be8daafcef2a";
-        IEnumerable<EventForResponseWithDetailsDto> response = _service.GetAllEventsForUser(userId);
+        IEnumerable<EventForResponseDto> response = _service.GetAllEventsForUser(userId);
 
         return Ok(response);
     }

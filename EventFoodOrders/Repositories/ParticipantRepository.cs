@@ -70,7 +70,7 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participant = context.Participants
-                .Where(e => e.Id == id)
+                .Where(p => p.Id == id)
                 .AsNoTracking()
                 .FirstOrDefault();
 
@@ -82,6 +82,22 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         }
     }
 
+    internal IEnumerable<Participant> GetAllParticipantsForUser(string userId)
+    {
+        Guid id = Guid.Parse(userId);
+
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            IEnumerable<Participant> participants = context.Participants
+                .Where(p => p.UserId == id)
+                .AsNoTracking()
+                .ToList();
+
+            return participants;
+        }
+    }
+
+    // Helper functions
     private void UpdateParticipantEntity(Participant destination, Participant source)
     {
         destination.Id = source.Id;

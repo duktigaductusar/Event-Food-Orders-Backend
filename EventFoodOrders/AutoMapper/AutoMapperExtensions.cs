@@ -7,7 +7,25 @@ namespace EventFoodOrders.AutoMapper;
 
 public static class AutoMapperExtensions
 {
-    public static EventForResponseWithDetailsDto MapToEventForResponseDto(this IMapper mapper, Event srcEvent, Participant srcParticipant)
+    public static EventForResponseDto MapToEventForResponseDto(this IMapper mapper, Event srcEvent, Participant srcParticipant)
+    {
+        if (srcEvent.Id != srcParticipant.EventId)
+        {
+            throw new EventNotFoundException(srcEvent.Id);
+        }
+
+        EventForResponseDto dto = mapper.Map<EventForResponseDto>(srcEvent, opt =>
+            opt.AfterMap((src, dest) =>
+            {
+                dest.IsOwner = srcParticipant.Id == srcEvent.OwnerId;
+                dest.ParticipantResponseType = srcParticipant.Response;
+            })
+        );
+
+        return dto;
+    }
+
+    public static EventForResponseWithDetailsDto MapToEventForResponseWithDetailsDto(this IMapper mapper, Event srcEvent, Participant srcParticipant)
     {
         if (srcEvent.Id != srcParticipant.EventId)
         {

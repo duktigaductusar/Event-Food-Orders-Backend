@@ -12,5 +12,4 @@ public class EventForResponseDto
     // Participant properties
     public required bool IsOwner { get; set; }
     public required string ParticipantResponseType { get; set; }
-    public required bool WantsMeal { get; set; }
 }

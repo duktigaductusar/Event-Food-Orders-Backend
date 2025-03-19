@@ -70,4 +70,11 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
 
         return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants); ;
     }
+
+    public IEnumerable<ParticipantForResponseDto> GetAllParticipantsForUser(string userId)
+    {
+        IEnumerable<Participant> participants = _participantRepository.GetAllParticipantsForUser(userId);
+
+        return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants);
+    }
 }
