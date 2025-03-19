@@ -22,10 +22,10 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
 
         Participant participant = _mapper.Map<Participant>(newParticipant);
 
-        ParticipantBuilder participantBuilder = new(participant);
-        participantBuilder.SetEvent(desiredEvent);
-        participantBuilder.SetResponse(ReType.Pending);
-        participant = participantBuilder.BuildParticipant();
+        ParticipantBuilder builder = new(participant);
+        builder.SetEvent(desiredEvent);
+        builder.SetResponse(ReType.Pending);
+        participant = builder.BuildParticipant();
 
         _participantRepository.AddParticipant(participant);
 
@@ -36,6 +36,9 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
     {
         Participant updatedParticipant = _participantRepository.GetParticipant(participantId);
         updatedParticipant = _mapper.Map(updatedParticipantDto, updatedParticipant);
+
+        ParticipantBuilder builder = new(updatedParticipant);
+        updatedParticipant = builder.BuildParticipant();
 
         updatedParticipant = _participantRepository.UpdateParticipant(participantId, updatedParticipant);
 

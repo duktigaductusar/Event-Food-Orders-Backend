@@ -15,6 +15,7 @@ namespace EventFoodOrders.Builders
         public ParticipantBuilder(Participant participant)
         {
             _participant = participant;
+            SetResponse(participant.Response);
         }
 
         public Participant BuildParticipant()
