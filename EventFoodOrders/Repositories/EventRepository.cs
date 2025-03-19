@@ -81,7 +81,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
 
             if (eventToFind is Event)
             {
-                if (eventToFind.Participants.Where(p => p.participant_id == uId).Any())
+                if (eventToFind.Participants.Where(p => p.Id == uId).Any())
                 {
                     return eventToFind;
                 }
@@ -123,8 +123,8 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
     private static void UpdateEventEntity(Event source, Event destination)
     {
         destination.Title = source.Title;
-        destination.EventDate = source.EventDate;
+        destination.Date = source.Date;
         destination.Description = source.Description;
-        destination.EventActive = source.EventActive;
+        destination.Deadline = source.Deadline;
     }
 }

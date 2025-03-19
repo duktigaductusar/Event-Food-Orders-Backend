@@ -44,6 +44,11 @@ public class Event
     [Column("deadline")]
     public DateTimeOffset Deadline { get; set; }
 
+    // Foreign key
+    //[Required]
+    [ForeignKey("owner_id")]
+    public Guid OwnerId { get; set; }
+
     // Navigation properties
     public Collection<Participant> Participants { get; set; }
 
@@ -55,5 +60,10 @@ public class Event
             return true;
         }
         return false;
+    }
+
+    public override string ToString()
+    {
+        return Title;
     }
 }

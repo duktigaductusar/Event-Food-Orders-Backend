@@ -2,14 +2,14 @@
 
 public class ParticipantForCreationDto
 {
-    public bool wantsMeal { get; set; }
-    public string allergies { get; set; }
+    public bool WantsMeal { get; set; }
+    public string[] Allergies { get; set; }
 
     public ParticipantForCreationDto()
     {
-        if (allergies == null)
+        if (Allergies == null)
         {
-            allergies = string.Empty;
+            Allergies = [];
         }
     }
 }

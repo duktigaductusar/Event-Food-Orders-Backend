@@ -8,52 +8,38 @@ public class Participant
 {
     public Participant()
     {
-        if (participant_id == Guid.Empty)
+        if (Id == Guid.Empty)
         {
-            participant_id = Guid.NewGuid();
+            Id = Guid.NewGuid();
         }
-        allergies = "";
-        // ToDo: Look over how to handle user data
-        //user = new User();
     }
 
     [Key]
     [Column("participant_id")]
     [Required]
-    public Guid participant_id { get; set; }
+    public Guid Id { get; set; }
 
-    //@ManyToOne
-    //@JoinColumn(name = "user_id", nullable = false)
-    //[Column("user_id")
-    //[Required]
-    //Guid user_id;
-
-
-    // ToDo: Look over how to handle user data
-    /*
-    [ForeignKey("user_id")]
-    //[Column("user_id")]
+    [Column("user_id")]
     [Required]
-    [NotNull]
-    public User user { get; set; }
-    */
+    public Guid UserId { get; set; }
 
-
-
-    //@ManyToOne
-    //@JoinColumn(name = "event_id", nullable = false)
-    //[Column("event_id")]
-    //[Required]
-    //public Guid _event { get; set; }
+    [Column("response")]
+    [Required]
+    public string Response { get; set; }
 
     [Column("wants_meal")]
-    public bool wantsMeal { get; set; }
+    public bool WantsMeal { get; set; }
 
     [Column("allergies")]
-    public string allergies { get; set; }
+    public string[]? Allergies { get; set; }
+
+    [Column("preferences")]
+    public string[]? Preferences { get; set; }
 
     [ForeignKey("event_id")]
     [Required]
     public Guid EventId { get; set; }
 
+    [Required]
+    public Event Event { get; set; }
 }

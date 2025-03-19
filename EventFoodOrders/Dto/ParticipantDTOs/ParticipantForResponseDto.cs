@@ -5,7 +5,6 @@ public class ParticipantForResponseDto
     public Guid participant_Id { get; set; }
     public Guid userId { get; set; }
     public Guid eventId { get; set; }
-    public DateTime EventDate { get; set; }
     public bool wantsMeal { get; set; }
     public string allergies { get; set; }
 

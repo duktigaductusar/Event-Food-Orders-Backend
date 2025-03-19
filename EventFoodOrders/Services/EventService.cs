@@ -6,9 +6,10 @@ using EventFoodOrders.Repositories;
 
 namespace EventFoodOrders.Services;
 
-public class EventService(EventRepository repository, CustomAutoMapper mapper)
+public class EventService(EventRepository eventRepository, ParticipantRepository participantRepository, CustomAutoMapper mapper)
 {
-    private readonly EventRepository _repository = repository;
+    private readonly EventRepository _eventRepository = eventRepository;
+    private readonly ParticipantRepository _participantRepository = participantRepository;
     private readonly IMapper _mapper = mapper.Mapper;
 
     public EventForResponseDto CreateEvent(EventForCreationDto eventForCreation)
@@ -16,7 +17,7 @@ public class EventService(EventRepository repository, CustomAutoMapper mapper)
         Event newEvent = _mapper.Map<Event>(eventForCreation);
         newEvent.Id = Guid.NewGuid();
 
-        newEvent = _repository.AddEvent(newEvent);
+        newEvent = _eventRepository.AddEvent(newEvent);
 
         return _mapper.Map<EventForResponseDto>(newEvent);
     }
@@ -25,28 +26,29 @@ public class EventService(EventRepository repository, CustomAutoMapper mapper)
     {
         Event updatedEvent = _mapper.Map<Event>(updatedEventDto);
 
-        updatedEvent = _repository.UpdateEvent(eventId, updatedEvent);
+        updatedEvent = _eventRepository.UpdateEvent(eventId, updatedEvent);
 
         return _mapper.Map<EventForResponseDto>(updatedEvent);
     }
 
     public bool DeleteEvent(string eventId)
     {
-        _repository.DeleteEvent(eventId);
+        _eventRepository.DeleteEvent(eventId);
 
         return true;
     }
 
     public EventForResponseDto GetEventForUser(string userId, string eventId)
     {
-        Event returnEvent = _repository.GetEventForUser(userId, eventId);
+        Event returnEvent = _eventRepository.GetEventForUser(userId, eventId);
+        Participant eventParticipant = _participantRepository.GetParticipant(userId);
 
-        return _mapper.Map<EventForResponseDto>(returnEvent);
+        return _mapper.MapToEventForResponseDto(returnEvent, eventParticipant);
     }
 
     public IEnumerable<EventForResponseDto> GetAllEventsForUser(string userId)
     {
-        IEnumerable<Event> returnEvents = _repository.GetAllEventsForUser(userId);
+        IEnumerable<Event> returnEvents = _eventRepository.GetAllEventsForUser(userId);
 
         return _mapper.Map<IEnumerable<EventForResponseDto>>(returnEvents);
     }

@@ -12,4 +12,16 @@ public class AutoMapperEventProfile: Profile
         CreateMap<EventForUpdateDto, Event>();
         CreateMap<Event, EventForResponseDto>();
     }
+
+    public void hihi()
+    {
+
+        CustomAutoMapper cmapper = new();
+
+        IMapper mapper = cmapper.Mapper;
+
+        Event e = new();
+
+        mapper.Map<EventForResponseDto>(e);
+    }
 }

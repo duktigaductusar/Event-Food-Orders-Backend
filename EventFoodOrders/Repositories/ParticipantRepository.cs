@@ -28,7 +28,7 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participantToUpdate = context.Participants
-                .Where(e => e.participant_id == id)
+                .Where(e => e.Id == id)
                 .FirstOrDefault();
 
             if (participantToUpdate is Participant)
@@ -50,7 +50,7 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participantToUpdate = context.Participants
-                .Where(e => e.participant_id == id)
+                .Where(e => e.Id == id)
                 .FirstOrDefault();
 
             if (participantToUpdate is Participant)
@@ -70,7 +70,7 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participant = context.Participants
-                .Where(e => e.participant_id == id)
+                .Where(e => e.Id == id)
                 .AsNoTracking()
                 .FirstOrDefault();
 
@@ -84,11 +84,10 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
 
     private void UpdateParticipantEntity(Participant destination, Participant source)
     {
-        destination.participant_id = source.participant_id;
+        destination.Id = source.Id;
         destination.EventId = source.EventId;
-        destination.wantsMeal = source.wantsMeal;
-        destination.allergies = source.allergies;
-        // ToDo: Look over how to handle user data
-        //destination.user = source.user;
+        destination.WantsMeal = source.WantsMeal;
+        destination.Allergies = source.Allergies;
+        destination.Preferences = source.Preferences;
     }
 }
