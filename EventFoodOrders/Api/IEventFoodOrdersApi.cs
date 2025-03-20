@@ -1,6 +1,6 @@
 ﻿using EventFoodOrders.Dto;
 using EventFoodOrders.Dto.ParticipantDTOs;
-using EventFoodOrders.Models;
+using EventFoodOrders.Entities;
 
 namespace EventFoodOrders.Api
 {

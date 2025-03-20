@@ -1,6 +1,6 @@
 ﻿using EventFoodOrders.Data;
 using EventFoodOrders.Exceptions;
-using EventFoodOrders.Models;
+using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Repositories;
@@ -29,7 +29,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToUpdate = context.Events
-                .Where(e => e.EventId == id)
+                .Where(e => e.Id == id)
                 .FirstOrDefault();
 
             if (eventToUpdate is Event)
@@ -52,7 +52,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToUpdate = context.Events
-                .Where(e => e.EventId == id)
+                .Where(e => e.Id == id)
                 .FirstOrDefault();
 
             if (eventToUpdate is Event)
@@ -74,14 +74,14 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToFind = context.Events
-                .Where(e => e.EventId == id)
+                .Where(e => e.Id == id)
                 .AsNoTracking()
                 .Include(e => e.Participants)
                 .FirstOrDefault();
 
             if (eventToFind is Event)
             {
-                if (eventToFind.Participants.Where(p => p.participant_id == uId).Any())
+                if (eventToFind.Participants.Where(p => p.Id == uId).Any())
                 {
                     return eventToFind;
                 }
@@ -122,9 +122,9 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
 
     private static void UpdateEventEntity(Event source, Event destination)
     {
-        destination.EventName = source.EventName;
-        destination.EventDate = source.EventDate;
+        destination.Title = source.Title;
+        destination.Date = source.Date;
         destination.Description = source.Description;
-        destination.EventActive = source.EventActive;
+        destination.Deadline = source.Deadline;
     }
 }

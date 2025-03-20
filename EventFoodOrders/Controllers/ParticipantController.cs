@@ -85,4 +85,14 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
 
         return Ok(response);
     }
+
+    [HttpGet]
+    //[Route("/get/{userId}/all")]
+    [Route("[controller]/get/{userId}/all")]
+    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsForUser(string userId)
+    {
+        IEnumerable<ParticipantForResponseDto> response = _participantService.GetAllParticipantsForUser(userId);
+
+        return Ok(response);
+    }
 }

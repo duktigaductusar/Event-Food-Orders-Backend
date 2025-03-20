@@ -2,53 +2,68 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EventFoodOrders.Models;
+namespace EventFoodOrders.Entities;
 
 [Table("events")]
 public class Event
 {
     public Event()
     {
-        if (EventId == Guid.Empty)
+        if (Id == Guid.Empty)
         {
-            EventId = Guid.NewGuid();
+            Id = Guid.NewGuid();
         }
-        EventName = "";
+        Title = "";
         Participants = [];
     }
 
     public Event(Guid guid)
     {
-        EventId = guid;
-        EventName = "";
+        Id = guid;
+        Title = "";
+        Participants = [];
     }
 
     [Key]
-    [Column("event_id")]
+    [Column("id")]
     [Required]
-    public Guid EventId { get; set; }
-
-
-    [Required]
-    [Column("event_name")]
-    public string EventName { get; set; }
+    public Guid Id { get; set; }
 
     [Required]
-    [Column("event_date")]
-    public DateTimeOffset EventDate { get; set; }
-
-    [Required]
-    [Column("active")]
-    public bool EventActive { get; set; }
+    [Column("title")]
+    public string Title { get; set; }
 
     [Column("description")]
     public string? Description { get; set; }
 
+    [Required]
+    [Column("date")]
+    public DateTimeOffset Date { get; set; }
+
+    [Required]
+    [Column("deadline")]
+    public DateTimeOffset Deadline { get; set; }
+
+    // Foreign key
+    //[Required]
+    [ForeignKey("owner_id")]
+    public Guid OwnerId { get; set; }
+
     // Navigation properties
     public Collection<Participant> Participants { get; set; }
 
-    public override string? ToString()
+    // Methods
+    public bool IsActive()
     {
-        return base.ToString();
+        if (DateTime.UtcNow < Date)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public override string ToString()
+    {
+        return Title;
     }
 }

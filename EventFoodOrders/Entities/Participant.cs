@@ -1,59 +1,58 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using EventFoodOrders.Utilities;
 
-namespace EventFoodOrders.Models;
+namespace EventFoodOrders.Entities;
 
 [Table("participants")]
 public class Participant
 {
     public Participant()
     {
-        if (participant_id == Guid.Empty)
+        if (Id == Guid.Empty)
         {
-            participant_id = Guid.NewGuid();
+            Id = Guid.NewGuid();
         }
-        allergies = "";
-        // ToDo: Look over how to handle user data
-        //user = new User();
+        if (Name == string.Empty || Name is null)
+        {
+            Name = "";
+        }
+        if (Response == string.Empty || Response is null)
+        {
+            Response = ReType.Pending;
+        }
     }
 
     [Key]
     [Column("participant_id")]
     [Required]
-    public Guid participant_id { get; set; }
+    public Guid Id { get; set; }
 
-    //@ManyToOne
-    //@JoinColumn(name = "user_id", nullable = false)
-    //[Column("user_id")
-    //[Required]
-    //Guid user_id;
-
-
-    // ToDo: Look over how to handle user data
-    /*
-    [ForeignKey("user_id")]
-    //[Column("user_id")]
+    [Column("user_id")]
     [Required]
-    [NotNull]
-    public User user { get; set; }
-    */
-
-
-
-    //@ManyToOne
-    //@JoinColumn(name = "event_id", nullable = false)
-    //[Column("event_id")]
-    //[Required]
-    //public Guid _event { get; set; }
-
-    [Column("wants_meal")]
-    public bool wantsMeal { get; set; }
-
-    [Column("allergies")]
-    public string allergies { get; set; }
+    public Guid UserId { get; set; }
 
     [ForeignKey("event_id")]
     [Required]
     public Guid EventId { get; set; }
 
+    [Column("name")]
+    [Required]
+    public string Name { get; set; }
+
+    [Column("response")]
+    [Required]
+    public string Response { get; set; }
+
+    [Column("wants_meal")]
+    public bool WantsMeal { get; set; }
+
+    [Column("allergies")]
+    public string[]? Allergies { get; set; }
+
+    [Column("preferences")]
+    public string[]? Preferences { get; set; }
+
+    [Required]
+    public Event Event { get; set; }
 }

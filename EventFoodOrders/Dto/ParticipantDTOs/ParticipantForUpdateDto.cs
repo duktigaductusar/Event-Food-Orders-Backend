@@ -2,8 +2,8 @@
 
 public class ParticipantForUpdateDto
 {
-    public bool wantsMeal { get; set; }
-    public string allergies { get; set; }
+    public bool? wantsMeal { get; set; }
+    public string? allergies { get; set; }
 
     public ParticipantForUpdateDto()
     {
