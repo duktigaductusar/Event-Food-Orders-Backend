@@ -59,7 +59,7 @@ public class Program
                 options.Authority =
                     $"https://login.microsoftonline.com/{builder.Configuration["AzureAd:TenantId"]}/v2.0";
                 options.ClientId = builder.Configuration["AzureAd:ClientId"];
-                options.ClientSecret = Environment.GetEnvironmentVariable("CLIENT__SECRET");
+                options.ClientSecret = builder.Configuration["AzureAd:ClientSecret"];
                 options.ResponseType = "code";
                 options.SaveTokens = false;
                 options.UseTokenLifetime = true;
