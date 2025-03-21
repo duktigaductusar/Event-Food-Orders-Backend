@@ -100,8 +100,6 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
     // Helper functions
     private void UpdateParticipantEntity(Participant destination, Participant source)
     {
-        destination.Id = source.Id;
-        destination.EventId = source.EventId;
         destination.WantsMeal = source.WantsMeal;
         destination.Allergies = source.Allergies;
         destination.Preferences = source.Preferences;

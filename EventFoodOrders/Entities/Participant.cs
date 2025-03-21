@@ -7,13 +7,12 @@ namespace EventFoodOrders.Entities;
 [Table("participants")]
 public class Participant
 {
-    public Participant(Guid userId, Event eventToParticipateIn)
+    public Participant(Guid userId, Guid eventId)
     {
         Id = Guid.NewGuid();
 
         UserId = userId;
-        EventInvitedTo = eventToParticipateIn;
-        EventId = eventToParticipateIn.Id;
+        EventId = eventId;
 
         if (Name == string.Empty || Name is null)
         {
@@ -56,7 +55,4 @@ public class Participant
 
     [Column("preferences")]
     public string[]? Preferences { get; set; }
-
-    [Required]
-    public Event EventInvitedTo { get; init; }
 }

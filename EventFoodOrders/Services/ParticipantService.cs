@@ -74,6 +74,6 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
 
     public Participant CreateParticipant(Guid userId, Event eventToParticipateIn)
     {
-        return new Participant(userId, eventToParticipateIn);
+        return new Participant(userId, eventToParticipateIn.Id);
     }
 }
