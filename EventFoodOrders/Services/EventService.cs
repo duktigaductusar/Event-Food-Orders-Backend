@@ -48,29 +48,21 @@ public class EventService(EventRepository eventRepository, ParticipantService pa
         return _mapper.MapToEventForResponseWithDetailsDto(returnEvent, eventParticipant);
     }
 
-    public IEnumerable<EventForResponseDto> GetAllEventsForUser(string userId)
+    public IEnumerable<EventForResponseDto> GetAllEventsForUser(Guid userId)
     {
         IEnumerable<Event> returnEvents = _eventRepository.GetAllEventsForUser(userId);
-        IEnumerable<EventForResponseDto> events = [];
+        List<EventForResponseDto> events = [];
 
         foreach(Event e in returnEvents)
         {
             Participant? participant = e.Participants
-                .Where(p => p.UserId == Guid.Parse(userId))
+                //.Where(p => p.UserId == userId)
                 .FirstOrDefault();
 
             if (participant is not null)
             {
-                events.Append(_mapper.MapToEventForResponseDto(e, participant));
-            }/*
-            else
-            {
-                ParticipantBuilder builder = new();
-                builder.SetEvent(e);
-                builder.SetAllergies(["Shrimp"]);
-                participant = builder.BuildParticipant();
-                events = events.Append(_mapper.MapToEventForResponseDto(e, participant));
-            }*/
+                events.Add(_mapper.MapToEventForResponseDto(e, participant));
+            }
         }
 
         return events;

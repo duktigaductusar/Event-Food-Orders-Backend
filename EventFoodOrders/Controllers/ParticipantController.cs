@@ -6,15 +6,13 @@ namespace EventFoodOrders.Controllers;
 
 [ApiController]
 [Route("/api/participant")]
-public class ParticipantController(ILogger<ParticipantController> logger, ParticipantService participantService, EventService eventService) : ControllerBase
+public class ParticipantController(ParticipantService participantService) : ControllerBase
 {
-    private readonly ILogger<ParticipantController> _logger = logger;
-    private readonly EventService _eventService = eventService;
     private readonly ParticipantService _participantService = participantService;
 
     [HttpPost]
     [Route("{eventId}")]
-    public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(string eventId, ParticipantForCreationDto newParticipant)
+    public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant)
     {
         ParticipantForResponseDto response;
 

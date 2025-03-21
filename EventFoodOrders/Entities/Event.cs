@@ -8,13 +8,16 @@ namespace EventFoodOrders.Entities;
 public class Event
 {
     public Event()
-    { }
+    {
+        Title = "TITLE_MISSING";
+        Participants = [];
+    }
 
     public Event(Guid userId)
     {
         Id = Guid.NewGuid();
         OwnerId = userId;
-        Title = "";
+        Title = "TITLE_MISSING";
         Description = "";
         Date = DateTime.UtcNow;
         Deadline = DateTime.UtcNow;

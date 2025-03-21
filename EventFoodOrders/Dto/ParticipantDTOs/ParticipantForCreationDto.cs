@@ -2,10 +2,5 @@
 
 public class ParticipantForCreationDto
 {
-    public required Guid UserId;
-
-    public ParticipantForCreationDto(Guid userId)
-    {
-        UserId = userId;
-    }
+    public Guid UserId { get; set; }
 }

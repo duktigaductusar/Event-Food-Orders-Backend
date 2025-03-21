@@ -91,17 +91,14 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         }
     }
 
-    public IEnumerable<Event> GetAllEventsForUser(string userId)
+    public IEnumerable<Event> GetAllEventsForUser(Guid userId)
     {
-        //ToDo: Update ID method
-        Guid id = Guid.Parse(userId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             IEnumerable<Event> events = context.Events
                 .AsNoTracking()
                 .Include(e => e.Participants)
-                //.Where(e => e.id == id)
+                //.Where(e => e.id == userId)
                 .ToList();
 
             return events;

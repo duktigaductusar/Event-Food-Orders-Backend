@@ -7,6 +7,12 @@ namespace EventFoodOrders.Entities;
 [Table("participants")]
 public class Participant
 {
+    public Participant()
+    {
+        Name = "NAME_MISSING";
+        ResponseType = ReType.Pending;
+    }
+
     public Participant(Guid userId, Guid eventId)
     {
         Id = Guid.NewGuid();
@@ -37,7 +43,7 @@ public class Participant
     [ForeignKey("event_id")]
     [Column("event_id")]
     [Required]
-    public Guid EventId { get; init; }
+    public Guid EventId { get; set; }
 
     [Column("name")]
     [Required]

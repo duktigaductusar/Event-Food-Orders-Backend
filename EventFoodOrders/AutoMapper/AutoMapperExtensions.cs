@@ -39,12 +39,18 @@ public static class AutoMapperExtensions
 
     public static IEnumerable<EventForResponseDto> MapEnumerableToEventForResponseDto(this IMapper mapper, IEnumerable<Event> srcEvents, IEnumerable<Participant> srcParticipants)
     {
-        IEnumerable<EventForResponseDto> dtos = [];
+        List<EventForResponseDto> dtos = [];
 
         if (srcEvents.Count() == srcParticipants.Count())
         {
-            
+            for (int i = 0; i < srcEvents.Count(); i++)
+            {
+                dtos.Add(mapper.MapToEventForResponseDto(srcEvents.ElementAt(i), srcParticipants.ElementAt(i)));
+            }
+
+            return dtos;
         }
+
         return [];
     }
 
@@ -64,10 +70,22 @@ public static class AutoMapperExtensions
                 dest.WantsMeal = srcParticipant.WantsMeal;
                 dest.Allergies = srcParticipant.Allergies ?? [""];
                 dest.Preferences = srcParticipant.Preferences ?? [""];
-            })
-        );
+            }
+        ));
 
         return dto;
+    }
+
+    public static Participant MapToParticipantFromCreationDto(this IMapper mapper, Guid eventId, ParticipantForCreationDto participantForCreationDto)
+    {
+        Participant participant = mapper.Map<Participant>(participantForCreationDto, opt =>
+            opt.AfterMap((src, dest) =>
+            {
+                dest.EventId = eventId;
+            }
+        ));
+
+        return participant;
     }
 
     public static Participant MapToParticipantFromUpdateDto(this IMapper mapper, Participant participant, ParticipantForUpdateDto participantForUpdateDto)

@@ -12,13 +12,11 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
     private readonly EventRepository _eventRepository = eventRepository;
     private readonly IMapper _mapper = mapper.Mapper;
 
-    public ParticipantForResponseDto AddParticipantToEvent(string eventId, ParticipantForCreationDto newParticipant)
+    public ParticipantForResponseDto AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant)
     {
-        Guid id = Guid.Parse(eventId);
+       Event desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == eventId);
 
-        Event desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == id);
-
-        Participant participant = _mapper.Map<Participant>(newParticipant);
+        Participant participant = _mapper.MapToParticipantFromCreationDto(eventId, newParticipant);
         _participantRepository.AddParticipant(participant);
 
         return _mapper.Map<ParticipantForResponseDto>(participant);

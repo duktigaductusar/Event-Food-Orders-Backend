@@ -6,9 +6,8 @@ namespace EventFoodOrders.Controllers;
 
 [ApiController]
 [Route("/api/event")]
-public class EventController(ILogger<EventController> logger, EventService service) : ControllerBase
+public class EventController(EventService service) : ControllerBase
 {
-    private readonly ILogger<EventController> _logger = logger;
     private readonly EventService _service = service;
 
     [HttpPost]
@@ -86,7 +85,7 @@ public class EventController(ILogger<EventController> logger, EventService servi
     public ActionResult<IEnumerable<EventForResponseDto>> GetAllEventsForUser()
     {
         //ToDo: Update how the controller gets the user id, this is a temp Guid as string
-        string userId = "4aa80da1-69dc-449f-bf4c-be8daafcef2a";
+        Guid userId = Guid.NewGuid();
         IEnumerable<EventForResponseDto> response = _service.GetAllEventsForUser(userId);
 
         return Ok(response);
