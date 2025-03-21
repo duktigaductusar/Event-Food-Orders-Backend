@@ -145,6 +145,18 @@ public class Program
 
         var app = builder.Build();
 
+        // Error handling
+        // Hsts for security
+        if (isDevelopment)
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseExceptionHandler();
+            //app.UseHsts();
+        }
+
         app.UseHttpsRedirection();
         app.UseRouting();
 
@@ -161,9 +173,11 @@ public class Program
         {
             app.UseCors("AngularFontendProd");
         }
+
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseSession();
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
