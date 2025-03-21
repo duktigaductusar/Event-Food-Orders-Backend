@@ -145,15 +145,9 @@ public class Program
 
         var app = builder.Build();
 
+        app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.UseSession();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
-        
+
         if (isDevelopment)
         {
             app.UseCors("AngularFontendDEV");
@@ -167,12 +161,13 @@ public class Program
         {
             app.UseCors("AngularFontendProd");
         }
-
-
-        // Configure the HTTP request pipeline.
-
-        app.UseHttpsRedirection();
-
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseSession();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
 
         app.MapControllers();
 
