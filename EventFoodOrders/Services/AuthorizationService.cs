@@ -1,4 +1,5 @@
-﻿using EventFoodOrders.security;
+﻿using System.IdentityModel.Tokens.Jwt;
+using EventFoodOrders.security;
 using Newtonsoft.Json;
 using IAuthorizationService = EventFoodOrders.Interfaces.IAuthorizationService;
 
@@ -49,11 +50,26 @@ public class AuthorizationService : IAuthorizationService
         }
         
         var content = await response.Content.ReadAsStringAsync();
-        var res = JsonConvert.DeserializeObject<AuthResponse>(content);
-        if (res == null)
+        var authResponse = JsonConvert.DeserializeObject<AuthResponse>(content);
+        if (authResponse == null)
         {
             throw new NullReferenceException("JSON Deserialization return null.");
         }
-        return res;
+
+        var handler = new JwtSecurityTokenHandler();
+        var jwt = handler.ReadJwtToken(authResponse.idToken);
+        
+        authResponse.UserId = jwt.Claims.FirstOrDefault(c => c.Type == "oid")?.Value
+                              ?? jwt.Claims.FirstOrDefault(c => c.Type == "sub")?.Value!;
+        authResponse.Email = jwt.Claims.FirstOrDefault(c => c.Type == "email")?.Value
+                             ?? jwt.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value!;
+        authResponse.DisplayName = jwt.Claims.FirstOrDefault(c => c.Type == "name")?.Value!;
+
+        if (authResponse.UserId == null || authResponse.Email == null || authResponse.DisplayName == null)
+        {
+            throw new NullReferenceException("UserId, Email or DisplayName returned null when deserializing token.");
+        }
+        
+        return authResponse;
     }
 }

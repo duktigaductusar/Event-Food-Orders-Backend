@@ -8,8 +8,12 @@ using EventFoodOrders.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using DotNetEnv;
+using EventFoodOrders.security;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace EventFoodOrders;
 
@@ -70,7 +74,36 @@ public class Program
                 options.Scope.Add("email");
                 options.Scope.Add("https://graph.microsoft.com/Mail.Send");
             });
-        
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (context.Request.Cookies.TryGetValue("jwt_token", out var jwtToken))
+                        {
+                            context.Token = jwtToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
+                };
+            });
+        builder.Services.AddScoped<IJwtUtility, JwtUtility>();
+        builder.Services.AddAuthorization();
         // No more auth thingies
         
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
