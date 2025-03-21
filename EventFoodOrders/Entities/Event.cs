@@ -8,9 +8,7 @@ namespace EventFoodOrders.Entities;
 public class Event
 {
     public Event()
-    {
-        
-    }
+    { }
 
     public Event(Guid userId)
     {
