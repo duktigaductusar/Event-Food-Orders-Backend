@@ -174,15 +174,6 @@ public class Program
         app.UseHttpsRedirection();
 
 
-        if (isDevelopment)
-        {
-            app.UsePathBase("/efobackend");
-        }
-        else
-        {
-            app.UsePathBase("");
-        }
-
         app.MapControllers();
 
         app.Run();

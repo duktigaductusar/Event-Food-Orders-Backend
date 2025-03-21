@@ -21,15 +21,12 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         return newEvent;
     }
 
-    public Event UpdateEvent(string eventId, Event updatedEvent)
+    public Event UpdateEvent(Guid eventId, Event updatedEvent)
     {
-        //ToDo: Update ID method
-        Guid id = Guid.Parse(eventId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToUpdate = context.Events
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == eventId)
                 .FirstOrDefault();
 
             if (eventToUpdate is Event)
@@ -44,15 +41,12 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         return updatedEvent;
     }
 
-    public void DeleteEvent(string eventId)
+    public void DeleteEvent(Guid eventId)
     {
-        //ToDo: Update ID method
-        Guid id = Guid.Parse(eventId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToUpdate = context.Events
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == eventId)
                 .FirstOrDefault();
 
             if (eventToUpdate is Event)
@@ -65,23 +59,19 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         }
     }
 
-    public Event GetEventForUser(string userId, string eventId)
+    public Event GetEventForUser(Guid userId, Guid eventId)
     {
-        //ToDo: Update ID method
-        Guid id = Guid.Parse(eventId);
-        Guid uId = Guid.Parse(userId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToFind = context.Events
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == eventId)
                 .AsNoTracking()
                 .Include(e => e.Participants)
                 .FirstOrDefault();
 
             if (eventToFind is Event)
             {
-                if (eventToFind.Participants.Where(p => p.Id == uId).Any())
+                if (eventToFind.Participants.Where(p => p.Id == userId).Any())
                 {
                     return eventToFind;
                 }
@@ -91,17 +81,14 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         }
     }
 
-    public IEnumerable<Event> GetAllEventsForUser(string userId)
+    public IEnumerable<Event> GetAllEventsForUser(Guid userId)
     {
-        //ToDo: Update ID method
-        Guid id = Guid.Parse(userId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             IEnumerable<Event> events = context.Events
                 .AsNoTracking()
                 .Include(e => e.Participants)
-                //.Where(e => e.id == id)
+                //.Where(e => e.id == userId)
                 .ToList();
 
             return events;

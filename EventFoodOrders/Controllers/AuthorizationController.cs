@@ -1,9 +1,6 @@
-﻿using System.Collections.Immutable;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using EventFoodOrders.security;
 using Microsoft.AspNetCore.Authorization;
 using IAuthorizationService = EventFoodOrders.Interfaces.IAuthorizationService;
@@ -49,9 +46,6 @@ public class AuthorizationController : ControllerBase
         {
             HttpOnly = true,
             Secure = !_env.IsDevelopment(),
-            //Prod setting
-            // SameSite = SameSiteMode.Strict,
-            //Dev setting
             SameSite = SameSiteMode.Strict,
             Expires = DateTime.UtcNow.AddHours(1)
         };

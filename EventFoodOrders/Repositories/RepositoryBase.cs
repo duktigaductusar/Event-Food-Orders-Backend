@@ -7,7 +7,7 @@ public class RepositoryBase<T, Q>()
     where T : class
     where Q : Exception, new()
 {
-    private readonly ExceptionStandIn<Q> _exceptionFactory = new();
+    private readonly ExceptionStandIn<Q> _exception = new();
 
     internal T GetSingleWithCondition(DbSet<T> dbSet, Func<T, bool> condition)
     {
@@ -17,7 +17,7 @@ public class RepositoryBase<T, Q>()
 
         if (result is null)
         {
-            _exceptionFactory.ThrowDefaultException();
+            _exception.ThrowDefaultException();
         }
 
         return result!;

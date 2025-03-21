@@ -8,7 +8,8 @@ public class AutoMapperEventProfile: Profile
 {
     public AutoMapperEventProfile()
     {
-        CreateMap<EventForCreationDto, Event>();
+        CreateMap<EventForCreationDto, EventForCreationObject>();
+        CreateMap<EventForCreationObject, Event>();
         CreateMap<EventForUpdateDto, Event>();
         CreateMap<Event, EventForResponseDto>();
         CreateMap<Event, EventForResponseWithDetailsDto>();

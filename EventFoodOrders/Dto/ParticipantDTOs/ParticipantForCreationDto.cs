@@ -2,14 +2,5 @@
 
 public class ParticipantForCreationDto
 {
-    public bool WantsMeal { get; set; }
-    public string[] Allergies { get; set; }
-
-    public ParticipantForCreationDto()
-    {
-        if (Allergies == null)
-        {
-            Allergies = [];
-        }
-    }
+    public Guid UserId { get; set; }
 }

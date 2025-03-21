@@ -21,14 +21,12 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         return participant;
     }
 
-    public Participant UpdateParticipant(string participantId, Participant updatedParticipant)
+    public Participant UpdateParticipant(Guid participantId, Participant updatedParticipant)
     {
-        Guid id = Guid.Parse(participantId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participantToUpdate = context.Participants
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == participantId)
                 .FirstOrDefault();
 
             if (participantToUpdate is Participant)
@@ -43,14 +41,12 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         return updatedParticipant;
     }
 
-    public void DeleteParticipant(string participantId)
+    public void DeleteParticipant(Guid participantId)
     {
-        Guid id = Guid.Parse(participantId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participantToUpdate = context.Participants
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == participantId)
                 .FirstOrDefault();
 
             if (participantToUpdate is Participant)
@@ -63,14 +59,12 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         }
     }
 
-    internal Participant GetParticipant(string participantId)
+    internal Participant GetParticipant(Guid participantId)
     {
-        Guid id = Guid.Parse(participantId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participant = context.Participants
-                .Where(p => p.Id == id)
+                .Where(p => p.Id == participantId)
                 .AsNoTracking()
                 .FirstOrDefault();
 
@@ -82,14 +76,12 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         }
     }
 
-    internal IEnumerable<Participant> GetAllParticipantsForUser(string userId)
+    internal IEnumerable<Participant> GetAllParticipantsForUser(Guid userId)
     {
-        Guid id = Guid.Parse(userId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             IEnumerable<Participant> participants = context.Participants
-                .Where(p => p.UserId == id)
+                .Where(p => p.UserId == userId)
                 .AsNoTracking()
                 .ToList();
 
@@ -100,8 +92,6 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
     // Helper functions
     private void UpdateParticipantEntity(Participant destination, Participant source)
     {
-        destination.Id = source.Id;
-        destination.EventId = source.EventId;
         destination.WantsMeal = source.WantsMeal;
         destination.Allergies = source.Allergies;
         destination.Preferences = source.Preferences;

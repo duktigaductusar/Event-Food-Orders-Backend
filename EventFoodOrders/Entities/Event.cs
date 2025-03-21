@@ -9,18 +9,19 @@ public class Event
 {
     public Event()
     {
-        if (Id == Guid.Empty)
-        {
-            Id = Guid.NewGuid();
-        }
-        Title = "";
+        Id = Guid.NewGuid();
+        Title = "TITLE_MISSING";
         Participants = [];
     }
 
-    public Event(Guid guid)
+    public Event(Guid userId)
     {
-        Id = guid;
-        Title = "";
+        Id = Guid.NewGuid();
+        OwnerId = userId;
+        Title = "TITLE_MISSING";
+        Description = "";
+        Date = DateTime.UtcNow;
+        Deadline = DateTime.UtcNow;
         Participants = [];
     }
 
@@ -47,6 +48,7 @@ public class Event
     // Foreign key
     //[Required]
     [ForeignKey("owner_id")]
+    [Column("owner_id")]
     public Guid OwnerId { get; set; }
 
     // Navigation properties
