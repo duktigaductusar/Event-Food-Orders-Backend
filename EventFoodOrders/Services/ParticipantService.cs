@@ -3,7 +3,6 @@ using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories;
-using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Services;
 
@@ -20,7 +19,6 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
         Event desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == id);
 
         Participant participant = _mapper.Map<Participant>(newParticipant);
-
         _participantRepository.AddParticipant(participant);
 
         return _mapper.Map<ParticipantForResponseDto>(participant);
@@ -29,9 +27,7 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
     public ParticipantForResponseDto UpdateParticipant(string participantId, ParticipantForUpdateDto updatedParticipantDto)
     {
         Participant participant = _participantRepository.GetParticipant(participantId);
-
         participant = _mapper.MapToParticipantFromUpdateDto(participant, updatedParticipantDto);
-
         participant = _participantRepository.UpdateParticipant(participantId, participant);
 
         return _mapper.Map<ParticipantForResponseDto>(participant);
@@ -74,5 +70,10 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
         IEnumerable<Participant> participants = _participantRepository.GetAllParticipantsForUser(userId);
 
         return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants);
+    }
+
+    public Participant CreateParticipant(Guid userId, Event eventToParticipateIn)
+    {
+        return new Participant(userId, eventToParticipateIn);
     }
 }

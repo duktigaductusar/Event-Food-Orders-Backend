@@ -6,19 +6,21 @@ using EventFoodOrders.Repositories;
 
 namespace EventFoodOrders.Services;
 
-public class EventService(EventRepository eventRepository, ParticipantRepository participantRepository, CustomAutoMapper mapper)
+public class EventService(EventRepository eventRepository, ParticipantService participantService, ParticipantRepository participantRepository, CustomAutoMapper mapper)
 {
     private readonly EventRepository _eventRepository = eventRepository;
+    private readonly ParticipantService _participantService = participantService;
     private readonly ParticipantRepository _participantRepository = participantRepository;
     private readonly IMapper _mapper = mapper.Mapper;
 
-    public EventForResponseDto CreateEvent(string userId, EventForCreationDto eventForCreation)
+    public EventForResponseDto CreateEvent(Guid userId, EventForCreationDto eventForCreation)
     {
         Event newEvent = _mapper.Map<Event>(eventForCreation);
         newEvent.Id = Guid.NewGuid();
         newEvent = _eventRepository.AddEvent(newEvent);
+        newEvent.OwnerId = userId;
 
-        Participant owner = new();
+        Participant owner = _participantService.CreateParticipant(userId, newEvent);
         owner = _participantRepository.AddParticipant(owner);
 
         return _mapper.MapToEventForResponseDto(newEvent, owner);

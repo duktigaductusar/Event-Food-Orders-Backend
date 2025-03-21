@@ -7,35 +7,38 @@ namespace EventFoodOrders.Entities;
 [Table("participants")]
 public class Participant
 {
-    public Participant()
+    public Participant(Guid userId, Event eventToParticipateIn)
     {
-        if (Id == Guid.Empty)
-        {
-            Id = Guid.NewGuid();
-        }
+        Id = Guid.NewGuid();
+
+        UserId = userId;
+        EventInvitedTo = eventToParticipateIn;
+        EventId = eventToParticipateIn.Id;
+
         if (Name == string.Empty || Name is null)
         {
-            Name = "";
+            Name = "NAME_MISSING";
         }
-        if (ResponseType == string.Empty || ResponseType is null)
-        {
-            ResponseType = ReType.Pending;
-        }
+        
+        ResponseType = ReType.Pending;
+        WantsMeal = false;
+        Allergies = [];
+        Preferences = [];
     }
 
     [Key]
     [Column("participant_id")]
     [Required]
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 
     [Column("user_id")]
     [Required]
-    public Guid UserId { get; set; }
+    public Guid UserId { get; init; }
 
     [ForeignKey("event_id")]
     [Column("event_id")]
     [Required]
-    public Guid EventId { get; set; }
+    public Guid EventId { get; init; }
 
     [Column("name")]
     [Required]
@@ -55,5 +58,5 @@ public class Participant
     public string[]? Preferences { get; set; }
 
     [Required]
-    public Event Event { get; set; }
+    public Event EventInvitedTo { get; init; }
 }
