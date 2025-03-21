@@ -10,7 +10,7 @@ public class AutoMapperParticipantProfile: Profile
     public AutoMapperParticipantProfile()
     {
         CreateMap<ParticipantForCreationDto, Participant>()
-            .ForMember(dest => dest.ResponseType, opt => opt.MapFrom(ReType.Pending));
+            .AfterMap((src, dest) => dest.ResponseType = ReType.Pending);
 
         // Update using extension method MapToParticipantFromUpdateDto to include ResponseType
         CreateMap<ParticipantForUpdateDto, Participant>()

@@ -4,11 +4,21 @@ using EventFoodOrders.Exceptions;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Utilities;
+using EventFoodOrders.Entities.HelperModels;
 
 namespace EventFoodOrders.AutoMapper;
 
 public static class AutoMapperExtensions
 {
+    public static Event MapToNewEvent(this IMapper mapper, Guid userId, EventForCreationDto eventForCreationDto)
+    {
+        EventForCreationObject eventCreationObject = mapper.Map<EventForCreationObject>(eventForCreationDto);
+        eventCreationObject.UserId = userId;
+        Event newEvent = mapper.Map<Event>(eventCreationObject); ;
+
+        return newEvent;
+    }
+
     public static EventForResponseDto MapToEventForResponseDto(this IMapper mapper, Event srcEvent, Participant srcParticipant)
     {
         if (srcEvent.Id != srcParticipant.EventId)

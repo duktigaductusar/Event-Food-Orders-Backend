@@ -15,10 +15,8 @@ public class EventService(EventRepository eventRepository, ParticipantService pa
 
     public EventForResponseDto CreateEvent(Guid userId, EventForCreationDto eventForCreation)
     {
-        Event newEvent = _mapper.Map<Event>(eventForCreation);
-        newEvent.Id = Guid.NewGuid();
+        Event newEvent = _mapper.MapToNewEvent(userId, eventForCreation);
         newEvent = _eventRepository.AddEvent(newEvent);
-        newEvent.OwnerId = userId;
 
         Participant owner = _participantService.CreateParticipant(userId, newEvent);
         owner = _participantRepository.AddParticipant(owner);

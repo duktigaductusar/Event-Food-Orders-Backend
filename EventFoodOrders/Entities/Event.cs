@@ -9,18 +9,17 @@ public class Event
 {
     public Event()
     {
-        if (Id == Guid.Empty)
-        {
-            Id = Guid.NewGuid();
-        }
-        Title = "";
-        Participants = [];
+        
     }
 
-    public Event(Guid guid)
+    public Event(Guid userId)
     {
-        Id = guid;
+        Id = Guid.NewGuid();
+        OwnerId = userId;
         Title = "";
+        Description = "";
+        Date = DateTime.UtcNow;
+        Deadline = DateTime.UtcNow;
         Participants = [];
     }
 
