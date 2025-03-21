@@ -18,13 +18,13 @@ public class EventService(EventRepository eventRepository, ParticipantService pa
         Event newEvent = _mapper.MapToNewEvent(userId, eventForCreation);
         newEvent = _eventRepository.AddEvent(newEvent);
 
-        Participant owner = _participantService.CreateParticipant(userId, newEvent);
+        Participant owner = _participantService.CreateParticipant(userId, newEvent.Id);
         owner = _participantRepository.AddParticipant(owner);
 
         return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
 
-    public EventForResponseDto UpdateEvent(string eventId, EventForUpdateDto updatedEventDto)
+    public EventForResponseDto UpdateEvent(Guid eventId, EventForUpdateDto updatedEventDto)
     {
         Event updatedEvent = _mapper.Map<Event>(updatedEventDto);
 
@@ -33,14 +33,14 @@ public class EventService(EventRepository eventRepository, ParticipantService pa
         return _mapper.Map<EventForResponseDto>(updatedEvent);
     }
 
-    public bool DeleteEvent(string eventId)
+    public bool DeleteEvent(Guid eventId)
     {
         _eventRepository.DeleteEvent(eventId);
 
         return true;
     }
 
-    public EventForResponseWithDetailsDto GetEventForUser(string userId, string eventId)
+    public EventForResponseWithDetailsDto GetEventForUser(Guid userId, Guid eventId)
     {
         Event returnEvent = _eventRepository.GetEventForUser(userId, eventId);
         Participant eventParticipant = _participantRepository.GetParticipant(userId);

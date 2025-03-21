@@ -30,7 +30,7 @@ public class ParticipantController(ParticipantService participantService) : Cont
 
     [HttpPut]
     [Route("{participantId}")]
-    public ActionResult<ParticipantForResponseDto> UpdateParticipant(string participantId, ParticipantForUpdateDto participantToUpdate)
+    public ActionResult<ParticipantForResponseDto> UpdateParticipant(Guid participantId, ParticipantForUpdateDto participantToUpdate)
     {
         ParticipantForResponseDto response = _participantService.UpdateParticipant(participantId, participantToUpdate);
 
@@ -39,7 +39,7 @@ public class ParticipantController(ParticipantService participantService) : Cont
 
     [HttpDelete]
     [Route("{participantId}")]
-    public ActionResult<bool> DeleteParticipant(string participantId)
+    public ActionResult<bool> DeleteParticipant(Guid participantId)
     {
         bool response = _participantService.DeleteParticipant(participantId);
 
@@ -49,7 +49,7 @@ public class ParticipantController(ParticipantService participantService) : Cont
     [HttpGet]
     //[Route("/get/{userId}/{eventId}")]
     [Route("{participantId}")]
-    public ActionResult<ParticipantForResponseDto> GetSingleParticipantInEvent(string eventId, string participantId)
+    public ActionResult<ParticipantForResponseDto> GetSingleParticipantInEvent(Guid eventId, Guid participantId)
     {
         ParticipantForResponseDto response;
 
@@ -68,7 +68,7 @@ public class ParticipantController(ParticipantService participantService) : Cont
     [HttpGet]
     //[Route("/get/{userId}/all")]
     [Route("{eventId}/all")]
-    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(string userId, string eventId)
+    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(Guid userId, Guid eventId)
     {
         IEnumerable <ParticipantForResponseDto> response;
 
@@ -83,6 +83,7 @@ public class ParticipantController(ParticipantService participantService) : Cont
 
         return Ok(response);
     }
+    //ToDo: Remove unused?
     /*
     [HttpGet]
     //[Route("/get/{userId}/all")]

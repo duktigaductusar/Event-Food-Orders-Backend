@@ -12,15 +12,16 @@ public class Participant
         Id = Guid.NewGuid();
         Name = "NAME_MISSING";
         ResponseType = ReType.Pending;
-    }
-
-    public Participant(Guid userId, Guid eventId): base()
-    {
-        UserId = userId;
-        EventId = eventId;
         WantsMeal = false;
         Allergies = [];
         Preferences = [];
+    }
+
+    public Participant(Guid userId, Guid eventId)
+        : this()
+    {
+        UserId = userId;
+        EventId = eventId;
     }
 
     [Key]

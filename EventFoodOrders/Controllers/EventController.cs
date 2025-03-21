@@ -20,11 +20,8 @@ public class EventController(EventService service) : ControllerBase
 
     [HttpPut]
     [Route("{eventId}")]
-    public ActionResult<EventForResponseDto> UpdateEvent(string eventId, EventForUpdateDto eventToUpdate)
+    public ActionResult<EventForResponseDto> UpdateEvent(Guid eventId, EventForUpdateDto eventToUpdate)
     {
-        try { Guid.Parse(eventId); }
-        catch { return BadRequest("Id not valid Guid."); }
-
         try
         {
             EventForResponseDto response = _service.UpdateEvent(eventId, eventToUpdate);
@@ -38,11 +35,8 @@ public class EventController(EventService service) : ControllerBase
 
     [HttpDelete]
     [Route("{eventId}")]
-    public ActionResult<bool> DeleteEvent(string eventId)
+    public ActionResult<bool> DeleteEvent(Guid eventId)
     {
-        try { Guid.Parse(eventId); }
-        catch { return BadRequest("Id not valid Guid."); }
-
         bool response = false;
 
         try
@@ -60,14 +54,8 @@ public class EventController(EventService service) : ControllerBase
     [HttpGet]
     //[Route("/get/{userId}/{eventId}")]
     [Route("{eventId}")]
-    public ActionResult<EventForResponseWithDetailsDto> GetSingleEventForUser(string eventId, string userId)
+    public ActionResult<EventForResponseWithDetailsDto> GetSingleEventForUser(Guid eventId, Guid userId)
     {
-        try { Guid.Parse(userId); }
-        catch { return BadRequest("Id not valid Guid."); }
-
-        try { Guid.Parse(eventId); }
-        catch{return BadRequest("Id not valid Guid.");}
-
         try
         {
             EventForResponseWithDetailsDto response = _service.GetEventForUser(userId, eventId);

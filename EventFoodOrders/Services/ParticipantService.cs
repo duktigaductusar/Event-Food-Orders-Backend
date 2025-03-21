@@ -23,7 +23,7 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
         return _mapper.Map<ParticipantForResponseDto>(participant);
     }
 
-    public ParticipantForResponseDto UpdateParticipant(string participantId, ParticipantForUpdateDto updatedParticipantDto)
+    public ParticipantForResponseDto UpdateParticipant(Guid participantId, ParticipantForUpdateDto updatedParticipantDto)
     {
         Participant participant = _participantRepository.GetParticipant(participantId);
         participant = _mapper.MapToParticipantFromUpdateDto(participant, updatedParticipantDto);
@@ -32,20 +32,18 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
         return _mapper.Map<ParticipantForResponseDto>(participant);
     }
 
-    public bool DeleteParticipant(string participantId)
+    public bool DeleteParticipant(Guid participantId)
     {
         _participantRepository.DeleteParticipant(participantId);
 
         return true;
     }
 
-    public ParticipantForResponseDto GetParticipant(string userId, string eventId)
+    public ParticipantForResponseDto GetParticipant(Guid userId, Guid eventId)
     {
-        Guid participantId = Guid.Parse(userId);
-
         Event participantsEvent = _eventRepository.GetEventForUser(userId, eventId);
         Participant? participant = participantsEvent.Participants
-            .Where(p => p.Id == participantId)
+            .Where(p => p.Id == userId)
             .FirstOrDefault();
 
         if (participant is null)
@@ -56,7 +54,7 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
         return _mapper.Map<ParticipantForResponseDto>(participant);
     }
 
-    public IEnumerable<ParticipantForResponseDto> GetAllParticipantsForEvent(string userId, string eventId)
+    public IEnumerable<ParticipantForResponseDto> GetAllParticipantsForEvent(Guid userId, Guid eventId)
     {
         Event participantsEvent = _eventRepository.GetEventForUser(userId, eventId);
         IEnumerable<Participant> participants = [.. participantsEvent.Participants];
@@ -64,15 +62,15 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
         return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants); ;
     }
 
-    public IEnumerable<ParticipantForResponseDto> GetAllParticipantsForUser(string userId)
+    public IEnumerable<ParticipantForResponseDto> GetAllParticipantsForUser(Guid userId)
     {
         IEnumerable<Participant> participants = _participantRepository.GetAllParticipantsForUser(userId);
 
         return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants);
     }
 
-    public Participant CreateParticipant(Guid userId, Event eventToParticipateIn)
+    public Participant CreateParticipant(Guid userId, Guid eventId)
     {
-        return new Participant(userId, eventToParticipateIn.Id);
+        return new Participant(userId, eventId);
     }
 }

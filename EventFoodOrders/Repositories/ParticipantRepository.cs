@@ -64,7 +64,7 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participant = context.Participants
-                .Where(p => p.Id == id)
+                .Where(p => p.Id == participantId)
                 .AsNoTracking()
                 .FirstOrDefault();
 
@@ -76,14 +76,12 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         }
     }
 
-    internal IEnumerable<Participant> GetAllParticipantsForUser(string userId)
+    internal IEnumerable<Participant> GetAllParticipantsForUser(Guid userId)
     {
-        Guid id = Guid.Parse(userId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             IEnumerable<Participant> participants = context.Participants
-                .Where(p => p.UserId == id)
+                .Where(p => p.UserId == userId)
                 .AsNoTracking()
                 .ToList();
 
