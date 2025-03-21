@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using EventFoodOrders.AutoMapper;
-using EventFoodOrders.Builders;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories;
@@ -19,9 +18,7 @@ public class EventService(EventRepository eventRepository, ParticipantRepository
         newEvent.Id = Guid.NewGuid();
         newEvent = _eventRepository.AddEvent(newEvent);
 
-        ParticipantBuilder builder = new();
-        builder.SetEvent(newEvent);
-        Participant owner = builder.BuildParticipant();
+        Participant owner = new();
         owner = _participantRepository.AddParticipant(owner);
 
         return _mapper.MapToEventForResponseDto(newEvent, owner);
@@ -65,7 +62,7 @@ public class EventService(EventRepository eventRepository, ParticipantRepository
             if (participant is not null)
             {
                 events.Append(_mapper.MapToEventForResponseDto(e, participant));
-            }
+            }/*
             else
             {
                 ParticipantBuilder builder = new();
@@ -73,7 +70,7 @@ public class EventService(EventRepository eventRepository, ParticipantRepository
                 builder.SetAllergies(["Shrimp"]);
                 participant = builder.BuildParticipant();
                 events = events.Append(_mapper.MapToEventForResponseDto(e, participant));
-            }
+            }*/
         }
 
         return events;

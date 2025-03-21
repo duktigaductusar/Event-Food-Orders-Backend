@@ -2,7 +2,8 @@
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Exceptions;
 using EventFoodOrders.Entities;
-using System.Collections.Generic;
+using EventFoodOrders.Dto.ParticipantDTOs;
+using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.AutoMapper;
 
@@ -57,5 +58,21 @@ public static class AutoMapperExtensions
         );
 
         return dto;
+    }
+
+    public static Participant MapToParticipantFromUpdateDto(this IMapper mapper, Participant participant, ParticipantForUpdateDto participantForUpdateDto)
+    {
+        participant = mapper.Map<Participant>(participantForUpdateDto);
+        
+        foreach (string responseType in Utility.PossibleResponses)
+        {
+            if (participantForUpdateDto.ResponseType == responseType)
+            {
+                participant.ResponseType = responseType;
+                break;
+            }
+        }
+
+        return participant;
     }
 }

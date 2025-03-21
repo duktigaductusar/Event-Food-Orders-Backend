@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using EventFoodOrders.AutoMapper;
-using EventFoodOrders.Builders;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories;
@@ -22,11 +21,6 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
 
         Participant participant = _mapper.Map<Participant>(newParticipant);
 
-        ParticipantBuilder builder = new(participant);
-        builder.SetEvent(desiredEvent);
-        builder.SetResponse(ReType.Pending);
-        participant = builder.BuildParticipant();
-
         _participantRepository.AddParticipant(participant);
 
         return _mapper.Map<ParticipantForResponseDto>(participant);
@@ -34,15 +28,13 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
 
     public ParticipantForResponseDto UpdateParticipant(string participantId, ParticipantForUpdateDto updatedParticipantDto)
     {
-        Participant updatedParticipant = _participantRepository.GetParticipant(participantId);
-        updatedParticipant = _mapper.Map(updatedParticipantDto, updatedParticipant);
+        Participant participant = _participantRepository.GetParticipant(participantId);
 
-        ParticipantBuilder builder = new(updatedParticipant);
-        updatedParticipant = builder.BuildParticipant();
+        participant = _mapper.MapToParticipantFromUpdateDto(participant, updatedParticipantDto);
 
-        updatedParticipant = _participantRepository.UpdateParticipant(participantId, updatedParticipant);
+        participant = _participantRepository.UpdateParticipant(participantId, participant);
 
-        return _mapper.Map<ParticipantForResponseDto>(updatedParticipant);
+        return _mapper.Map<ParticipantForResponseDto>(participant);
     }
 
     public bool DeleteParticipant(string participantId)
