@@ -405,26 +405,26 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         return retVal;
     }
 
-    public LoginResponse Login(UserLoginDTO input)
-    {
-        if (input.email.IsNullOrEmpty())
-        {
-            throw new UserNotFoundException("input email is null or empty");
-        }
-
-        User? user = findByEmail(input.email).FirstOrDefault();
-        if (user == null)
-        {
-            throw new UserNotFoundException("User not found with email: " + input.email);
-        }
-
-        if (user.Role != Role.ADMIN.ToString())
-        {
-            throw new AccessDeniedException("Access denied. Only admins can log in.");
-        }
-
-        return new LoginResponse(input.email, "");
-    }
+    // public LoginResponse Login(UserLoginDTO input)
+    // {
+    //     if (input.email.IsNullOrEmpty())
+    //     {
+    //         throw new UserNotFoundException("input email is null or empty");
+    //     }
+    //
+    //     User? user = findByEmail(input.email).FirstOrDefault();
+    //     if (user == null)
+    //     {
+    //         throw new UserNotFoundException("User not found with email: " + input.email);
+    //     }
+    //
+    //     if (user.Role != Role.ADMIN.ToString())
+    //     {
+    //         throw new AccessDeniedException("Access denied. Only admins can log in.");
+    //     }
+    //
+    //     return new LoginResponse(input.email, "");
+    // }
 
     public long getRegistrationsCount(Guid eventId)
     {
