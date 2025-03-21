@@ -33,6 +33,7 @@ public class Participant
     public Guid UserId { get; set; }
 
     [ForeignKey("event_id")]
+    [Column("event_id")]
     [Required]
     public Guid EventId { get; set; }
 

@@ -47,6 +47,7 @@ public class Event
     // Foreign key
     //[Required]
     [ForeignKey("owner_id")]
+    [Column("owner_id")]
     public Guid OwnerId { get; set; }
 
     // Navigation properties
