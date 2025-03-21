@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using EventFoodOrders.security;
+using Microsoft.AspNetCore.Authorization;
 using IAuthorizationService = EventFoodOrders.Interfaces.IAuthorizationService;
 
 namespace EventFoodOrders.Controllers;
@@ -61,13 +62,16 @@ public class AuthorizationController : ControllerBase
     }
 
     [HttpGet("[controller]/logout")]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
-        
+        Response.Cookies.Delete("jwt_token");
+        HttpContext.Session?.Clear();
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         var logoutUrl = $"https:login.microsoftonline.com/{Environment.GetEnvironmentVariable("AzureAd__TenantId")}/oauth2/v2.0/logout?post_logout_redirect_uri=localhost:4200/login";
         return Redirect(logoutUrl);
     }
 
+    [Authorize(AuthenticationSchemes = "Jwt")]
     [HttpGet("[controller]/status")]
     public IActionResult Status()
     {
