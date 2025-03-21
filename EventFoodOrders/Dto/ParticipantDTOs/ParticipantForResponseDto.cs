@@ -7,6 +7,7 @@ public class ParticipantForResponseDto
     public Guid eventId { get; set; }
     public bool wantsMeal { get; set; }
     public string allergies { get; set; }
+    public string responseType { get; set; }
 
     //ToDo: Update assignment to response dto ?
     /*

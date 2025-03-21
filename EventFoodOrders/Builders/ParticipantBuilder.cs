@@ -15,7 +15,7 @@ namespace EventFoodOrders.Builders
         public ParticipantBuilder(Participant participant)
         {
             _participant = participant;
-            SetResponse(participant.Response);
+            SetResponse(participant.ResponseType);
         }
 
         public Participant BuildParticipant()
@@ -45,11 +45,11 @@ namespace EventFoodOrders.Builders
         {
             if (Utility.PossibleResponses.Where(r => r == response).Any())
             {
-                _participant.Response = response;
+                _participant.ResponseType = response;
             }
             else
             {
-                _participant.Response = ReType.Pending;
+                _participant.ResponseType = ReType.Pending;
             }
 
             return _participant;

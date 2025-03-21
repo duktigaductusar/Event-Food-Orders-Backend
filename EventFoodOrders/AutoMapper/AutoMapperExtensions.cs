@@ -19,7 +19,7 @@ public static class AutoMapperExtensions
             opt.AfterMap((src, dest) =>
             {
                 dest.IsOwner = srcParticipant.Id == srcEvent.OwnerId;
-                dest.ParticipantResponseType = srcParticipant.Response;
+                dest.ResponseType = srcParticipant.ResponseType;
             })
         );
 
@@ -49,7 +49,7 @@ public static class AutoMapperExtensions
             {
                 dest.ParticipantID = srcParticipant.Id.ToString();
                 dest.IsOwner = srcParticipant.Id == srcEvent.OwnerId;
-                dest.ParticipantResponseType = srcParticipant.Response;
+                dest.ResponseType = srcParticipant.ResponseType;
                 dest.WantsMeal = srcParticipant.WantsMeal;
                 dest.Allergies = srcParticipant.Allergies ?? [""];
                 dest.Preferences = srcParticipant.Preferences ?? [""];

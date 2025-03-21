@@ -17,9 +17,9 @@ public class Participant
         {
             Name = "";
         }
-        if (Response == string.Empty || Response is null)
+        if (ResponseType == string.Empty || ResponseType is null)
         {
-            Response = ReType.Pending;
+            ResponseType = ReType.Pending;
         }
     }
 
@@ -40,9 +40,9 @@ public class Participant
     [Required]
     public string Name { get; set; }
 
-    [Column("response")]
+    [Column("response_type")]
     [Required]
-    public string Response { get; set; }
+    public string ResponseType { get; set; }
 
     [Column("wants_meal")]
     public bool WantsMeal { get; set; }

@@ -13,7 +13,7 @@ public record EventForResponseWithDetailsDto
     // Participant properties
     public required string ParticipantID { get; set; }
     public required bool IsOwner { get; set; }
-    public required string ParticipantResponseType { get; set; }
+    public required string ResponseType { get; set; }
     public required bool WantsMeal { get; set; }
     public required string[] Allergies { get; set; }
     public required string[] Preferences { get; set; }
