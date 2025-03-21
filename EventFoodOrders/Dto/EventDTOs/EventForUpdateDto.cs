@@ -1,10 +1,9 @@
-﻿namespace EventFoodOrders.Dto.EventDTOs
+﻿namespace EventFoodOrders.Dto.EventDTOs;
+
+public record EventForUpdateDto
 {
-    public record EventForUpdateDto
-    {
-        public string EventName { get; init; }
-        public DateTimeOffset EventDate { get; init; }
-        public string Description { get; init; }
-        public bool EventActive { get; init; }
-    }
+    public string? Title { get; init; }
+    public string? Description { get; init; }
+    public DateTimeOffset? Date { get; init; }
+    public DateTimeOffset? Deadline { get; init; }
 }

@@ -1,13 +1,13 @@
 ﻿using EventFoodOrders.Data;
 using EventFoodOrders.Dto;
-using EventFoodOrders.Dto.EventDTOs;
+using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Exceptions;
-using EventFoodOrders.Models;
+using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace EventFoodOrders.Api;
-
+/*
 public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : IEventFoodOrdersApi
 {
     public IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
@@ -74,7 +74,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            retVal = context.Events.First(e => e.EventId == _id);
+            retVal = context.Events.First(e => e.id == _id);
             if (retVal == null)
             {
                 throw new EventNotFoundException("No event for id " + _id.ToString());
@@ -100,7 +100,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         return participant;
     }
 
-    public Participant UpdateParticipant(Guid partId, ParticipantUpdateRequestDTO _participantRegistrationRequest)
+    public Participant UpdateParticipant(Guid partId, ParticipantForUpdateDto _participantRegistrationRequest)
     {
 
         if (_participantRegistrationRequest == null)
@@ -170,7 +170,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         Event? newEvent = null;
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            newEvent = context.Events.Where(e => e.EventId == newParticipant._event).FirstOrDefault();
+            newEvent = context.Events.Where(e => e.id == newParticipant._event).FirstOrDefault();
         }
 
         if (newEvent == null)
@@ -178,7 +178,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             throw new EventNotFoundException("Failed to update participant");
         }
 
-        ParticipantDTO participantDTO = new ParticipantDTO(newParticipant.participant_id, user.id, newEvent.EventId, new DateTime(newEvent.EventDate.Ticks), newParticipant.wantsMeal, newParticipant.allergies);
+        ParticipantForResponseDto participantDTO = new ParticipantDTO(newParticipant.participant_id, user.id, newEvent.id, new DateTime(newEvent.eventDate.Ticks), newParticipant.wantsMeal, newParticipant.allergies);
 
         return newParticipant;
 
@@ -236,14 +236,14 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         return retVal;
     }
 
-    public Event SaveEvent(EventForResponseDTO? _event)
+    public Event SaveEvent(EventDTO? _event)
     {
         Event retVal = new();
-        Event toSave = new Event(_event.EventId);
-        toSave.Description = _event.Description;
-        toSave.EventDate = _event.EventDate;
-        toSave.EventName = _event.EventName;
-        toSave.EventActive = true;
+        Event toSave = new Event(_event.eventId);
+        toSave.description = _event.Description;
+        toSave.eventDate = _event.EventDate;
+        toSave.eventName = _event.EventName;
+        toSave.eventActive = true;
 
         if (_event == null)
         {
@@ -255,13 +255,13 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             //TODO Fix 
             throw new IllegalArgumentException("Event date has already passed: " + _event?.EventDate);
         }
-        /*
+
         // TODO fix nullable issue
         if (findByEventNameAndEventDate(_event.EventName, _event?.EventDate) != null)
         {
             throw new EventAlreadyExistsException("Can't save an event that allready exists");
         }
-        */
+
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
@@ -281,7 +281,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            return context.Events.Where(e => e.EventName == eventName && e.EventDate == eventDate).FirstOrDefault();
+            return context.Events.Where(e => e.eventName == eventName && e.eventDate == eventDate).FirstOrDefault();
         }
     }
 
@@ -344,7 +344,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            Event existingEvent = context.Events.First(e => e.EventId == _guid);
+            Event existingEvent = context.Events.First(e => e.id == _guid);
             if (existingEvent == null)
             {
                 throw new EventNotFoundException("No Event found with id " + _guid);
@@ -451,10 +451,10 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
 
         Event existingEvent = GetEvent(_id);
-        existingEvent.EventActive = _event.EventActive;
-        existingEvent.EventDate = _event.EventDate;
-        existingEvent.EventName = _event.EventName;
-        existingEvent.Description = _event.Description;
+        existingEvent.eventActive = _event.eventActive;
+        existingEvent.eventDate = _event.eventDate;
+        existingEvent.eventName = _event.eventName;
+        existingEvent.description = _event.description;
 
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
@@ -470,7 +470,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            List<Event> retVal = context.Events.Where(e => e.EventActive).ToList();
+            List<Event> retVal = context.Events.Where(e => e.eventActive).ToList();
 
             return retVal;
         }
@@ -505,7 +505,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
         }
     }
 
-    public ParticipantDTO RegisterForEvent(ParticipantRegistrationRequestDTO _participantRegistrationRequest)
+    public ParticipantForResponseDto RegisterForEvent(ParticipantForCreationDto _participantRegistrationRequest)
     {
 
         if (_participantRegistrationRequest == null)
@@ -525,7 +525,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             throw new BadRequestException("Event not found with ID: " + _participantRegistrationRequest.eventId.ToString());
         }
 
-        var _participant = findParticipantByUserIdAndEventId(user.id, _event.EventId);
+        var _participant = findParticipantByUserIdAndEventId(user.id, _event.id);
         if (_participant != null)
         {
             throw new ArgumentException("User is already registered for this event.");
@@ -538,7 +538,7 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
 
             Participant participant = new Participant();
             participant.user = _user;
-            participant._event = _event.EventId;
+            participant._event = _event.id;
             participant.wantsMeal = _participantRegistrationRequest.wantsMeal;
             participant.allergies = _user.allergies;
 
@@ -546,9 +546,9 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
             context.SaveChanges();
         }
 
-        DateTime dateTime = new DateTime(_event.EventDate.Ticks);
+        DateTime dateTime = new DateTime(_event.eventDate.Ticks);
 
-        ParticipantDTO retVal = new ParticipantDTO(returnParticipant.participant_id, user.id, _event.EventId, dateTime, _participantRegistrationRequest.wantsMeal, user.allergies);
+        ParticipantForResponseDto retVal = new ParticipantDTO(returnParticipant.participant_id, user.id, _event.id, dateTime, _participantRegistrationRequest.wantsMeal, user.allergies);
 
         return retVal;
     }
@@ -571,3 +571,4 @@ public class EventFoodOrdersApi(ILogger<EventFoodOrdersApi> logger, IDbContextFa
     }
 
 }
+*/

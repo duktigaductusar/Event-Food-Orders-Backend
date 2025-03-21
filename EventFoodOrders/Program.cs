@@ -1,5 +1,3 @@
-using AutoMapper;
-using EventFoodOrders.Api;
 using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Data;
 using EventFoodOrders.Interfaces;
@@ -108,11 +106,12 @@ public class Program
         
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
-        builder.Services.AddTransient<IEventFoodOrdersApi, EventFoodOrdersApi>();
 
+        builder.Services.AddTransient<CustomAutoMapper>();
         builder.Services.AddTransient<EventService>();
         builder.Services.AddTransient<EventRepository>();
-        builder.Services.AddTransient<CustomAutoMapper>();
+        builder.Services.AddTransient<ParticipantService>();
+        builder.Services.AddTransient<ParticipantRepository>();
 
 
         if (isDevelopment)
