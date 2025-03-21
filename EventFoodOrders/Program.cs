@@ -85,15 +85,6 @@ public class Program
 
         app.UseAuthorization();
 
-        if (isDevelopment)
-        {
-            app.UsePathBase("/efobackend");
-        }
-        else
-        {
-            app.UsePathBase("");
-        }
-
         app.MapControllers();
 
         app.Run();

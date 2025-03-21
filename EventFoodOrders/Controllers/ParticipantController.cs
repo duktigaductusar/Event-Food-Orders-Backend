@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EventFoodOrders.Controllers;
 
 [ApiController]
-[Route("/api/")]
+[Route("/api/participant")]
 public class ParticipantController(ILogger<ParticipantController> logger, ParticipantService participantService, EventService eventService) : ControllerBase
 {
     private readonly ILogger<ParticipantController> _logger = logger;
@@ -13,7 +13,7 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
     private readonly ParticipantService _participantService = participantService;
 
     [HttpPost]
-    [Route("[controller]/{eventId}/new")]
+    [Route("{eventId}")]
     public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(string eventId, ParticipantForCreationDto newParticipant)
     {
         ParticipantForResponseDto response;
@@ -31,7 +31,7 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
     }
 
     [HttpPut]
-    [Route("[controller]/update/{participantId}")]
+    [Route("{participantId}")]
     public ActionResult<ParticipantForResponseDto> UpdateParticipant(string participantId, ParticipantForUpdateDto participantToUpdate)
     {
         ParticipantForResponseDto response = _participantService.UpdateParticipant(participantId, participantToUpdate);
@@ -40,8 +40,8 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
     }
 
     [HttpDelete]
-    [Route("[controller]/delete/{eventId}/{participantId}")]
-    public ActionResult<bool> DeleteParticipant(string eventId, string participantId)
+    [Route("{participantId}")]
+    public ActionResult<bool> DeleteParticipant(string participantId)
     {
         bool response = _participantService.DeleteParticipant(participantId);
 
@@ -50,7 +50,7 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
 
     [HttpGet]
     //[Route("/get/{userId}/{eventId}")]
-    [Route("[controller]/get/{eventId}/{participantId}")]
+    [Route("{participantId}")]
     public ActionResult<ParticipantForResponseDto> GetSingleParticipantInEvent(string eventId, string participantId)
     {
         ParticipantForResponseDto response;
@@ -69,7 +69,7 @@ public class ParticipantController(ILogger<ParticipantController> logger, Partic
 
     [HttpGet]
     //[Route("/get/{userId}/all")]
-    [Route("[controller]/get/{userId}/{eventId}/all")]
+    [Route("{eventId}/all")]
     public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(string userId, string eventId)
     {
         IEnumerable <ParticipantForResponseDto> response;

@@ -5,14 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace EventFoodOrders.Controllers;
 
 [ApiController]
-[Route("/api/")]
+[Route("/api/event")]
 public class EventController(ILogger<EventController> logger, EventService service) : ControllerBase
 {
     private readonly ILogger<EventController> _logger = logger;
     private readonly EventService _service = service;
 
     [HttpPost]
-    [Route("[controller]/new")]
     public ActionResult<EventForResponseDto> CreateEvent(string userId, EventForCreationDto newEvent)
     {
         EventForResponseDto response = _service.CreateEvent(userId, newEvent);
@@ -21,7 +20,7 @@ public class EventController(ILogger<EventController> logger, EventService servi
     }
 
     [HttpPut]
-    [Route("[controller]/update/{eventId}")]
+    [Route("{eventId}")]
     public ActionResult<EventForResponseDto> UpdateEvent(string eventId, EventForUpdateDto eventToUpdate)
     {
         try { Guid.Parse(eventId); }
@@ -39,7 +38,7 @@ public class EventController(ILogger<EventController> logger, EventService servi
     }
 
     [HttpDelete]
-    [Route("[controller]/delete/{eventId}")]
+    [Route("{eventId}")]
     public ActionResult<bool> DeleteEvent(string eventId)
     {
         try { Guid.Parse(eventId); }
@@ -61,7 +60,7 @@ public class EventController(ILogger<EventController> logger, EventService servi
 
     [HttpGet]
     //[Route("/get/{userId}/{eventId}")]
-    [Route("[controller]/get/{eventId}")]
+    [Route("{eventId}")]
     public ActionResult<EventForResponseWithDetailsDto> GetSingleEventForUser(string eventId, string userId)
     {
         try { Guid.Parse(userId); }
@@ -83,7 +82,7 @@ public class EventController(ILogger<EventController> logger, EventService servi
 
     [HttpGet]
     //[Route("/get/{userId}/all")]
-    [Route("[controller]/get/all")]
+    [Route("all")]
     public ActionResult<IEnumerable<EventForResponseDto>> GetAllEventsForUser()
     {
         //ToDo: Update how the controller gets the user id, this is a temp Guid as string
