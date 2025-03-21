@@ -9,6 +9,10 @@ public class AutoMapperParticipantProfile: Profile
 {
     public AutoMapperParticipantProfile()
     {
+        CreateMap<ParticipantForCreationDto, ParticipantForCreationObject>();
+        CreateMap<ParticipantForUpdateDto, ParticipantForUpdateObject>();
+
+        // ToDo: Evaluate if needed?
         CreateMap<ParticipantForCreationDto, Participant>()
             .AfterMap((src, dest) => dest.ResponseType = ReType.Pending);
 

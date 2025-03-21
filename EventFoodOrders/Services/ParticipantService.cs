@@ -16,6 +16,7 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
     {
        Event desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == eventId);
 
+        //Participant participant = _mapper.MapToParticipantFromCreationDto(eventId, newParticipant);
         Participant participant = _mapper.MapToParticipantFromCreationDto(eventId, newParticipant);
         _participantRepository.AddParticipant(participant);
 
@@ -26,7 +27,7 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
     {
         Participant participant = _participantRepository.GetParticipant(participantId);
         participant = _mapper.MapToParticipantFromUpdateDto(participant, updatedParticipantDto);
-        participant = _participantRepository.UpdateParticipant(participantId, participant);
+        _participantRepository.UpdateParticipant(participantId, participant);
 
         return _mapper.Map<ParticipantForResponseDto>(participant);
     }

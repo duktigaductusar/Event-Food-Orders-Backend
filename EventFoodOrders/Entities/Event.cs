@@ -9,6 +9,7 @@ public class Event
 {
     public Event()
     {
+        Id = Guid.NewGuid();
         Title = "TITLE_MISSING";
         Participants = [];
     }

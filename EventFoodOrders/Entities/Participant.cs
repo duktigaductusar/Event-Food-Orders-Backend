@@ -9,23 +9,15 @@ public class Participant
 {
     public Participant()
     {
+        Id = Guid.NewGuid();
         Name = "NAME_MISSING";
         ResponseType = ReType.Pending;
     }
 
-    public Participant(Guid userId, Guid eventId)
+    public Participant(Guid userId, Guid eventId): base()
     {
-        Id = Guid.NewGuid();
-
         UserId = userId;
         EventId = eventId;
-
-        if (Name == string.Empty || Name is null)
-        {
-            Name = "NAME_MISSING";
-        }
-        
-        ResponseType = ReType.Pending;
         WantsMeal = false;
         Allergies = [];
         Preferences = [];

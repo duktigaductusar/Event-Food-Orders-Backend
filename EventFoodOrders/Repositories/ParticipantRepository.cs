@@ -21,14 +21,12 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         return participant;
     }
 
-    public Participant UpdateParticipant(string participantId, Participant updatedParticipant)
+    public Participant UpdateParticipant(Guid participantId, Participant updatedParticipant)
     {
-        Guid id = Guid.Parse(participantId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participantToUpdate = context.Participants
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == participantId)
                 .FirstOrDefault();
 
             if (participantToUpdate is Participant)
@@ -43,14 +41,12 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         return updatedParticipant;
     }
 
-    public void DeleteParticipant(string participantId)
+    public void DeleteParticipant(Guid participantId)
     {
-        Guid id = Guid.Parse(participantId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participantToUpdate = context.Participants
-                .Where(e => e.Id == id)
+                .Where(e => e.Id == participantId)
                 .FirstOrDefault();
 
             if (participantToUpdate is Participant)
@@ -63,10 +59,8 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         }
     }
 
-    internal Participant GetParticipant(string participantId)
+    internal Participant GetParticipant(Guid participantId)
     {
-        Guid id = Guid.Parse(participantId);
-
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participant = context.Participants
