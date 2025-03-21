@@ -66,10 +66,6 @@ public class AuthorizationController : ControllerBase
         
         var logoutUrl = $"https:login.microsoftonline.com/{Environment.GetEnvironmentVariable("AzureAd__TenantId")}/oauth2/v2.0/logout?post_logout_redirect_uri=localhost:4200/login";
         return Redirect(logoutUrl);
-
-        // return SignOut(new AuthenticationProperties { RedirectUri = "/login" },
-        //     CookieAuthenticationDefaults.AuthenticationScheme,
-        //     OpenIdConnectDefaults.AuthenticationScheme);
     }
 
     [HttpGet("[controller]/status")]

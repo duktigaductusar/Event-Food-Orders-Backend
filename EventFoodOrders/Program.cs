@@ -75,7 +75,7 @@ public class Program
                 options.Scope.Add("https://graph.microsoft.com/Mail.Send");
             });
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+            .AddJwtBearer("Jwt", options =>
             {
                 options.Events = new JwtBearerEvents
                 {
@@ -98,8 +98,8 @@ public class Program
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
                     ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
                 };
             });
         builder.Services.AddScoped<IJwtUtility, JwtUtility>();
