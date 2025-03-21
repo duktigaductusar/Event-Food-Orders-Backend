@@ -3,6 +3,11 @@
 # Learn more about .gitignore:
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
+
+#Files we who don't know what we are doing have added
+global.json
+.env
+
 # Node artifact files
 node_modules/
 dist/
