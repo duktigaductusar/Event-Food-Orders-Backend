@@ -146,18 +146,9 @@ public class Program
 
         var app = builder.Build();
         app.UseDataSeedExtension();
-        app.UseRouting();
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.UseSession();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
-        
         if (isDevelopment)
         {
-            app.UseCors("AngularFontendDEV");
+            app.UseCors("FrontendDEV");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -168,6 +159,14 @@ public class Program
         {
             app.UseCors("AngularFontendProd");
         }
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseSession();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
 
 
         // Configure the HTTP request pipeline.
