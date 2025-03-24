@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using EventFoodOrders.Extensions;
 using EventFoodOrders.Middleware;
 
 namespace EventFoodOrders;
@@ -165,7 +166,7 @@ public class Program
 
         if (isDevelopment)
         {
-            app.UseCors("AngularFontendDEV");
+            app.UseCors("FrontendDEV");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
