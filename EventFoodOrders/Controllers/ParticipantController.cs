@@ -1,3 +1,4 @@
+using Azure;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,8 @@ public class ParticipantController(ParticipantService participantService) : Cont
     [Route("{eventId}")]
     public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant)
     {
-        ParticipantForResponseDto response;
-
-        try
-        {
-            response = _participantService.AddParticipantToEvent(eventId, newParticipant);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-
-        return Ok(response);
+        ParticipantForResponseDto response = _participantService.AddParticipantToEvent(eventId, newParticipant);
+        return Created(uri: "", value: response);
     }
 
     [HttpPut]
@@ -33,7 +24,6 @@ public class ParticipantController(ParticipantService participantService) : Cont
     public ActionResult<ParticipantForResponseDto> UpdateParticipant(Guid participantId, ParticipantForUpdateDto participantToUpdate)
     {
         ParticipantForResponseDto response = _participantService.UpdateParticipant(participantId, participantToUpdate);
-
         return Ok(response);
     }
 
@@ -42,7 +32,6 @@ public class ParticipantController(ParticipantService participantService) : Cont
     public ActionResult<bool> DeleteParticipant(Guid participantId)
     {
         bool response = _participantService.DeleteParticipant(participantId);
-
         return Ok(response);
     }
 
@@ -51,17 +40,7 @@ public class ParticipantController(ParticipantService participantService) : Cont
     [Route("{participantId}")]
     public ActionResult<ParticipantForResponseDto> GetSingleParticipantInEvent(Guid eventId, Guid participantId)
     {
-        ParticipantForResponseDto response;
-
-        try
-        {
-            response = _participantService.GetParticipant(participantId, eventId);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-
+        ParticipantForResponseDto response = _participantService.GetParticipant(participantId, eventId);
         return Ok(response);
     }
 
@@ -70,28 +49,7 @@ public class ParticipantController(ParticipantService participantService) : Cont
     [Route("{eventId}/all")]
     public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(Guid userId, Guid eventId)
     {
-        IEnumerable <ParticipantForResponseDto> response;
-
-        try
-        {
-            response = _participantService.GetAllParticipantsForEvent(userId, eventId);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-
+        IEnumerable <ParticipantForResponseDto> response = _participantService.GetAllParticipantsForEvent(userId, eventId);
         return Ok(response);
     }
-    //ToDo: Remove unused?
-    /*
-    [HttpGet]
-    //[Route("/get/{userId}/all")]
-    [Route("{userId}/all")]
-    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsForUser(string userId)
-    {
-        IEnumerable<ParticipantForResponseDto> response = _participantService.GetAllParticipantsForUser(userId);
-
-        return Ok(response);
-    }*/
 }

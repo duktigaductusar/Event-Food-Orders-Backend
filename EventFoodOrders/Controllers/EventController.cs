@@ -14,7 +14,7 @@ public class EventController(EventService service) : ControllerBase
     public ActionResult<EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto newEvent)
     {
         EventForResponseDto response = _service.CreateEvent(userId, newEvent);
-        return Ok(response);
+        return Created(uri: "", value: response);
     }
 
     [HttpPut]
@@ -29,17 +29,7 @@ public class EventController(EventService service) : ControllerBase
     [Route("{eventId}")]
     public ActionResult<bool> DeleteEvent(Guid eventId)
     {
-        bool response = false;
-
-        try
-        {
-            response = _service.DeleteEvent(eventId);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-
+        bool response = _service.DeleteEvent(eventId);
         return Ok(response);
     }
 
@@ -48,15 +38,8 @@ public class EventController(EventService service) : ControllerBase
     [Route("{eventId}")]
     public ActionResult<EventForResponseWithDetailsDto> GetSingleEventForUser(Guid eventId, Guid userId)
     {
-        try
-        {
-            EventForResponseWithDetailsDto response = _service.GetEventForUser(userId, eventId);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        EventForResponseWithDetailsDto response = _service.GetEventForUser(userId, eventId);
+        return Ok(response);
     }
 
     [HttpGet]
