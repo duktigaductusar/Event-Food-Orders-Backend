@@ -13,8 +13,8 @@ public class Participant
         Name = "NAME_MISSING";
         ResponseType = ReType.Pending;
         WantsMeal = false;
-        Allergies = [];
-        Preferences = [];
+        Allergies = "";
+        Preferences = "";
     }
 
     public Participant(Guid userId, Guid eventId)
@@ -50,8 +50,8 @@ public class Participant
     public bool WantsMeal { get; set; }
 
     [Column("allergies")]
-    public string[]? Allergies { get; set; }
+    public string? Allergies { get; set; }
 
     [Column("preferences")]
-    public string[]? Preferences { get; set; }
+    public string? Preferences { get; set; }
 }

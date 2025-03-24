@@ -15,6 +15,6 @@ public record EventForResponseWithDetailsDto
     public required bool IsOwner { get; set; }
     public required string ResponseType { get; set; }
     public required bool WantsMeal { get; set; }
-    public required string[] Allergies { get; set; }
-    public required string[] Preferences { get; set; }
+    public required string Allergies { get; set; }
+    public required string Preferences { get; set; }
 }
