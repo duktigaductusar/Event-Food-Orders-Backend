@@ -1,24 +1,16 @@
 ﻿namespace EventFoodOrders.Exceptions;
 
-public class EventNotFoundException : Exception
+public class EventNotFoundException : CustomException
 {
     public EventNotFoundException() :
-        base("Event not found.")
+        base(StatusCodes.Status400BadRequest, message: "Event not found.")
+    { }
+
+    public EventNotFoundException(string message = "Event not found.") :
+        base(StatusCodes.Status400BadRequest, message: message)
     { }
 
     public EventNotFoundException(Guid eventId) :
-        base($"Event with id {eventId} not found.")
-    { }
-
-    public EventNotFoundException(string eventId) :
-        base($"Event with id {eventId} not found.")
-    { }
-
-    public EventNotFoundException(Guid eventId, Exception innerException) :
-        base($"Event with id {eventId} not found.", innerException)
-    { }
-
-    public EventNotFoundException(string eventId, Exception innerException) :
-        base($"Event with id {eventId} not found.", innerException)
+        this(message: $"Event with id {eventId} not found.")
     { }
 }

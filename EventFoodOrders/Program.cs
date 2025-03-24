@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using EventFoodOrders.Middleware;
 
 namespace EventFoodOrders;
 
@@ -145,15 +146,17 @@ public class Program
 
         var app = builder.Build();
 
+        app.UseCustomExceptionHandler();
+
         // Error handling
         // Hsts for security
         if (isDevelopment)
         {
-            app.UseDeveloperExceptionPage();
+            //app.UseDeveloperExceptionPage();
         }
         else
         {
-            app.UseExceptionHandler();
+            //app.UseExceptionHandler();
             //app.UseHsts();
         }
 

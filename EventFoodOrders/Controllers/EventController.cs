@@ -22,15 +22,15 @@ public class EventController(EventService service) : ControllerBase
     [Route("{eventId}")]
     public ActionResult<EventForResponseDto> UpdateEvent(Guid eventId, EventForUpdateDto eventToUpdate)
     {
-        try
-        {
+        //try
+        //{
             EventForResponseDto response = _service.UpdateEvent(eventId, eventToUpdate);
             return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        //}
+        //catch (Exception ex)
+        //{
+        //    return BadRequest(ex.Message);
+        //}
     }
 
     [HttpDelete]
