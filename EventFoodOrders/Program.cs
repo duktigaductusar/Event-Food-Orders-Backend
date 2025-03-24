@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using EventFoodOrders.Extensions;
 
 namespace EventFoodOrders;
 
@@ -144,7 +145,7 @@ public class Program
         }
 
         var app = builder.Build();
-
+        app.UseDataSeedExtension();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
