@@ -14,7 +14,6 @@ public class EventController(EventService service) : ControllerBase
     public ActionResult<EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto newEvent)
     {
         EventForResponseDto response = _service.CreateEvent(userId, newEvent);
-
         return Ok(response);
     }
 
@@ -22,15 +21,8 @@ public class EventController(EventService service) : ControllerBase
     [Route("{eventId}")]
     public ActionResult<EventForResponseDto> UpdateEvent(Guid eventId, EventForUpdateDto eventToUpdate)
     {
-        //try
-        //{
-            EventForResponseDto response = _service.UpdateEvent(eventId, eventToUpdate);
-            return Ok(response);
-        //}
-        //catch (Exception ex)
-        //{
-        //    return BadRequest(ex.Message);
-        //}
+        EventForResponseDto response = _service.UpdateEvent(eventId, eventToUpdate);
+        return Ok(response);
     }
 
     [HttpDelete]
