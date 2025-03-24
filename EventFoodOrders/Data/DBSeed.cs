@@ -89,16 +89,23 @@ public static class DBSeed
 
         var faker = new Faker("sv");
 
+        List<Guid> userIds = [];
+
+        for (int i = 0; i < 50; i++)
+        {
+            userIds.Add(Guid.NewGuid());
+        }
+
         var eventFaker = new Faker<Event>()
             .CustomInstantiator(f =>
             {
-                var ownerId = Guid.NewGuid();
+                var ownerId = userIds.ElementAt(faker.Random.Int(0, userIds.Count - 1));
                 return new Event(ownerId)
                 {
                     Title = f.PickRandom(eventTitles),
                     Description = f.PickRandom(eventDescripotions),
                     Date = f.Date.FutureOffset(2),
-                    Deadline = f.Date.FutureOffset(1),
+                    Deadline = f.Date.FutureOffset(1)
                 };
             });
 
@@ -113,8 +120,8 @@ public static class DBSeed
                 Name = faker.Name.FullName(),
                 ResponseType = faker.PickRandom(Utility.PossibleResponses),
                 WantsMeal = faker.Random.Bool(),
-                Allergies = [.. faker.Random.ArrayElements(allergies, faker.Random.Int(0, 2))],
-                Preferences = [.. faker.Random.ArrayElements(preferences, faker.Random.Int(0, 2))]
+                Allergies = allergies[faker.Random.Int(0, allergies.Length - 1)],
+                Preferences = preferences[faker.Random.Int(0, preferences.Length - 1)]
             };
 
             participants.Add(ownerParticipant);
@@ -122,14 +129,14 @@ public static class DBSeed
             var participantFaker = new Faker<Participant>()
                 .CustomInstantiator(f =>
                 {
-                    var userId = Guid.NewGuid();
+                    var userId = userIds.ElementAt(faker.Random.Int(0, userIds.Count - 1));
                     return new Participant(userId, ev.Id)
                     {
                         Name = f.Name.FullName(),
                         ResponseType = f.PickRandom(Utility.PossibleResponses),
                         WantsMeal = f.Random.Bool(),
-                        Allergies = [.. f.Random.ArrayElements(allergies, f.Random.Int(0, 2))],
-                        Preferences = [.. f.Random.ArrayElements(preferences, f.Random.Int(0, 2))]
+                        Allergies = allergies[faker.Random.Int(0, allergies.Length - 1)],
+                        Preferences = preferences[faker.Random.Int(0, preferences.Length - 1)]
                     };
                 });
 

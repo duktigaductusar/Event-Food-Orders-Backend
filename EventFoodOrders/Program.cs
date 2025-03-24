@@ -145,7 +145,9 @@ public class Program
         }
 
         var app = builder.Build();
+
         app.UseDataSeedExtension();
+
         if (isDevelopment)
         {
             app.UseCors("FrontendDEV");

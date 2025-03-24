@@ -67,8 +67,8 @@ public static class AutoMapperExtensions
                 dest.IsOwner = srcParticipant.Id == srcEvent.OwnerId;
                 dest.ResponseType = srcParticipant.ResponseType;
                 dest.WantsMeal = srcParticipant.WantsMeal;
-                dest.Allergies = srcParticipant.Allergies ?? [""];
-                dest.Preferences = srcParticipant.Preferences ?? [""];
+                dest.Allergies = srcParticipant.Allergies ?? "";
+                dest.Preferences = srcParticipant.Preferences ?? "";
             }
         ));
 
