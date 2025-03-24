@@ -33,7 +33,7 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
             {
                 UpdateParticipantEntity(participantToUpdate, updatedParticipant);
             }
-            else throw new NullReferenceException($"A participant with id {participantId} does not exist.");
+            else throw new ParticipantNotFoundException(participantId);
 
             context.SaveChanges();
         }
@@ -53,7 +53,7 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
             {
                 context.Remove(participantToUpdate);
             }
-            else throw new NullReferenceException($"A participant with id {participantId} does not exist.");
+            else throw new ParticipantNotFoundException(participantId);
 
             context.SaveChanges();
         }
@@ -72,7 +72,7 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
             {
                 return participant;
             }
-            else throw new NullReferenceException($"A participant with id {participantId} does not exist.");
+            else throw new ParticipantNotFoundException(participantId);
         }
     }
 
