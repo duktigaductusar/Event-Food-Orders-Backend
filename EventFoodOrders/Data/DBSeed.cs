@@ -108,7 +108,7 @@ public static class DBSeed
                 };
             });
 
-        var events = eventFaker.Generate(100);
+        var events = eventFaker.Generate(20);
 
         var participants = new List<Participant>();
 
@@ -139,7 +139,7 @@ public static class DBSeed
                     };
                 });
 
-            var generatedParticipants = participantFaker.Generate(faker.Random.Int(3, 40));
+            var generatedParticipants = participantFaker.Generate(faker.Random.Int(3, 10));
             participants.AddRange(generatedParticipants);
         }
 

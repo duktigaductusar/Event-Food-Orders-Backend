@@ -71,7 +71,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
 
             if (eventToFind is Event)
             {
-                if (eventToFind.Participants.Where(p => p.Id == userId).Any())
+                if (eventToFind.Participants.Where(p => p.UserId == userId).Any())
                 {
                     return eventToFind;
                 }
@@ -95,13 +95,17 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         }
     }
 
-    internal Event GetSingleEventWithCondition(Func<Event, bool> condition)
+    internal Event? GetSingleEventWithCondition(Func<Event, bool> condition)
     {
-        Event result;
+        Event? result;
 
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            result = GetSingleWithCondition(context.Events, condition);
+            result = context.Events
+                .AsNoTracking()
+                .Include(e => e.Participants)
+                .Where(condition)
+                .FirstOrDefault();
         }
 
         return result;
