@@ -2,16 +2,16 @@
 using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Entities;
-using EventFoodOrders.Repositories;
+using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Services;
 
-public class EventService(EventRepository eventRepository, IParticipantService participantService, ParticipantRepository participantRepository, CustomAutoMapper mapper) : IEventService
+public class EventService(IParticipantService participantService, IUoW uoW, ICustomAutoMapper mapper) : IEventService
 {
-    private readonly EventRepository _eventRepository = eventRepository;
+    private readonly IEventRepository _eventRepository = uoW.EventRepository;
+    private readonly IParticipantRepository _participantRepository = uoW.ParticipantRepository;
     private readonly IParticipantService _participantService = participantService;
-    private readonly ParticipantRepository _participantRepository = participantRepository;
     private readonly IMapper _mapper = mapper.Mapper;
 
     public EventForResponseDto CreateEvent(Guid userId, EventForCreationDto eventForCreation)

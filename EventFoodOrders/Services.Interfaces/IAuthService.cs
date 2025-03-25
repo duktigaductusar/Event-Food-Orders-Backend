@@ -1,6 +1,6 @@
 ﻿using EventFoodOrders.security;
 
-namespace EventFoodOrders.Interfaces;
+namespace EventFoodOrders.Services.Interfaces;
 
 public interface IAuthService
 {
