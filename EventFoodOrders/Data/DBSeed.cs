@@ -16,9 +16,7 @@ public static class DBSeed
         "Fisk",
         "Soja",
         "Selleri",
-        "Sesamfrön",
-        "KunskapsSem",
-        "KompetensStaffet"
+        "Sesamfrön"
     ];
 
     private static readonly string[] preferences = [
