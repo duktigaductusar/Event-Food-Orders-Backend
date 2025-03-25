@@ -164,6 +164,8 @@ public class Program
         app.UseHttpsRedirection();
         app.UseRouting();
 
+        app.UseDataSeedExtension();
+
         if (isDevelopment)
         {
             app.UseCors("FrontendDEV");
