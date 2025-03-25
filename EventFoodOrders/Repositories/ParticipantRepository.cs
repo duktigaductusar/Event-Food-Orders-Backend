@@ -9,7 +9,7 @@ namespace EventFoodOrders.Repositories;
 public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) :
     RepositoryBase<Participant, ParticipantNotFoundException>, IParticipantRepository
 {
-    private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
+    private readonly IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
     public Participant AddParticipant(Participant participant)
     {
@@ -60,17 +60,17 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         }
     }
 
-    internal Participant? GetParticipantWithParticipantId(Guid participantId)
+    public Participant? GetParticipantWithParticipantId(Guid participantId)
     {
         return GetParticipant(p => p.Id == participantId, participantId);
     }
 
-    internal Participant? GetParticipantWithUserId(Guid userId)
+    public Participant? GetParticipantWithUserId(Guid userId)
     {
         return GetParticipant(p => p.UserId == userId, userId);
     }
 
-    internal IEnumerable<Participant> GetAllParticipantsForUser(Guid userId)
+    public IEnumerable<Participant> GetAllParticipantsForUser(Guid userId)
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {

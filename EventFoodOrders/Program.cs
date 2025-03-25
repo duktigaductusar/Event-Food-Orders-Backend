@@ -14,6 +14,7 @@ using System.Text;
 using EventFoodOrders.Extensions;
 using EventFoodOrders.Middleware;
 using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Repositories.Interfaces;
 
 namespace EventFoodOrders;
 
@@ -42,7 +43,12 @@ public class Program
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IParticipantService, ParticipantService>();
         builder.Services.AddScoped<IEventService, EventService>();
+
+        builder.Services.AddScoped<IEventRepository, EventRepository>();
+        builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
+
         builder.Services.AddScoped<IServiceManager, ServiceManager>();
+        builder.Services.AddScoped<CustomAutoMapper>();
 
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession(options =>
@@ -113,9 +119,6 @@ public class Program
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
 
-        builder.Services.AddScoped<CustomAutoMapper>();
-        builder.Services.AddScoped<EventRepository>();
-        builder.Services.AddScoped<ParticipantRepository>();
 
 
         if (isDevelopment)

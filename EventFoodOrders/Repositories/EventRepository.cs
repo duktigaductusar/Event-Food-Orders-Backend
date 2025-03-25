@@ -96,7 +96,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         }
     }
 
-    internal Event? GetSingleEventWithCondition(Func<Event, bool> condition)
+    public Event? GetSingleEventWithCondition(Func<Event, bool> condition)
     {
         Event? result;
 
