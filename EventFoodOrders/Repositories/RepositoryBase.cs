@@ -5,7 +5,7 @@ namespace EventFoodOrders.Repositories;
 
 public class RepositoryBase<T, Q>()
     where T : class
-    where Q : Exception, new()
+    where Q : CustomException, new()
 {
     private readonly ExceptionStandIn<Q> _exception = new();
 

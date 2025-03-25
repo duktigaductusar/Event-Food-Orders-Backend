@@ -1,6 +1,6 @@
 ﻿namespace EventFoodOrders.Exceptions;
 
-public class ExceptionStandIn<T> where T : Exception, new()
+public class ExceptionStandIn<T> where T : CustomException, new()
 {
     internal void ThrowDefaultException()
     {

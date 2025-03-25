@@ -1,9 +1,8 @@
 ﻿using Bogus;
-using EventFoodOrders.Data;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Utilities;
 
-namespace EventFoodOrders.Seed;
+namespace EventFoodOrders.Data;
 
 public static class DBSeed
 {

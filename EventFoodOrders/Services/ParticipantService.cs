@@ -2,6 +2,7 @@
 using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Entities;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.Repositories;
 
 namespace EventFoodOrders.Services;
@@ -14,9 +15,8 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
 
     public ParticipantForResponseDto AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant)
     {
-       Event desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == eventId);
+        Event desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == eventId);
 
-        //Participant participant = _mapper.MapToParticipantFromCreationDto(eventId, newParticipant);
         Participant participant = _mapper.MapToParticipantFromCreationDto(eventId, newParticipant);
         _participantRepository.AddParticipant(participant);
 
@@ -48,7 +48,7 @@ public class ParticipantService(ParticipantRepository repository, EventRepositor
 
         if (participant is null)
         {
-            throw new ArgumentException($"No participant with id {userId} exists for event with id {eventId}.");
+            throw new ParticipantNotFoundInEventException(userId, eventId);
         }
 
         return _mapper.Map<ParticipantForResponseDto>(participant);

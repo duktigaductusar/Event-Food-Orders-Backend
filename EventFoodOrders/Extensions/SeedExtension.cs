@@ -1,5 +1,4 @@
 ﻿using EventFoodOrders.Data;
-using EventFoodOrders.Seed;
 
 namespace EventFoodOrders.Extensions;
 

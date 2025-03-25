@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using EventFoodOrders.Extensions;
+using EventFoodOrders.Middleware;
 
 namespace EventFoodOrders;
 
@@ -146,6 +147,23 @@ public class Program
 
         var app = builder.Build();
 
+        app.UseCustomExceptionHandler();
+
+        // Error handling
+        // Hsts for security
+        if (isDevelopment)
+        {
+            //app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            //app.UseExceptionHandler();
+            //app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseRouting();
+
         app.UseDataSeedExtension();
 
         if (isDevelopment)
@@ -161,20 +179,15 @@ public class Program
         {
             app.UseCors("AngularFontendProd");
         }
-        app.UseRouting();
+
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseSession();
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
         });
-
-
-        // Configure the HTTP request pipeline.
-
-        app.UseHttpsRedirection();
-
 
         app.MapControllers();
 
