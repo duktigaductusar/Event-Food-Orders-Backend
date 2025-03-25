@@ -14,6 +14,7 @@ using System.Text;
 using EventFoodOrders.Extensions;
 using EventFoodOrders.Middleware;
 using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Interfaces;
 
 namespace EventFoodOrders;
 
@@ -38,7 +39,12 @@ public class Program
         Env.Load();
         builder.Configuration.AddEnvironmentVariables();
         builder.Services.AddHttpClient();
+
+        builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IParticipantService, ParticipantService>();
+        builder.Services.AddScoped<IEventService, EventService>();
         builder.Services.AddScoped<IServiceManager, ServiceManager>();
+
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession(options =>
         {
