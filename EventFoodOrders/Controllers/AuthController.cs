@@ -3,28 +3,18 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using EventFoodOrders.security;
+using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using IAuthorizationService = EventFoodOrders.Interfaces.IAuthorizationService;
 
 namespace EventFoodOrders.Controllers;
 
 [ApiController]
 [Route("api/")]
-public class AuthorizationController : ControllerBase
+public class AuthController(IServiceManager serviceManager, IJwtUtility jwtUtility, IWebHostEnvironment env) : ControllerBase
 {
-    private readonly IAuthorizationService _authService;
+    private readonly IAuthService _authService = serviceManager.AuthService;
     private readonly IJwtUtility _jwtUtility;
     private readonly IWebHostEnvironment _env;
-    private readonly IAccessTokenStore _store;
-    
-
-    public AuthorizationController(IAuthorizationService authService, IJwtUtility jwtUtility, IWebHostEnvironment env, IAccessTokenStore store)
-    {
-        _authService = authService;
-        _jwtUtility = jwtUtility;
-        _env = env;
-        _store = store;
-    }
 
     [HttpGet("[controller]/login")]
     public IActionResult Login()
@@ -48,7 +38,7 @@ public class AuthorizationController : ControllerBase
         {
             return BadRequest("Parsing to Guid failed or returned null.");
         }
-        _store.Save(userGuid, authResponse.accessToken);
+        
         string userEmail = authResponse.Email;
         
         var jwt = _jwtUtility.GenerateJwt(userId, userEmail);
