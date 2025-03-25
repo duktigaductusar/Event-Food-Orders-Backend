@@ -88,17 +88,22 @@ public static class DBSeed
 
         var faker = new Faker("sv");
 
-        List<Guid> userIds = [];
+        List<SeedUser> seedUsers = new();
 
         for (int i = 0; i < 50; i++)
         {
-            userIds.Add(Guid.NewGuid());
+            seedUsers.Add(new SeedUser(
+                Guid.NewGuid(),
+                faker.Name.FullName(),
+                allergies[faker.Random.Int(0, allergies.Length - 1)],
+                preferences[faker.Random.Int(0, preferences.Length - 1)]
+            ));
         }
 
         var eventFaker = new Faker<Event>()
             .CustomInstantiator(f =>
             {
-                var ownerId = userIds.ElementAt(faker.Random.Int(0, userIds.Count - 1));
+                var ownerId = seedUsers.ElementAt(faker.Random.Int(0, seedUsers.Count - 1)).UserId;
                 return new Event(ownerId)
                 {
                     Title = f.PickRandom(eventTitles),
@@ -108,19 +113,20 @@ public static class DBSeed
                 };
             });
 
-        var events = eventFaker.Generate(20);
+        var events = eventFaker.Generate(10);
 
         var participants = new List<Participant>();
 
         foreach (var ev in events)
         {
+            var ownerUser = seedUsers.Find(u => u.UserId == ev.OwnerId);
             var ownerParticipant = new Participant(ev.OwnerId, ev.Id)
             {
-                Name = faker.Name.FullName(),
+                Name = ownerUser.Name,
                 ResponseType = faker.PickRandom(Utility.PossibleResponses),
                 WantsMeal = faker.Random.Bool(),
-                Allergies = allergies[faker.Random.Int(0, allergies.Length - 1)],
-                Preferences = preferences[faker.Random.Int(0, preferences.Length - 1)]
+                Allergies = ownerUser.Allergies,
+                Preferences = ownerUser.Preferences
             };
 
             participants.Add(ownerParticipant);
@@ -128,14 +134,19 @@ public static class DBSeed
             var participantFaker = new Faker<Participant>()
                 .CustomInstantiator(f =>
                 {
-                    var userId = userIds.ElementAt(faker.Random.Int(0, userIds.Count - 1));
-                    return new Participant(userId, ev.Id)
+                    SeedUser user = seedUsers.ElementAt(faker.Random.Int(0, seedUsers.Count - 1));
+                    while(user.UserId == ev.OwnerId)
                     {
-                        Name = f.Name.FullName(),
+                        user = seedUsers.ElementAt(faker.Random.Int(0, seedUsers.Count - 1));
+                    }
+
+                    return new Participant(user.UserId, ev.Id)
+                    {
+                        Name = user.Name,
                         ResponseType = f.PickRandom(Utility.PossibleResponses),
                         WantsMeal = f.Random.Bool(),
-                        Allergies = allergies[faker.Random.Int(0, allergies.Length - 1)],
-                        Preferences = preferences[faker.Random.Int(0, preferences.Length - 1)]
+                        Allergies = user.Allergies,
+                        Preferences = user.Preferences
                     };
                 });
 
@@ -146,5 +157,13 @@ public static class DBSeed
         context.Events.AddRange(events);
         context.Participants.AddRange(participants);
         context.SaveChanges();
+    }
+
+    private class SeedUser(Guid userId, string name, string allergies, string preferences)
+    {
+        public Guid UserId { get; } = userId;
+        public string Name { get; } = name;
+        public string Allergies { get; } = allergies;
+        public string Preferences { get; } = preferences;
     }
 }
