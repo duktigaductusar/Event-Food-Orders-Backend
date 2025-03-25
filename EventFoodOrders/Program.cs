@@ -103,7 +103,6 @@ public class Program
             });
         builder.Services.AddScoped<IJwtUtility, JwtUtility>();
         builder.Services.AddAuthorization();
-        builder.Services.AddSingleton<IAccessTokenStore, InMemoryAccessTokenStore>();
         // No more auth thingies
         
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>

@@ -7,6 +7,6 @@ namespace EventFoodOrders.Services
     {
         public IEventService EventService { get; set; }
         public IParticipantService ParticipantService { get; set; }
-        public EventFoodOrders.Interfaces.IAuthService AuthorizationService { get; set; }
+        public EventFoodOrders.Interfaces.IAuthService AuthService { get; set; }
     }
 }
