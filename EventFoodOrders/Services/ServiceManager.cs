@@ -1,5 +1,4 @@
-﻿using EventFoodOrders.Interfaces;
-using EventFoodOrders.Services.Interfaces;
+﻿using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Services
 {

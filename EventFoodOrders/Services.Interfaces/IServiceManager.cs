@@ -1,6 +1,4 @@
-﻿using EventFoodOrders.Interfaces;
-
-namespace EventFoodOrders.Services.Interfaces
+﻿namespace EventFoodOrders.Services.Interfaces
 {
     public interface IServiceManager
     {
