@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 
-namespace EventFoodOrders.AutoMapper
+namespace EventFoodOrders.AutoMapper;
+
+/// <summary>
+/// Retrieves a pre-configured IMapper.
+/// </summary>
+public interface ICustomAutoMapper
 {
-    public interface ICustomAutoMapper
-    {
-        IMapper Mapper { get; }
-    }
+    IMapper Mapper { get; }
 }
