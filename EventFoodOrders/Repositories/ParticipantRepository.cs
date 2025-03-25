@@ -59,21 +59,14 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         }
     }
 
-    internal Participant GetParticipant(Guid participantId)
+    internal Participant? GetParticipantWithParticipantId(Guid participantId)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
-        {
-            Participant? participant = context.Participants
-                .Where(p => p.Id == participantId)
-                .AsNoTracking()
-                .FirstOrDefault();
+        return GetParticipant(p => p.Id == participantId, participantId);
+    }
 
-            if (participant is Participant)
-            {
-                return participant;
-            }
-            else throw new ParticipantNotFoundException(participantId);
-        }
+    internal Participant? GetParticipantWithUserId(Guid userId)
+    {
+        return GetParticipant(p => p.UserId == userId, userId);
     }
 
     internal IEnumerable<Participant> GetAllParticipantsForUser(Guid userId)
@@ -95,5 +88,21 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         destination.WantsMeal = source.WantsMeal;
         destination.Allergies = source.Allergies;
         destination.Preferences = source.Preferences;
+    }
+
+    private Participant? GetParticipant(Func<Participant, bool> condition, Guid id)
+    {
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            Participant? participant = context.Participants
+                .Where(condition)
+                .FirstOrDefault();
+
+            if (participant is Participant)
+            {
+                return participant;
+            }
+            return null;
+        }
     }
 }

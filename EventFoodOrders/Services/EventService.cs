@@ -43,7 +43,7 @@ public class EventService(EventRepository eventRepository, ParticipantService pa
     public EventForResponseWithDetailsDto GetEventForUser(Guid userId, Guid eventId)
     {
         Event returnEvent = _eventRepository.GetEventForUser(userId, eventId);
-        Participant eventParticipant = _participantRepository.GetParticipant(userId);
+        Participant eventParticipant = _participantRepository.GetParticipantWithParticipantId(userId);
 
         return _mapper.MapToEventForResponseWithDetailsDto(returnEvent, eventParticipant);
     }
