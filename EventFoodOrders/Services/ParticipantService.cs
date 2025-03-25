@@ -8,10 +8,10 @@ using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Services;
 
-public class ParticipantService(IParticipantRepository repository, IEventRepository eventRepository, ICustomAutoMapper mapper) : IParticipantService
+public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipantService
 {
-    private readonly IParticipantRepository _participantRepository = repository;
-    private readonly IEventRepository _eventRepository = eventRepository;
+    private readonly IParticipantRepository _participantRepository = uoW.ParticipantRepository;
+    private readonly IEventRepository _eventRepository = uoW.EventRepository;
     private readonly IMapper _mapper = mapper.Mapper;
 
     public ParticipantForResponseDto AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant)

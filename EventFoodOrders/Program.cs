@@ -41,13 +41,14 @@ public class Program
         builder.Services.AddHttpClient();
 
         builder.Services.AddScoped<IAuthService, AuthService>();
-        builder.Services.AddScoped<IParticipantService, ParticipantService>();
         builder.Services.AddScoped<IEventService, EventService>();
+        builder.Services.AddScoped<IParticipantService, ParticipantService>();
+        builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
         builder.Services.AddScoped<IEventRepository, EventRepository>();
         builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
+        builder.Services.AddScoped<IUoW, UoW>();
 
-        builder.Services.AddScoped<IServiceManager, ServiceManager>();
         builder.Services.AddScoped<ICustomAutoMapper, CustomAutoMapper>();
 
         builder.Services.AddDistributedMemoryCache();
