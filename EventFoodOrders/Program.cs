@@ -48,7 +48,7 @@ public class Program
         builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
 
         builder.Services.AddScoped<IServiceManager, ServiceManager>();
-        builder.Services.AddScoped<CustomAutoMapper>();
+        builder.Services.AddScoped<ICustomAutoMapper, CustomAutoMapper>();
 
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession(options =>

@@ -7,7 +7,7 @@ using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Services;
 
-public class EventService(IEventRepository eventRepository, IParticipantService participantService, IParticipantRepository participantRepository, CustomAutoMapper mapper) : IEventService
+public class EventService(IEventRepository eventRepository, IParticipantService participantService, IParticipantRepository participantRepository, ICustomAutoMapper mapper) : IEventService
 {
     private readonly IEventRepository _eventRepository = eventRepository;
     private readonly IParticipantService _participantService = participantService;
