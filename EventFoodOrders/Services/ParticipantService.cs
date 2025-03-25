@@ -4,10 +4,11 @@ using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Exceptions;
 using EventFoodOrders.Repositories;
+using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Services;
 
-public class ParticipantService(ParticipantRepository repository, EventRepository eventRepository, CustomAutoMapper mapper)
+public class ParticipantService(ParticipantRepository repository, EventRepository eventRepository, CustomAutoMapper mapper) : IParticipantService
 {
     private readonly ParticipantRepository _participantRepository = repository;
     private readonly EventRepository _eventRepository = eventRepository;

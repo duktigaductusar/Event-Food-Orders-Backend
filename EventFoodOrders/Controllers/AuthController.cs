@@ -2,25 +2,19 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using EventFoodOrders.security;
+using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using IAuthorizationService = EventFoodOrders.Interfaces.IAuthorizationService;
 
 namespace EventFoodOrders.Controllers;
 
 [ApiController]
 [Route("api/")]
-public class AuthorizationController : ControllerBase
+public class AuthController(IServiceManager serviceManager, IJwtUtility jwtUtility, IWebHostEnvironment env) : ControllerBase
 {
-    private readonly IAuthorizationService _authService;
-    private readonly IJwtUtility _jwtUtility;
-    private readonly IWebHostEnvironment _env;
-
-    public AuthorizationController(IAuthorizationService authService, IJwtUtility jwtUtility, IWebHostEnvironment env)
-    {
-        _authService = authService;
-        _jwtUtility = jwtUtility;
-        _env = env;
-    }
+    private readonly IAuthService _authService = serviceManager.AuthorizationService;
+    private readonly IJwtUtility _jwtUtility = jwtUtility;
+    private readonly IWebHostEnvironment _env = env;
 
     [HttpGet("[controller]/login")]
     public IActionResult Login()
