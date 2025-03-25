@@ -3,13 +3,14 @@ using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories;
+using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Services;
 
-public class EventService(EventRepository eventRepository, ParticipantService participantService, ParticipantRepository participantRepository, CustomAutoMapper mapper)
+public class EventService(EventRepository eventRepository, IParticipantService participantService, ParticipantRepository participantRepository, CustomAutoMapper mapper) : IEventService
 {
     private readonly EventRepository _eventRepository = eventRepository;
-    private readonly ParticipantService _participantService = participantService;
+    private readonly IParticipantService _participantService = participantService;
     private readonly ParticipantRepository _participantRepository = participantRepository;
     private readonly IMapper _mapper = mapper.Mapper;
 
@@ -53,7 +54,7 @@ public class EventService(EventRepository eventRepository, ParticipantService pa
         IEnumerable<Event> returnEvents = _eventRepository.GetAllEventsForUser(userId);
         List<EventForResponseDto> events = [];
 
-        foreach(Event e in returnEvents)
+        foreach (Event e in returnEvents)
         {
             Participant? participant = e.Participants
                 //.Where(p => p.UserId == userId)

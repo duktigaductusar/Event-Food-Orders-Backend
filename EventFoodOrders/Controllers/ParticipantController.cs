@@ -1,15 +1,14 @@
-using Azure;
 using EventFoodOrders.Dto.ParticipantDTOs;
-using EventFoodOrders.Services;
+using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventFoodOrders.Controllers;
 
 [ApiController]
 [Route("/api/participant")]
-public class ParticipantController(ParticipantService participantService) : ControllerBase
+public class ParticipantController(IServiceManager serviceManager) : ControllerBase
 {
-    private readonly ParticipantService _participantService = participantService;
+    private readonly IParticipantService _participantService = serviceManager.ParticipantService;
 
     [HttpPost]
     [Route("{eventId}")]

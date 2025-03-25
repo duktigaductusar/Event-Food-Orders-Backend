@@ -1,11 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using EventFoodOrders.Interfaces;
 using EventFoodOrders.security;
 using Newtonsoft.Json;
-using IAuthorizationService = EventFoodOrders.Interfaces.IAuthorizationService;
 
 namespace EventFoodOrders.Services;
 
-public class AuthorizationService : IAuthorizationService
+public class AuthService : IAuthService
 {
     private readonly HttpClient _httpClient;
     private readonly string _tenantId;
@@ -13,7 +13,7 @@ public class AuthorizationService : IAuthorizationService
     private readonly string _clientSecret;
     private readonly string _redirectUri;
 
-    public AuthorizationService(HttpClient httpClient)
+    public AuthService(HttpClient httpClient)
     {
         _httpClient = httpClient;
         _tenantId = Environment.GetEnvironmentVariable("AzureAd__TenantId") ?? throw new ArgumentNullException("TENANT_ID not set in environment variable");

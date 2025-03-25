@@ -1,14 +1,14 @@
 using EventFoodOrders.Dto.EventDTOs;
-using EventFoodOrders.Services;
+using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventFoodOrders.Controllers;
 
 [ApiController]
 [Route("/api/event")]
-public class EventController(EventService service) : ControllerBase
+public class EventController(IServiceManager serviceManager) : ControllerBase
 {
-    private readonly EventService _service = service;
+    private readonly IEventService _service = serviceManager.EventService;
 
     [HttpPost]
     public ActionResult<EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto newEvent)
