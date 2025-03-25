@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using EventFoodOrders.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using EventFoodOrders.security;
@@ -14,12 +15,15 @@ public class AuthorizationController : ControllerBase
     private readonly IAuthorizationService _authService;
     private readonly IJwtUtility _jwtUtility;
     private readonly IWebHostEnvironment _env;
+    private readonly IAccessTokenStore _store;
+    
 
-    public AuthorizationController(IAuthorizationService authService, IJwtUtility jwtUtility, IWebHostEnvironment env)
+    public AuthorizationController(IAuthorizationService authService, IJwtUtility jwtUtility, IWebHostEnvironment env, IAccessTokenStore store)
     {
         _authService = authService;
         _jwtUtility = jwtUtility;
         _env = env;
+        _store = store;
     }
 
     [HttpGet("[controller]/login")]
@@ -37,7 +41,14 @@ public class AuthorizationController : ControllerBase
             return BadRequest("Authorization code is missing.");
         }
         var authResponse = await _authService.ExchangeCodeForTokenAsync(code);
+        
         string userId = authResponse.UserId;
+        Guid userGuid = Guid.Parse(userId);
+        if (userGuid == Guid.Empty || userGuid == null)
+        {
+            return BadRequest("Parsing to Guid failed or returned null.");
+        }
+        _store.Save(userGuid, authResponse.accessToken);
         string userEmail = authResponse.Email;
         
         var jwt = _jwtUtility.GenerateJwt(userId, userEmail);
