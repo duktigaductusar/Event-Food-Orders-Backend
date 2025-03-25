@@ -1,6 +1,5 @@
 using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Data;
-using EventFoodOrders.Interfaces;
 using EventFoodOrders.Repositories;
 using EventFoodOrders.Services;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using EventFoodOrders.Extensions;
 using EventFoodOrders.Middleware;
+using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Interfaces;
 
 namespace EventFoodOrders;
 
@@ -38,7 +39,12 @@ public class Program
         Env.Load();
         builder.Configuration.AddEnvironmentVariables();
         builder.Services.AddHttpClient();
-        builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+
+        builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IParticipantService, ParticipantService>();
+        builder.Services.AddScoped<IEventService, EventService>();
+        builder.Services.AddScoped<IServiceManager, ServiceManager>();
+
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddSession(options =>
         {
@@ -103,17 +109,14 @@ public class Program
             });
         builder.Services.AddScoped<IJwtUtility, JwtUtility>();
         builder.Services.AddAuthorization();
-        builder.Services.AddSingleton<IAccessTokenStore, InMemoryAccessTokenStore>();
         // No more auth thingies
         
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
 
-        builder.Services.AddTransient<CustomAutoMapper>();
-        builder.Services.AddTransient<EventService>();
-        builder.Services.AddTransient<EventRepository>();
-        builder.Services.AddTransient<ParticipantService>();
-        builder.Services.AddTransient<ParticipantRepository>();
+        builder.Services.AddScoped<CustomAutoMapper>();
+        builder.Services.AddScoped<EventRepository>();
+        builder.Services.AddScoped<ParticipantRepository>();
 
 
         if (isDevelopment)

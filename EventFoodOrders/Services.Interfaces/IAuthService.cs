@@ -2,7 +2,7 @@
 
 namespace EventFoodOrders.Interfaces;
 
-public interface IAuthorizationService
+public interface IAuthService
 {
     string GetLoginUrl();
     Task<AuthResponse> ExchangeCodeForTokenAsync(string code);
