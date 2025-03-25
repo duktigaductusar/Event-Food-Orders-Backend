@@ -73,8 +73,7 @@ public class Program
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
                 options.Scope.Add("https://graph.microsoft.com/Mail.Send");
-            });
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            })
             .AddJwtBearer("Jwt", options =>
             {
                 options.Events = new JwtBearerEvents
@@ -104,6 +103,7 @@ public class Program
             });
         builder.Services.AddScoped<IJwtUtility, JwtUtility>();
         builder.Services.AddAuthorization();
+        builder.Services.AddSingleton<IAccessTokenStore, InMemoryAccessTokenStore>();
         // No more auth thingies
         
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
