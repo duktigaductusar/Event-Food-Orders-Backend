@@ -9,8 +9,6 @@ namespace EventFoodOrders.security;
 
 public class JwtUtility(IConfiguration config) : IJwtUtility
 {
-    private readonly IConfiguration _config = config;
-
     public string GenerateJwt(string userId, string email)
     {
         // 1. Claims
@@ -21,9 +19,9 @@ public class JwtUtility(IConfiguration config) : IJwtUtility
         };
         
         // 2. Sign-in credentials
-        var secret = _config["JWT:Secret"];
-        var issuer = _config["JWT:Issuer"];
-        var audience = _config["JWT:Audience"];
+        var secret = config["JWT:Secret"];
+        var issuer = config["JWT:Issuer"];
+        var audience = config["JWT:Audience"];
         
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
