@@ -1,24 +1,15 @@
 ﻿using EventFoodOrders.Exceptions;
-using Newtonsoft.Json;
+using EventFoodOrders.Services.Interfaces;
 
-namespace EventFoodOrders.Services
+namespace EventFoodOrders.Mock
 {
-    public class UserService
+    public class MockUserService(IUserSeed seeder) : IUserService
     {
-        readonly List<User> users;
-
-        public UserService()
-        {
-            string filePath = "Seed/users.json"; // You may need to adjust the path if needed
-            string json = File.ReadAllText(filePath);
-
-            // Deserialize the JSON into a list of User objects
-            users = JsonConvert.DeserializeObject<List<User>>(json);
-        }
+        readonly List<MockUser> users = seeder.Users;
 
         public string GetName(Guid userId)
         {
-            User? user = users.FirstOrDefault(u => u.UserId == userId);
+            MockUser? user = users.FirstOrDefault(u => u.UserId == userId);
             if (user is null)
             {
                 throw new CustomException(StatusCodes.Status500InternalServerError, "User not found.");
@@ -49,17 +40,10 @@ namespace EventFoodOrders.Services
 
         public void SendEmail(List<Guid> userIds, string message)
         {
-            foreach(var userId in userIds)
+            foreach (var userId in userIds)
             {
                 Console.WriteLine($"Sending an email to... {GetName(userId)}");
             }
         }
-    }
-
-    public class User
-    {
-        public Guid UserId { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
     }
 }

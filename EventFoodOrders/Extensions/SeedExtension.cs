@@ -1,4 +1,6 @@
 ﻿using EventFoodOrders.Data;
+using EventFoodOrders.Mock;
+using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Extensions;
 
@@ -9,8 +11,9 @@ public static class SeedExtension
         using var scope = app.ApplicationServices.CreateScope();
         var serviceProvider = scope.ServiceProvider;
         var context = serviceProvider.GetRequiredService<EventFoodOrdersDbContext>();
+        var userSeed = serviceProvider.GetRequiredService<IUserSeed>();
 
         Console.WriteLine("Seeding data...");
-        DBSeed.Run(context);
+        DBSeed.Run(context, userSeed);
     }
 }

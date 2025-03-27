@@ -59,7 +59,6 @@
 
   <ItemGroup>
     <Folder Include="Interfaces\" />
-    <Folder Include="Seed\" />
   </ItemGroup>
 
 </Project>

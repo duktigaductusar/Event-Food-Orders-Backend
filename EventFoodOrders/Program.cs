@@ -15,6 +15,7 @@ using EventFoodOrders.Extensions;
 using EventFoodOrders.Middleware;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Repositories.Interfaces;
+using EventFoodOrders.Mock;
 
 namespace EventFoodOrders;
 
@@ -39,6 +40,12 @@ public class Program
         Env.Load();
         builder.Configuration.AddEnvironmentVariables();
         builder.Services.AddHttpClient();
+
+        if (isDevelopment)
+        {
+            builder.Services.AddScoped<IUserSeed, UserSeed>();
+            builder.Services.AddScoped<IUserService, MockUserService>();
+        }
 
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IEventService, EventService>();
