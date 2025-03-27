@@ -1,6 +1,6 @@
-﻿using EventFoodOrders.Exceptions;
+﻿using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.Services.Interfaces;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace EventFoodOrders.Mock
 {
@@ -47,14 +47,25 @@ namespace EventFoodOrders.Mock
             }
         }
 
-        public List<string> GetEmailAddresses(string queryString)
+        public List<UserDto> GetUsers(string queryString)
         {
-            List<string> filteredEmails = [.. users
+            List<MockUser> filteredUsers = [.. users
                 .Where(u => u.Username.StartsWith(queryString, StringComparison.OrdinalIgnoreCase) ||
-                    (u.Email != null && u.Email.StartsWith(queryString, StringComparison.OrdinalIgnoreCase)))
-                .Select(u => u.Email)];
+                    (u.Email != null && u.Email.StartsWith(queryString, StringComparison.OrdinalIgnoreCase)))];
 
-            return filteredEmails;
+            List<UserDto> dtos = [];
+
+            foreach (var user in filteredUsers)
+            {
+                dtos.Add(new UserDto
+                {
+                    Username = user.Username,
+                    Email = user.Email,
+                    UserId = user.UserId
+                });
+            }
+
+            return dtos;
         }
     }
 }
