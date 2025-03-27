@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using EventFoodOrders.Interfaces;
 using EventFoodOrders.security;
+using EventFoodOrders.Services.Interfaces;
 using Newtonsoft.Json;
 
 namespace EventFoodOrders.Services;

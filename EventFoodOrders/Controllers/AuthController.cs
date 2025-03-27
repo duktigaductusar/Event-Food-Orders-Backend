@@ -1,4 +1,4 @@
-﻿using EventFoodOrders.Interfaces;
+using EventFoodOrders.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
