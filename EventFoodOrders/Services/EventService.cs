@@ -7,12 +7,13 @@ using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Services;
 
-public class EventService(IParticipantService participantService, IUoW uoW, ICustomAutoMapper mapper) : IEventService
+public class EventService(IParticipantService participantService, IUoW uoW, ICustomAutoMapper mapper, IUserService userService) : IEventService
 {
     private readonly IEventRepository _eventRepository = uoW.EventRepository;
     private readonly IParticipantRepository _participantRepository = uoW.ParticipantRepository;
     private readonly IParticipantService _participantService = participantService;
     private readonly IMapper _mapper = mapper.Mapper;
+    private readonly IUserService _userService = userService;
 
     public EventForResponseDto CreateEvent(Guid userId, EventForCreationDto eventForCreation)
     {
@@ -44,7 +45,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
     public EventForResponseWithDetailsDto GetEventForUser(Guid userId, Guid eventId)
     {
         Event returnEvent = _eventRepository.GetEventForUser(userId, eventId);
-        Participant eventParticipant = _participantRepository.GetParticipantWithParticipantId(userId);
+        Participant eventParticipant = _participantRepository.GetParticipantWithUserId(userId);
 
         return _mapper.MapToEventForResponseWithDetailsDto(returnEvent, eventParticipant);
     }
@@ -53,6 +54,8 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
     {
         IEnumerable<Event> returnEvents = _eventRepository.GetAllEventsForUser(userId);
         List<EventForResponseDto> events = [];
+
+        string name = _userService.GetNameWithId(Guid.Parse("a84c12d5-9075-42d2-b467-6b345b7d8c9f"));
 
         foreach (Event e in returnEvents)
         {

@@ -1,8 +1,9 @@
 ﻿using Bogus;
+using EventFoodOrders.Data;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Utilities;
 
-namespace EventFoodOrders.Data;
+namespace EventFoodOrders.Mock;
 
 public static class DBSeed
 {
@@ -79,7 +80,7 @@ public static class DBSeed
     ];
 
 
-    public static void Run(EventFoodOrdersDbContext context)
+    public static void Run(EventFoodOrdersDbContext context, IUserSeed userSeed)
     {
         if (context.Events.Any() || context.Participants.Any())
             return;
@@ -88,11 +89,11 @@ public static class DBSeed
 
         List<SeedUser> seedUsers = new();
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < userSeed.Users.Count; i++)
         {
             seedUsers.Add(new SeedUser(
-                Guid.NewGuid(),
-                faker.Name.FullName(),
+                userSeed.Users[i].UserId,
+                userSeed.Users[i].Username,
                 allergies[faker.Random.Int(0, allergies.Length - 1)],
                 preferences[faker.Random.Int(0, preferences.Length - 1)]
             ));
