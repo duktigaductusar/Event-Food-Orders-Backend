@@ -1,8 +1,7 @@
 ﻿
-namespace EventFoodOrders.Mock
+namespace EventFoodOrders.Mock;
+
+public interface IUserSeed
 {
-    public interface IUserSeed
-    {
-        List<MockUser> Users { get; set; }
-    }
+    List<MockUser> Users { get; set; }
 }
