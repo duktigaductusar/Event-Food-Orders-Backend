@@ -1,7 +1,5 @@
-using EventFoodOrders.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
 using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Controllers;
@@ -29,26 +27,5 @@ public class AuthController(IServiceManager serviceManager) : ControllerBase
             return Ok(res);
         }
         return Unauthorized(new {IsAuthenticated = false});
-    }
-
-    private bool ValidateAzureAdToken(string token, out JwtSecurityToken jwtToken)
-    {
-        jwtToken = null;
-        var tokenHandler = new JwtSecurityTokenHandler();
-        try
-        {
-            jwtToken = tokenHandler.ReadJwtToken(token);
-            //ToDo - Proper validation towards EntraId
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public class TokenExchangeRequest
-    {
-        public string Token { get; set; }
     }
 }
