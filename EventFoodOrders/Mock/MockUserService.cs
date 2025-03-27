@@ -1,5 +1,6 @@
 ﻿using EventFoodOrders.Exceptions;
 using EventFoodOrders.Services.Interfaces;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace EventFoodOrders.Mock
 {
@@ -7,7 +8,7 @@ namespace EventFoodOrders.Mock
     {
         readonly List<MockUser> users = seeder.Users;
 
-        public string GetName(Guid userId)
+        public string GetNameWithId(Guid userId)
         {
             MockUser? user = users.FirstOrDefault(u => u.UserId == userId);
             if (user is null)
@@ -17,14 +18,14 @@ namespace EventFoodOrders.Mock
             return user.Username;
         }
 
-        public List<string> GetNames(List<Guid> userIds)
+        public List<string> GetNamesWithIds(List<Guid> userIds)
         {
             List<string> userNames = [];
             foreach (var userId in userIds)
             {
                 try
                 {
-                    string name = GetName(userId);
+                    string name = GetNameWithId(userId);
                     if (name is not null)
                     {
                         userNames.Add(name);
@@ -42,8 +43,18 @@ namespace EventFoodOrders.Mock
         {
             foreach (var userId in userIds)
             {
-                Console.WriteLine($"Sending an email to... {GetName(userId)}");
+                Console.WriteLine($"Sending an email to... {GetNameWithId(userId)}");
             }
+        }
+
+        public List<string> GetEmailAddresses(string queryString)
+        {
+            List<string> filteredEmails = [.. users
+                .Where(u => u.Username.StartsWith(queryString, StringComparison.OrdinalIgnoreCase) ||
+                    (u.Email != null && u.Email.StartsWith(queryString, StringComparison.OrdinalIgnoreCase)))
+                .Select(u => u.Email)];
+
+            return filteredEmails;
         }
     }
 }

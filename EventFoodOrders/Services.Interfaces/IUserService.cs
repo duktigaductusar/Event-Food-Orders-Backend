@@ -2,8 +2,9 @@
 {
     public interface IUserService
     {
-        string GetName(Guid userId);
-        List<string> GetNames(List<Guid> userIds);
+        List<string> GetEmailAddresses(string queryString);
+        string GetNameWithId(Guid userId);
+        List<string> GetNamesWithIds(List<Guid> userIds);
         void SendEmail(List<Guid> userIds, string message);
     }
 }
