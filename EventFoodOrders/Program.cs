@@ -58,63 +58,15 @@ public class Program
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = true;
         });
-        
-        builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            })
-            .AddCookie(options =>
-            {
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.Cookie.SameSite = SameSiteMode.Strict;
-            })
-            .AddOpenIdConnect("AzureAd", options =>
-            {
-                options.Authority =
-                    $"https://login.microsoftonline.com/{builder.Configuration["AzureAd:TenantId"]}/v2.0";
-                options.ClientId = builder.Configuration["AzureAd:ClientId"];
-                options.ClientSecret = builder.Configuration["AzureAd:ClientSecret"];
-                options.ResponseType = "code";
-                options.SaveTokens = false;
-                options.UseTokenLifetime = true;
-                options.CallbackPath = "/signing-oidc";
-                options.SignedOutCallbackPath = "/signout-callback-oidc";
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                options.Scope.Add("email");
-                options.Scope.Add("https://graph.microsoft.com/Mail.Send");
-            })
-            .AddJwtBearer("Jwt", options =>
-            {
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        if (context.Request.Cookies.TryGetValue("jwt_token", out var jwtToken))
-                        {
-                            context.Token = jwtToken;
-                        }
 
-                        return Task.CompletedTask;
-                    }
-                };
-
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
-                };
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = $"https://login.microsoftonline.com/{builder.Configuration["AzureAd:TenantId"]}/v2.0";
+                options.Audience = builder.Configuration["AzureAd:ClientId"];
             });
-        builder.Services.AddScoped<IJwtUtility, JwtUtility>();
         builder.Services.AddAuthorization();
+        builder.Services.AddScoped<IJwtUtility, JwtUtility>();
         // No more auth thingies
         
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
