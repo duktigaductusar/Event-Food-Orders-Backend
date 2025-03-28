@@ -73,7 +73,6 @@ public class Program
                 options.Audience = builder.Configuration["AzureAd:ClientId"];
             });
         builder.Services.AddAuthorization();
-        builder.Services.AddScoped<IJwtUtility, JwtUtility>();
         // No more auth thingies
         
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
