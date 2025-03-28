@@ -11,7 +11,7 @@ public record EventForResponseWithDetailsDto
     public bool? IsActive { get; init; }
 
     // Participant properties
-    public required string ParticipantID { get; set; }
+    public required string ParticipantId { get; set; }
     public required bool IsOwner { get; set; }
     public required string ResponseType { get; set; }
     public required bool WantsMeal { get; set; }

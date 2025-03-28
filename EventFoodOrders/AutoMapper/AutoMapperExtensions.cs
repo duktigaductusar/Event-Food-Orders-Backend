@@ -63,7 +63,7 @@ public static class AutoMapperExtensions
         EventForResponseWithDetailsDto dto = mapper.Map<EventForResponseWithDetailsDto>(srcEvent, opt =>
             opt.AfterMap((src, dest) =>
             {
-                dest.ParticipantID = srcParticipant.Id.ToString();
+                dest.ParticipantId = srcParticipant.Id.ToString();
                 dest.IsOwner = srcParticipant.UserId == srcEvent.OwnerId;
                 dest.ResponseType = srcParticipant.ResponseType;
                 dest.WantsMeal = srcParticipant.WantsMeal;
