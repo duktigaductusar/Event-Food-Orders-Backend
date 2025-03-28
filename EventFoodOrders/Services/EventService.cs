@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Dto.EventDTOs;
+using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
@@ -22,6 +23,18 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
 
         Participant owner = _participantService.CreateParticipant(userId, newEvent.Id);
         owner = _participantRepository.AddParticipant(owner);
+
+        if (eventForCreation.UserIds is not null)
+        {
+            foreach (Guid id in eventForCreation.UserIds)
+            {
+                ParticipantForCreationDto newParticipant = new()
+                {
+                    UserId = id
+                };
+                _participantService.AddParticipantToEvent(newEvent.Id, newParticipant);
+            }
+        }
 
         return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
