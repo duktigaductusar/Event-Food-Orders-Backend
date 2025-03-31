@@ -1,6 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using Azure.Identity;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.security;
 using EventFoodOrders.Services.Interfaces;
+using Microsoft.Extensions.Options;
+using Microsoft.Graph;
 using Newtonsoft.Json;
 
 namespace EventFoodOrders.Services;
@@ -8,6 +12,7 @@ namespace EventFoodOrders.Services;
 public class AuthService : IAuthService
 {
     private readonly HttpClient _httpClient;
+    private GraphServiceClient _graphClient;
     private readonly string _tenantId;
     private readonly string _clientId;
     private readonly string _clientSecret;
@@ -16,10 +21,18 @@ public class AuthService : IAuthService
     public AuthService(HttpClient httpClient)
     {
         _httpClient = httpClient;
+        SetUpGraphClient();
         _tenantId = Environment.GetEnvironmentVariable("AzureAd__TenantId") ?? throw new ArgumentNullException("TENANT_ID not set in environment variable");
         _clientId = Environment.GetEnvironmentVariable("AzureAd__ClientId") ?? throw new ArgumentNullException("CLIENT_ID not set in environment variable");
         _clientSecret = Environment.GetEnvironmentVariable("AzureAd__ClientSecret") ?? throw new ArgumentNullException("CLIENT_SECRET not set in environment variable");
         _redirectUri = Environment.GetEnvironmentVariable("AzureAd__RedirectUri") ?? throw new ArgumentNullException("REDIRECT_URI not set in environment variable");
+    }
+
+    public async Task<string> GetUserName(Guid userId)
+    {
+        var res = await _graphClient.Users[userId.ToString()].GetAsync() ??
+            throw new CustomException(StatusCodes.Status500InternalServerError, "Failed to fetch user name.");
+        return res.DisplayName!;
     }
 
     public string GetLoginUrl()
@@ -72,6 +85,37 @@ public class AuthService : IAuthService
         
         return authResponse;
     }
-    
-    
+
+    private void SetUpGraphClient()
+    {
+        var scopes = new[] { "User.Read" };
+
+        // Multi-tenant apps can use "common",
+        // single-tenant apps must use the tenant ID from the Azure portal
+        var tenantId = _tenantId;
+
+        // Value from app registration
+        var clientId = _clientId;
+
+        // using Azure.Identity;
+        var options = new DeviceCodeCredentialOptions
+        {
+            AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
+            ClientId = clientId,
+            TenantId = tenantId,
+            // Callback function that receives the user prompt
+            // Prompt contains the generated device code that user must
+            // enter during the auth process in the browser
+            DeviceCodeCallback = (code, cancellation) =>
+            {
+                Console.WriteLine(code.Message);
+                return Task.FromResult(0);
+            },
+        };
+
+        // https://learn.microsoft.com/dotnet/api/azure.identity.devicecodecredential
+        var deviceCodeCredential = new DeviceCodeCredential(options);
+
+        _graphClient = new GraphServiceClient(deviceCodeCredential, scopes);
+    }
 }
