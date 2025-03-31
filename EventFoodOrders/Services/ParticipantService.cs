@@ -23,7 +23,7 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
             throw new EventNotFoundException();
         }
 
-        Participant? existingParticipant = _participantRepository.GetParticipantWithUserId(newParticipant.UserId);
+        Participant? existingParticipant = _participantRepository.GetParticipantWithEventAndUserId(eventId, newParticipant.UserId);
         Participant participant = _mapper.MapToParticipantFromCreationDto(eventId, newParticipant);
 
         if (existingParticipant is not null)
