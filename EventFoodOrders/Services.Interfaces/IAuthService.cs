@@ -11,12 +11,12 @@ public interface IAuthService
     /// Returns the proper URL for logging in to Entra ID.
     /// </summary>
     /// <returns></returns>
-    string GetLoginUrl();
+    // string GetLoginUrl();
 
     /// <summary>
     /// Exchanges a login token for an access token.
     /// </summary>
     /// <param name="code"></param>
     /// <returns></returns>
-    Task<AuthResponse> ExchangeCodeForTokenAsync(string code);
+    // Task<AuthResponse> ExchangeCodeForTokenAsync(string code);
 }

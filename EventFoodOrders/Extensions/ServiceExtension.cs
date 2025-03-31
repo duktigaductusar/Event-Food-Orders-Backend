@@ -1,0 +1,29 @@
+﻿using EventFoodOrders.AutoMapper;
+using EventFoodOrders.Mock;
+using EventFoodOrders.Repositories;
+using EventFoodOrders.Repositories.Interfaces;
+using EventFoodOrders.Services;
+using EventFoodOrders.Services.Interfaces;
+
+namespace EventFoodOrders.Extensions;
+
+public static class ServiceExtension
+{
+    public static void ConfigureScopedServices(this IServiceCollection services, bool isDev)
+    {
+        if (isDev)
+        {
+            services.AddScoped<IUserSeed, UserSeed>();
+            services.AddScoped<IUserService, MockUserService>();
+        }
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IEventService, EventService>();
+        services.AddScoped<IParticipantService, ParticipantService>();
+        services.AddScoped<IServiceManager, ServiceManager>();
+        services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<IParticipantRepository, ParticipantRepository>();
+        services.AddScoped<IUoW, UoW>();
+        services.AddScoped<ICustomAutoMapper, CustomAutoMapper>();
+    }
+    
+}
