@@ -8,6 +8,13 @@ namespace EventFoodOrders.Services.Interfaces;
 public interface IAuthService
 {
     /// <summary>
+    /// Returns the user name/display name of a user using their id from Entra ID.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task<string> GetUserName(Guid userId);
+
+    /// <summary>
     /// Returns the proper URL for logging in to Entra ID.
     /// </summary>
     /// <returns></returns>
