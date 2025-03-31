@@ -39,7 +39,7 @@ public interface IParticipantRepository
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    Participant? GetParticipantWithUserId(Guid userId);
+    Participant? GetParticipantWithEventAndUserId(Guid eventId, Guid userId);
 
     /// <summary>
     /// Updates a participant in the database.
