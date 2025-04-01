@@ -47,11 +47,31 @@ public class MockUserService(IUserSeed seeder) : IUserService
         }
     }
 
-    public List<UserDto> GetUsers(string queryString)
+    public List<UserDto> GetUsersFromQuery(string queryString)
     {
         List<MockUser> filteredUsers = [.. users
             .Where(u => u.Username.StartsWith(queryString, StringComparison.OrdinalIgnoreCase) ||
                 (u.Email != null && u.Email.StartsWith(queryString, StringComparison.OrdinalIgnoreCase)))];
+
+        List<UserDto> dtos = [];
+
+        foreach (var user in filteredUsers)
+        {
+            dtos.Add(new UserDto
+            {
+                Username = user.Username,
+                Email = user.Email,
+                UserId = user.UserId
+            });
+        }
+
+        return dtos;
+    }
+
+    public List<UserDto> GetUsersFromIds(Guid[] userIds)
+    {
+        List<MockUser> filteredUsers = [.. users
+            .Where(u => userIds.Contains(u.UserId)).ToList()];
 
         List<UserDto> dtos = [];
 
