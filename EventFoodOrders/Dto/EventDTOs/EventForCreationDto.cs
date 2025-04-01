@@ -6,5 +6,5 @@ public record EventForCreationDto
     public string? Description { get; init; }
     public required DateTimeOffset Date { get; init; }
     public required DateTimeOffset Deadline{ get; init; }
-    public Guid[]? Participants { get; init; }
+    public Guid[]? UserIds { get; init; }
 }

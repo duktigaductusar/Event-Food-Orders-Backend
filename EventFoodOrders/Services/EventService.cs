@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Dto.EventDTOs;
+using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
@@ -22,6 +23,18 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
 
         Participant owner = _participantService.CreateParticipant(userId, newEvent.Id);
         owner = _participantRepository.AddParticipant(owner);
+
+        if (eventForCreation.UserIds is not null)
+        {
+            foreach (Guid id in eventForCreation.UserIds)
+            {
+                ParticipantForCreationDto newParticipant = new()
+                {
+                    UserId = id
+                };
+                _participantService.AddParticipantToEvent(newEvent.Id, newParticipant);
+            }
+        }
 
         return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
@@ -45,7 +58,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
     public EventForResponseWithDetailsDto GetEventForUser(Guid userId, Guid eventId)
     {
         Event returnEvent = _eventRepository.GetEventForUser(userId, eventId);
-        Participant eventParticipant = _participantRepository.GetParticipantWithUserId(userId);
+        Participant eventParticipant = _participantRepository.GetParticipantWithEventAndUserId(eventId, userId)!;
 
         return _mapper.MapToEventForResponseWithDetailsDto(returnEvent, eventParticipant);
     }
@@ -68,7 +81,8 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
                 events.Add(_mapper.MapToEventForResponseDto(e, participant));
             }
         }
-
+        events.Sort((i, p) => i.Title.CompareTo(p.Title));
+        events.Sort((i, p) => i.Date.CompareTo(p.Date));
         return events;
     }
 }

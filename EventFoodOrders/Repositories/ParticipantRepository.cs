@@ -62,12 +62,12 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
 
     public Participant? GetParticipantWithParticipantId(Guid participantId)
     {
-        return GetParticipant(p => p.Id == participantId, participantId);
+        return GetParticipant(p => p.Id == participantId);
     }
 
-    public Participant? GetParticipantWithUserId(Guid userId)
+    public Participant? GetParticipantWithEventAndUserId(Guid eventId, Guid userId)
     {
-        return GetParticipant(p => p.UserId == userId, userId);
+        return GetParticipant(p => p.EventId == eventId && p.UserId == userId);
     }
 
     public IEnumerable<Participant> GetAllParticipantsForUser(Guid userId)
@@ -89,9 +89,10 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         destination.WantsMeal = source.WantsMeal;
         destination.Allergies = source.Allergies;
         destination.Preferences = source.Preferences;
+        destination.ResponseType = source.ResponseType;
     }
 
-    private Participant? GetParticipant(Func<Participant, bool> condition, Guid id)
+    private Participant? GetParticipant(Func<Participant, bool> condition)
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
