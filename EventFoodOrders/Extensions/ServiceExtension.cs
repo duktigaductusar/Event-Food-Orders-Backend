@@ -21,9 +21,15 @@ public static class ServiceExtension
         services.AddScoped<IParticipantService, ParticipantService>();
         services.AddScoped<IServiceManager, ServiceManager>();
         services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<IGraphRepository, GraphRepository>();
         services.AddScoped<IParticipantRepository, ParticipantRepository>();
         services.AddScoped<IUoW, UoW>();
         services.AddScoped<ICustomAutoMapper, CustomAutoMapper>();
+    }
+
+    public static void ConfigureSingletonServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IGraphTokenService, GraphTokenService>();
     }
     
 }

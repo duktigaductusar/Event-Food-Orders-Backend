@@ -4,4 +4,6 @@ public interface IUoW
 {
     IEventRepository EventRepository { get; set; }
     IParticipantRepository ParticipantRepository { get; set; }
+    
+    IGraphRepository GraphRepository { get; set; }
 }

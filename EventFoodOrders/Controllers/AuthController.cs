@@ -1,3 +1,5 @@
+using EventFoodOrders.Repositories;
+using EventFoodOrders.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using EventFoodOrders.Services.Interfaces;
@@ -5,13 +7,14 @@ using EventFoodOrders.Services.Interfaces;
 namespace EventFoodOrders.Controllers;
 
 [ApiController]
-[Route("api/")]
-public class AuthController(IServiceManager serviceManager) : ControllerBase
+[Route("api/[controller]")]
+public class AuthController(IServiceManager serviceManager, IGraphRepository graphRepository) : ControllerBase
 {
     private readonly IAuthService _authService = serviceManager.AuthService;
+    private readonly IGraphRepository _graphRepository = graphRepository;
 
     [Authorize]
-    [HttpGet("[controller]/status")]
+    [HttpGet("status")]
     public IActionResult Status()
     {
         if (User.Identity?.IsAuthenticated == true)
@@ -27,5 +30,19 @@ public class AuthController(IServiceManager serviceManager) : ControllerBase
             return Ok(res);
         }
         return Unauthorized(new {IsAuthenticated = false});
+    }
+
+    [HttpGet("graph")]
+    public async Task<IActionResult> Graph(Guid userId)
+    {
+        try
+        {
+            var user = await _graphRepository.GetUserAsync(userId);
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error when fetchng user from Graph API: {ex.Message}");
+        }
     }
 }

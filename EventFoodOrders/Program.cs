@@ -1,12 +1,15 @@
 using EventFoodOrders.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Http;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using EventFoodOrders.Extensions;
 using EventFoodOrders.Middleware;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Mock;
+using EventFoodOrders.Repositories;
+using EventFoodOrders.Repositories.Interfaces;
 
 namespace EventFoodOrders;
 
@@ -21,8 +24,9 @@ public class Program
         //Auth thingies
         Env.Load();
         builder.Configuration.AddEnvironmentVariables();
-        builder.Services.AddHttpClient();
+        builder.Services.AddHttpClient<IGraphRepository, GraphRepository>();
         builder.Services.ConfigureScopedServices(isDevelopment);
+        builder.Services.ConfigureSingletonServices();
         builder.Services.AddDistributedMemoryCache();
         builder.Services.ConfigureSessions();
         builder.Services.ConfigureAuths(builder.Configuration);

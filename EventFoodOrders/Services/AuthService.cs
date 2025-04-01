@@ -13,7 +13,7 @@ public class AuthService : IAuthService
     private readonly string _tenantId;
     private readonly string _clientId;
     private readonly string _clientSecret;
-    private readonly string _redirectUri;
+    // private readonly string _redirectUri;
 
     public AuthService(HttpClient httpClient)
     {
@@ -21,7 +21,7 @@ public class AuthService : IAuthService
         _tenantId = Environment.GetEnvironmentVariable("AzureAd__TenantId") ?? throw new ArgumentNullException("TENANT_ID not set in environment variable");
         _clientId = Environment.GetEnvironmentVariable("AzureAd__ClientId") ?? throw new ArgumentNullException("CLIENT_ID not set in environment variable");
         _clientSecret = Environment.GetEnvironmentVariable("AzureAd__ClientSecret") ?? throw new ArgumentNullException("CLIENT_SECRET not set in environment variable");
-        _redirectUri = Environment.GetEnvironmentVariable("AzureAd__RedirectUri") ?? throw new ArgumentNullException("REDIRECT_URI not set in environment variable");
+        // _redirectUri = Environment.GetEnvironmentVariable("AzureAd__RedirectUri") ?? throw new ArgumentNullException("REDIRECT_URI not set in environment variable");
     }
 
     // public string GetLoginUrl()
