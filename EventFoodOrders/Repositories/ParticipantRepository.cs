@@ -89,6 +89,7 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         destination.WantsMeal = source.WantsMeal;
         destination.Allergies = source.Allergies;
         destination.Preferences = source.Preferences;
+        destination.ResponseType = source.ResponseType;
     }
 
     private Participant? GetParticipant(Func<Participant, bool> condition)
