@@ -81,7 +81,8 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
                 events.Add(_mapper.MapToEventForResponseDto(e, participant));
             }
         }
-
+        events.Sort((i, p) => i.Title.CompareTo(p.Title));
+        events.Sort((i, p) => i.Date.CompareTo(p.Date));
         return events;
     }
 }
