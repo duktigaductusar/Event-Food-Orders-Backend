@@ -17,6 +17,7 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
     public ParticipantForResponseDto AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant)
     {
         Event? desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == eventId) ?? throw new EventNotFoundException();
+
         if (desiredEvent.Participants.Where(p => p.UserId == newParticipant.UserId).Any())
         {
             // This could be more specific but would reveal that a user is invited to an event.
@@ -25,18 +26,17 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
 
         Participant participant = _mapper.MapToParticipantFromCreationDto(eventId, newParticipant);
 
-        Participant? existingParticipant = new();
         Event? LatestEventForUser = _eventRepository.GetAllEventsForUser(newParticipant.UserId).FirstOrDefault();
 
         if (LatestEventForUser is not null)
         {
-            existingParticipant = LatestEventForUser.Participants.Where(p => p.UserId == newParticipant.UserId).FirstOrDefault();
-        }
+            Participant? existingParticipant = LatestEventForUser.Participants.Where(p => p.UserId == newParticipant.UserId).FirstOrDefault();
 
-        if (existingParticipant is not null)
-        {
-            participant.Allergies = existingParticipant.Allergies;
-            participant.Preferences = existingParticipant.Preferences;
+            if (existingParticipant is not null)
+            {
+                participant.Allergies = existingParticipant.Allergies;
+                participant.Preferences = existingParticipant.Preferences;
+            }
         }
 
         _participantRepository.AddParticipant(participant);
