@@ -89,7 +89,13 @@ public class UserService: IUserService
 
     public async Task <UserDto[]> GetUsersFromIds(Guid[] userIds)
     {
-        throw new NotImplementedException();
+        Collection<UserDto> users = [];
+        foreach (Guid id in userIds)
+        {
+            var user = await GetUserWithId(id);
+            users.Add(user);
+        }
+        return users.ToArray();
     }
     
     private async Task SetAccessToken()
