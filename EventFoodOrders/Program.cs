@@ -1,15 +1,10 @@
 using EventFoodOrders.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Http;
 using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using EventFoodOrders.Extensions;
 using EventFoodOrders.Middleware;
 using EventFoodOrders.Services.Interfaces;
-using EventFoodOrders.Mock;
-using EventFoodOrders.Repositories;
-using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services;
 
 namespace EventFoodOrders;

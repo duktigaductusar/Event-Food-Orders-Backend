@@ -3,7 +3,6 @@ using Azure.Identity;
 using EventFoodOrders.Exceptions;
 using EventFoodOrders.security;
 using EventFoodOrders.Services.Interfaces;
-using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Newtonsoft.Json;
 
