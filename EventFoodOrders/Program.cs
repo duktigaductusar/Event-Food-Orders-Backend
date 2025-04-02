@@ -10,6 +10,7 @@ using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Mock;
 using EventFoodOrders.Repositories;
 using EventFoodOrders.Repositories.Interfaces;
+using EventFoodOrders.Services;
 
 namespace EventFoodOrders;
 
@@ -24,7 +25,7 @@ public class Program
         //Auth thingies
         Env.Load();
         builder.Configuration.AddEnvironmentVariables();
-        builder.Services.AddHttpClient<IGraphRepository, GraphRepository>();
+        builder.Services.AddHttpClient<IUserService, UserService>();
         builder.Services.ConfigureScopedServices(isDevelopment);
         builder.Services.ConfigureSingletonServices();
         builder.Services.AddDistributedMemoryCache();

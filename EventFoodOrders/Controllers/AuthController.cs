@@ -1,7 +1,3 @@
-using System.Collections.ObjectModel;
-using EventFoodOrders.Dto.UserDTOs;
-using EventFoodOrders.Repositories;
-using EventFoodOrders.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using EventFoodOrders.Services.Interfaces;
@@ -10,10 +6,9 @@ namespace EventFoodOrders.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IServiceManager serviceManager, IGraphRepository graphRepository) : ControllerBase
+public class AuthController(IServiceManager serviceManager) : ControllerBase
 {
     private readonly IAuthService _authService = serviceManager.AuthService;
-    private readonly IGraphRepository _graphRepository = graphRepository;
 
     [Authorize]
     [HttpGet("status")]
@@ -39,48 +34,12 @@ public class AuthController(IServiceManager serviceManager, IGraphRepository gra
     {
         try
         {
-            var user = await _graphRepository.GetUserAsync(userId);
+            var user = await serviceManager.UserService.GetUserWithId(userId);
             return Ok(user);
         }
         catch (Exception ex)
         {
             return StatusCode(500, $"Internal server error when fetching user from Graph API: {ex.Message}");
         }
-    }
-
-    [HttpPost("mail")]
-    public async Task<IActionResult> Mail(Guid[] userIds)
-    {
-        try
-        {
-            await _graphRepository.SendMailAsync(userIds);
-            return Ok("Emails sent");
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error when sending mail: {ex.Message}");
-        }
-    }
-
-    [HttpGet("find")]
-    public async Task<IActionResult> SearchUserByName(string search)
-    {
-        try
-        {
-            var foundUsers = await _graphRepository.GetUsersByNameAsync(search);
-            return Ok(foundUsers);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error when searching users by string: {ex.Message}");
-        }
-    }
-
-    
-    [HttpGet("/login")]
-    public IActionResult Login()
-    {
-        string loginUrl = _authService.GetLoginUrl();
-        return Redirect(loginUrl);
     }
 }
