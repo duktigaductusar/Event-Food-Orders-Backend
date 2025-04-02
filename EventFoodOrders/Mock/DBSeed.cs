@@ -87,7 +87,9 @@ public static class DBSeed
 
         var faker = new Faker("sv");
 
-        List<SeedUser> seedUsers = new();
+        Guid userStandinGuid = Guid.Parse("a84c12d5-9075-42d2-b467-6b345b7d8c9f");
+
+        List<SeedUser> seedUsers = [];
 
         for (int i = 0; i < userSeed.Users.Count; i++)
         {
@@ -99,10 +101,29 @@ public static class DBSeed
             ));
         }
 
+        int numberOfOwnerEvents = 3;
+
         var eventFaker = new Faker<Event>()
             .CustomInstantiator(f =>
             {
-                var ownerId = seedUsers.ElementAt(faker.Random.Int(0, seedUsers.Count - 1)).UserId;
+                Guid ownerId = Guid.NewGuid();
+                if (numberOfOwnerEvents > 0)
+                {
+                    ownerId = userStandinGuid;
+                    numberOfOwnerEvents--;
+                }
+                else
+                {
+                    if (faker.Random.Int(0, 1) == 1)
+                    {
+                        ownerId = seedUsers.ElementAt(faker.Random.Int(0, seedUsers.Count - 1)).UserId;
+                    }
+                    else
+                    {
+                        ownerId = userStandinGuid;
+                    }
+                }
+                    
                 return new Event(ownerId)
                 {
                     Title = f.PickRandom(eventTitles),
@@ -112,7 +133,7 @@ public static class DBSeed
                 };
             });
 
-        var events = eventFaker.Generate(10);
+        var events = eventFaker.Generate(12);
 
         var participants = new List<Participant>();
 
@@ -133,8 +154,8 @@ public static class DBSeed
             var participantFaker = new Faker<Participant>()
                 .CustomInstantiator(f =>
                 {
-                    SeedUser user = seedUsers.ElementAt(faker.Random.Int(0, seedUsers.Count - 1));
-                    while(user.UserId == ev.OwnerId)
+                    SeedUser user = seedUsers.Find(u => u.UserId == userStandinGuid);
+                    while (user.UserId == ev.OwnerId)
                     {
                         user = seedUsers.ElementAt(faker.Random.Int(0, seedUsers.Count - 1));
                     }
@@ -149,7 +170,7 @@ public static class DBSeed
                     };
                 });
 
-            var generatedParticipants = participantFaker.Generate(faker.Random.Int(3, 10));
+            var generatedParticipants = participantFaker.Generate(faker.Random.Int(6, 12));
             participants.AddRange(generatedParticipants);
         }
 

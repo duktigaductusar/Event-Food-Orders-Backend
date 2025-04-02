@@ -48,7 +48,7 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     public ActionResult<IEnumerable<EventForResponseDto>> GetAllEventsForUser()
     {
         //ToDo: Update how the controller gets the user id, this is a temp Guid as string
-        Guid userId = Guid.NewGuid();
+        Guid userId = Guid.Parse("a84c12d5-9075-42d2-b467-6b345b7d8c9f");
         IEnumerable<EventForResponseDto> response = _service.GetAllEventsForUser(userId);
 
         return Ok(response);
