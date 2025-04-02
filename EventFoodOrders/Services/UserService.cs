@@ -1,37 +1,43 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
 using System.Text;
-using Azure.Core;
 using EventFoodOrders.Dto.UserDTOs;
-using EventFoodOrders.Repositories.Interfaces;
-using EventFoodOrders.Services;
-using Microsoft.Graph;
-using Microsoft.Graph.Models;
+using EventFoodOrders.Services.Interfaces;
 using Newtonsoft.Json;
 
-namespace EventFoodOrders.Repositories;
+namespace EventFoodOrders.Services;
 
-public class GraphRepository : IGraphRepository
+public class UserService: IUserService
 {
     private readonly IGraphTokenService _graphTokenService;
     private readonly HttpClient _httpClient;
     private string _accessToken;
     private IConfiguration _config;
-
-    public GraphRepository(IGraphTokenService graphTokenService, HttpClient httpClient, IConfiguration config)
+    
+    public UserService(IGraphTokenService graphTokenService, HttpClient httpClient, IConfiguration config)
     {
         _graphTokenService = graphTokenService;
         _httpClient = httpClient;
         _httpClient.BaseAddress = new Uri("https://graph.microsoft.com/v1.0/");
         _config = config;
     }
+    public async Task<UserDto[]> GetUsersFromQuery(string queryString)
+    {
+        await SetAccessToken();
+        var encodedSearchString = Uri.EscapeDataString(queryString);
+        var query = $"users?$filter=startswith(displayName,'{encodedSearchString}')";
+        var response = await _httpClient.GetAsync(query);
+        response.EnsureSuccessStatusCode();
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<GraphUsersResponse>(content)!;
+        return result.Value ?? [];
+    }
 
-    public async Task<UserDto> GetUserAsync(Guid userId)
+    public async Task<UserDto> GetUserWithId(Guid userId)
     {
         await SetAccessToken();
         var searchId = userId.ToString();
-        var debug = new HttpRequestMessage(HttpMethod.Get, $"users/{searchId}");
-        debug.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
         var response = await _httpClient.GetAsync($"users/{searchId}");
         response.EnsureSuccessStatusCode();
         
@@ -39,13 +45,18 @@ public class GraphRepository : IGraphRepository
         return JsonConvert.DeserializeObject<UserDto>(content)!;
     }
 
-    public async Task SendMailAsync(Guid[] userIds)
+    public List<string> GetNamesWithIds(Guid[] userIds)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task SendEmail(Guid[] userIds)
     {
         Console.WriteLine("Email sending method starting");
         Collection<string> recipients = [];
         foreach (var userId in userIds)
         {
-            var recipient = await GetUserAsync(userId);
+            var recipient = await GetUserWithId(userId);
             var recipientEmail = recipient.Email;
             recipients.Add(recipientEmail);
         }
@@ -76,7 +87,11 @@ public class GraphRepository : IGraphRepository
         response.EnsureSuccessStatusCode();
     }
 
-
+    public async Task <UserDto[]> GetUsersFromIds(Guid[] userIds)
+    {
+        throw new NotImplementedException();
+    }
+    
     private async Task SetAccessToken()
     {
         if (string.IsNullOrEmpty(_accessToken))
@@ -85,5 +100,12 @@ public class GraphRepository : IGraphRepository
         }
         
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+    }
+    
+    //For testing purposes
+    public class GraphUsersResponse
+    {
+        [JsonProperty("value")]
+        public UserDto[] Value { get; set; }
     }
 }

@@ -6,20 +6,20 @@ namespace EventFoodOrders.Controllers;
 
 [ApiController]
 [Route("api/user")]
-public class UserController(IUserService userService)
+public class UserController(IServiceManager serviceManager) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<List<UserDto>> GetUsersFromQuery(string queryString)
+    public async Task<ActionResult<UserDto[]>> GetUsersFromQuery(string queryString)
     {
-        var users = userService.GetUsersFromQuery(queryString);
+        var users = await serviceManager.UserService.GetUsersFromQuery(queryString);
         return users;
     }
 
     [HttpPost]
     [Route("userId")]
-    public ActionResult<List<UserDto>> GetUsers([FromBody] UserIdsDto userIds)
+    public async Task<ActionResult<UserDto[]>> GetUsers([FromBody] UserIdsDto userIds)
     {
-        var users = userService.GetUsersFromIds(userIds.UserIds);
+        var users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
         return users;
     }
 }
