@@ -30,13 +30,31 @@ public class GraphRepository : IGraphRepository
     {
         await SetAccessToken();
         var searchId = userId.ToString();
-        var debug = new HttpRequestMessage(HttpMethod.Get, $"users/{searchId}");
-        debug.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
         var response = await _httpClient.GetAsync($"users/{searchId}");
         response.EnsureSuccessStatusCode();
         
         var content = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<UserDto>(content)!;
+    }
+
+    public async Task<UserDto[]> GetUsersByNameAsync(string searchString)
+    {
+        await SetAccessToken();
+        var encodedSearchString = Uri.EscapeDataString(searchString);
+        var query = $"users?$filter=startswith(displayName,'{encodedSearchString}')";
+        var response = await _httpClient.GetAsync(query);
+        response.EnsureSuccessStatusCode();
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<GraphUsersResponse>(content)!;
+        return result?.Value ?? [];
+    }
+    
+    //For testing purposes
+    public class GraphUsersResponse
+    {
+        [JsonProperty("value")]
+        public UserDto[] Value { get; set; }
     }
 
     public async Task SendMailAsync(Guid[] userIds)

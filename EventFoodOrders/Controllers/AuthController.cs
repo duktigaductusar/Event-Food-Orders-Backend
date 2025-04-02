@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Repositories;
 using EventFoodOrders.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +59,20 @@ public class AuthController(IServiceManager serviceManager, IGraphRepository gra
         catch (Exception ex)
         {
             return StatusCode(500, $"Internal server error when sending mail: {ex.Message}");
+        }
+    }
+
+    [HttpGet("find")]
+    public async Task<IActionResult> SearchUserByName(string search)
+    {
+        try
+        {
+            var foundUsers = await _graphRepository.GetUsersByNameAsync(search);
+            return Ok(foundUsers);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error when searching users by string: {ex.Message}");
         }
     }
 
