@@ -7,4 +7,5 @@ public class ServiceManager(IAuthService authService, IEventService eventService
     public IAuthService AuthService { get; set; } = authService;
     public IEventService EventService { get; set; } = eventService;
     public IParticipantService ParticipantService { get; set; } = participantService;
+    
 }

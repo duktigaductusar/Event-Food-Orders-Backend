@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using Azure.Identity;
 using EventFoodOrders.Exceptions;
 using EventFoodOrders.security;
@@ -32,6 +32,7 @@ public class AuthService : IAuthService
     {
         var res = await _graphClient.Users[userId.ToString()].GetAsync() ??
             throw new CustomException(StatusCodes.Status500InternalServerError, "Failed to fetch user name.");
+        
         return res.DisplayName!;
     }
 
@@ -91,18 +92,13 @@ public class AuthService : IAuthService
         var scopes = new[] { "User.Read" };
 
         // Multi-tenant apps can use "common",
-        // single-tenant apps must use the tenant ID from the Azure portal
-        var tenantId = _tenantId;
-
-        // Value from app registration
-        var clientId = _clientId;
 
         // using Azure.Identity;
         var options = new DeviceCodeCredentialOptions
         {
             AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
-            ClientId = clientId,
-            TenantId = tenantId,
+            ClientId = _clientId,
+            TenantId = _tenantId,
             // Callback function that receives the user prompt
             // Prompt contains the generated device code that user must
             // enter during the auth process in the browser
