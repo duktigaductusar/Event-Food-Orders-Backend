@@ -15,6 +15,7 @@ public class Participant
         WantsMeal = false;
         Allergies = "";
         Preferences = "";
+        LastUpdated = DateTime.Now;
     }
 
     public Participant(Guid userId, Guid eventId)
@@ -54,4 +55,7 @@ public class Participant
 
     [Column("preferences")]
     public string? Preferences { get; set; }
+
+    [Column("last_updated")]
+    public DateTimeOffset LastUpdated { get; set; }
 }
