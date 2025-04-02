@@ -22,18 +22,4 @@ public class UserController(IServiceManager serviceManager) : ControllerBase
         var users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
         return users;
     }
-    
-    [HttpGet("find")]
-    public async Task<IActionResult> SearchUserByName(string search)
-    {
-        try
-        {
-            var foundUsers = await serviceManager.UserService.GetUsersFromQuery(search);
-            return Ok(foundUsers);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error when searching users by string: {ex.Message}");
-        }
-    }
 }
