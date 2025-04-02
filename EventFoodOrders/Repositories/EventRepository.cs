@@ -89,7 +89,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
             IEnumerable<Event> events = context.Events
                 .AsNoTracking()
                 .Include(e => e.Participants)
-                //.Where(e => e.id == userId)
+                .Where(e => e.Participants.Where(p => p.UserId == userId).Count() > 0)
                 .ToList();
 
             return events;
@@ -112,6 +112,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         return result;
     }
 
+    // Helper functions
     private static void UpdateEventEntity(Event source, Event destination)
     {
         destination.Title = source.Title;
