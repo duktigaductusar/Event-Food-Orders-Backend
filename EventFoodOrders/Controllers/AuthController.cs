@@ -29,17 +29,17 @@ public class AuthController(IServiceManager serviceManager) : ControllerBase
         return Unauthorized(new {IsAuthenticated = false});
     }
 
-    [HttpGet("graph")]
-    public async Task<IActionResult> Graph(Guid userId)
-    {
-        try
-        {
-            var user = await serviceManager.UserService.GetUserWithId(userId);
-            return Ok(user);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error when fetching user from Graph API: {ex.Message}");
-        }
-    }
+    //[HttpGet("graph")]
+    //public async Task<IActionResult> Graph(Guid userId)
+    //{
+    //    try
+    //    {
+    //        var user = await serviceManager.UserService.GetUserWithId(userId);
+    //        return Ok(user);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return StatusCode(500, $"Internal server error when fetching user from Graph API: {ex.Message}");
+    //    }
+    //}
 }
