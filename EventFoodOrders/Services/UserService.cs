@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace EventFoodOrders.Services;
 
-public class UserService: IUserService
+public class UserService//: IUserService
 {
     private readonly IGraphTokenService _graphTokenService;
     private readonly HttpClient _httpClient;

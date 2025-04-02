@@ -4,9 +4,8 @@ namespace EventFoodOrders.Services.Interfaces;
 
 public interface IUserService
 {
-    Task<UserDto[]> GetUsersFromQuery(string queryString);
-    Task<UserDto> GetUserWithId(Guid userId);
-    List<string> GetNamesWithIds(Guid[] userIds);
-    Task SendEmail(Guid[] userIds);
-    Task<UserDto[]> GetUsersFromIds(Guid[] userIds);
+    List<UserDto> GetUsersFromQuery(string queryString);
+    List<string> GetNamesWithIds(List<Guid> userIds);
+    void SendEmail(List<Guid> userIds, string message);
+    List<UserDto> GetUsersFromIds(Guid[] userIds);
 }

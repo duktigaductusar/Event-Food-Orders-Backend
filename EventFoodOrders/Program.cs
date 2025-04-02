@@ -6,6 +6,7 @@ using EventFoodOrders.Extensions;
 using EventFoodOrders.Middleware;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Services;
+using EventFoodOrders.Mock;
 
 namespace EventFoodOrders;
 
@@ -20,7 +21,7 @@ public class Program
         //Auth thingies
         Env.Load();
         builder.Configuration.AddEnvironmentVariables();
-        builder.Services.AddHttpClient<IUserService, UserService>();
+        builder.Services.AddHttpClient<IUserService, MockUserService>();
         builder.Services.ConfigureScopedServices(isDevelopment);
         builder.Services.ConfigureSingletonServices();
         builder.Services.AddDistributedMemoryCache();
