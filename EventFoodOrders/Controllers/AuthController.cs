@@ -42,7 +42,29 @@ public class AuthController(IServiceManager serviceManager, IGraphRepository gra
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error when fetchng user from Graph API: {ex.Message}");
+            return StatusCode(500, $"Internal server error when fetching user from Graph API: {ex.Message}");
         }
+    }
+
+    [HttpPost("mail")]
+    public async Task<IActionResult> Mail(Guid[] userIds)
+    {
+        try
+        {
+            await _graphRepository.SendMailAsync(userIds);
+            return Ok("Emails sent");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error when sending mail: {ex.Message}");
+        }
+    }
+
+    
+    [HttpGet("/login")]
+    public IActionResult Login()
+    {
+        string loginUrl = _authService.GetLoginUrl();
+        return Redirect(loginUrl);
     }
 }

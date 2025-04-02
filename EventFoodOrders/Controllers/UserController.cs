@@ -8,12 +8,10 @@ namespace EventFoodOrders.Controllers;
 [Route("api/user")]
 public class UserController(IUserService userService)
 {
-    private readonly IUserService _userService = userService;
-
     [HttpGet]
     public ActionResult<List<UserDto>> GetUsersFromQuery(string queryString)
     {
-        var users = _userService.GetUsersFromQuery(queryString);
+        var users = userService.GetUsersFromQuery(queryString);
         return users;
     }
 
@@ -21,7 +19,7 @@ public class UserController(IUserService userService)
     [Route("userId")]
     public ActionResult<List<UserDto>> GetUsers([FromBody] UserIdsDto userIds)
     {
-        var users = _userService.GetUsersFromIds(userIds.UserIds);
+        var users = userService.GetUsersFromIds(userIds.UserIds);
         return users;
     }
 }
