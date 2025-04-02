@@ -68,12 +68,12 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
         IEnumerable<Event> returnEvents = _eventRepository.GetAllEventsForUser(userId);
         List<EventForResponseDto> events = [];
 
-        string name = _userService.GetNameWithId(Guid.Parse("a84c12d5-9075-42d2-b467-6b345b7d8c9f"));
+        string name = _userService.GetNameWithId(userId);
 
         foreach (Event e in returnEvents)
         {
             Participant? participant = e.Participants
-                //.Where(p => p.UserId == userId)
+                .Where(p => p.UserId == userId)
                 .FirstOrDefault();
 
             if (participant is not null)
