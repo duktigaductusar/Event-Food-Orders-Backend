@@ -1,6 +1,8 @@
 using EventFoodOrders.Dto.EventDTOs;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
 
 namespace EventFoodOrders.Controllers;
 
@@ -11,10 +13,22 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     private readonly IEventService _service = serviceManager.EventService;
 
     [HttpPost]
-    public ActionResult<EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto newEvent)
+    public ActionResult<EventForResponseDto> CreateEvent(EventForCreationDto newEvent)
     {
-        EventForResponseDto response = _service.CreateEvent(userId, newEvent);
-        return Created(uri: "", value: response);
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            string? userIdAsString = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value;
+            if (userIdAsString != null)
+            {
+                if (Guid.TryParse(userIdAsString, out Guid userId) == true)
+                {
+                    EventForResponseDto response = _service.CreateEvent(userId, newEvent);
+                    return Created(uri: "", value: response);
+                }
+            }
+        }
+
+        throw new UnauthorizedUserException();
     }
 
     [HttpPut]
