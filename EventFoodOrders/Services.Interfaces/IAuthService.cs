@@ -1,4 +1,5 @@
-﻿using EventFoodOrders.security;
+﻿using System.Security.Claims;
+using EventFoodOrders.security;
 
 namespace EventFoodOrders.Services.Interfaces;
 
@@ -19,6 +20,7 @@ public interface IAuthService
     /// </summary>
     /// <returns></returns>
     string GetLoginUrl();
+    Guid GetUserIdFromUserClaims(IEnumerable<Claim> claims);
 
     /// <summary>
     /// Exchanges a login token for an access token.

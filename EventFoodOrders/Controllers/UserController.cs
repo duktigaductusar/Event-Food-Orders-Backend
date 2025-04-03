@@ -11,8 +11,11 @@ public class UserController(IServiceManager serviceManager) : ControllerBase
     [HttpGet]
     public ActionResult<UserDto[]> GetUsersFromQuery(string queryString)
     {
+        Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
         //var users = await serviceManager.UserService.GetUsersFromQuery(queryString);
+
         var users = serviceManager.UserService.GetUsersFromQuery(queryString);
+        users.RemoveAll(u => u.UserId == userId);
         return users.ToArray();
     }
 

@@ -18,7 +18,7 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
     {
         Event? desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == eventId) ?? throw new EventNotFoundException();
 
-        if (desiredEvent.Participants.Where(p => p.UserId == newParticipant.UserId).Any())
+        if (desiredEvent.Participants.Where(p => p.UserId == newParticipant.UserId).Count() > 0)
         {
             // This could be more specific but would reveal that a user is invited to an event.
             throw new EventNotFoundException();

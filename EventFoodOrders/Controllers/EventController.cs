@@ -1,6 +1,8 @@
 using EventFoodOrders.Dto.EventDTOs;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
 
 namespace EventFoodOrders.Controllers;
 
@@ -11,8 +13,9 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     private readonly IEventService _service = serviceManager.EventService;
 
     [HttpPost]
-    public ActionResult<EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto newEvent)
+    public ActionResult<EventForResponseDto> CreateEvent(EventForCreationDto newEvent)
     {
+        Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
         EventForResponseDto response = _service.CreateEvent(userId, newEvent);
         return Created(uri: "", value: response);
     }

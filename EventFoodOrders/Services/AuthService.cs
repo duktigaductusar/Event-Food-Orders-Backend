@@ -1,9 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using Azure.Identity;
+using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Exceptions;
 using EventFoodOrders.security;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.Graph;
+using Microsoft.Graph.Models;
 using Newtonsoft.Json;
 
 namespace EventFoodOrders.Services;
@@ -112,5 +114,19 @@ public class AuthService : IAuthService
         var deviceCodeCredential = new DeviceCodeCredential(options);
 
         _graphClient = new GraphServiceClient(deviceCodeCredential, scopes);
+    }
+
+    public Guid GetUserIdFromUserClaims(IEnumerable<System.Security.Claims.Claim> claims)
+    {
+        string? userIdAsString = claims.FirstOrDefault(c => c.Type == "http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value;
+        if (userIdAsString != null)
+        {
+            if (Guid.TryParse(userIdAsString, out Guid userId) == true)
+            {
+                return userId;
+            }
+        }
+
+        throw new UnauthorizedUserException();
     }
 }
