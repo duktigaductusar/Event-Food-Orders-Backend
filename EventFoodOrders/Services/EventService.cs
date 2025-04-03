@@ -20,9 +20,13 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
     {
         Event newEvent = _mapper.MapToNewEvent(userId, eventForCreation);
         newEvent = _eventRepository.AddEvent(newEvent);
-
-        Participant owner = _participantService.CreateParticipant(userId, newEvent.Id);
-        owner = _participantRepository.AddParticipant(owner);
+        
+        _participantService.AddParticipantToEvent(newEvent.Id, new ParticipantForCreationDto()
+        {
+            UserId = userId,
+        });
+        
+        var owner = _participantRepository.GetParticipantWithEventAndUserId(newEvent.Id, userId);
 
         if (eventForCreation.UserIds is not null)
         {
