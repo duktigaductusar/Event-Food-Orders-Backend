@@ -1,4 +1,6 @@
 ﻿using EventFoodOrders.Dto.EventDTOs;
+using EventFoodOrders.Dto.ParticipantDTOs;
+using EventFoodOrders.Dto.UserDTOs;
 
 namespace EventFoodOrders.Services.Interfaces;
 
@@ -36,6 +38,12 @@ public interface IEventService
     /// <param name="eventId"></param>
     /// <returns></returns>
     EventForResponseWithDetailsDto GetEventForUser(Guid userId, Guid eventId);
+
+    /// <summary>
+    /// Gets a single event with all the participant and user information.
+    /// </summary>
+    /// <returns></returns>
+    EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto dto, IEnumerable<ParticipantForResponseDto> participants, IEnumerable<UserDto> users);
 
     /// <summary>
     /// Updates an event given its Id and a Dto.
