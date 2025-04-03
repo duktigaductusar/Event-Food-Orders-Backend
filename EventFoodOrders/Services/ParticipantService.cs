@@ -63,7 +63,7 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
     {
         Event participantsEvent = _eventRepository.GetEventForUser(userId, eventId);
         Participant? participant = participantsEvent.Participants
-            .Where(p => p.Id == userId)
+            .Where(p => p.UserId == userId)
             .FirstOrDefault();
 
         if (participant is null)
