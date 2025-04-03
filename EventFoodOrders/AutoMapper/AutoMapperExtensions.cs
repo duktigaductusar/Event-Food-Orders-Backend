@@ -96,6 +96,7 @@ public static class AutoMapperExtensions
     public static ParticipantWithUserDto MapToParticipantWithUserDto(this IMapper mapper, ParticipantForResponseDto participant, UserDto user)
     {
         var p = mapper.Map<ParticipantWithUserDto>(participant);
+        p.UserId = user.UserId;
         p.UserName = user.Username;
         p.Email = user.Email;
         return p;
