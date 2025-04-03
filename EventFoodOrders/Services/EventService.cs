@@ -68,7 +68,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
         IEnumerable<Event> returnEvents = _eventRepository.GetAllEventsForUser(userId);
         List<EventForResponseDto> events = [];
 
-        string name = _userService.GetNameWithId(userId);
+        // string name = _userService.GetUserWithId(userId);
 
         foreach (Event e in returnEvents)
         {

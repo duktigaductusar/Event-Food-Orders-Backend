@@ -1,5 +1,3 @@
-using EventFoodOrders.Repositories;
-using EventFoodOrders.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using EventFoodOrders.Services.Interfaces;
@@ -8,10 +6,9 @@ namespace EventFoodOrders.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IServiceManager serviceManager, IGraphRepository graphRepository) : ControllerBase
+public class AuthController(IServiceManager serviceManager) : ControllerBase
 {
     private readonly IAuthService _authService = serviceManager.AuthService;
-    private readonly IGraphRepository _graphRepository = graphRepository;
 
     [Authorize]
     [HttpGet("status")]
@@ -32,39 +29,17 @@ public class AuthController(IServiceManager serviceManager, IGraphRepository gra
         return Unauthorized(new {IsAuthenticated = false});
     }
 
-    [HttpGet("graph")]
-    public async Task<IActionResult> Graph(Guid userId)
-    {
-        try
-        {
-            var user = await _graphRepository.GetUserAsync(userId);
-            return Ok(user);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error when fetching user from Graph API: {ex.Message}");
-        }
-    }
-
-    [HttpPost("mail")]
-    public async Task<IActionResult> Mail(Guid[] userIds)
-    {
-        try
-        {
-            await _graphRepository.SendMailAsync(userIds);
-            return Ok("Emails sent");
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error when sending mail: {ex.Message}");
-        }
-    }
-
-    
-    [HttpGet("/login")]
-    public IActionResult Login()
-    {
-        string loginUrl = _authService.GetLoginUrl();
-        return Redirect(loginUrl);
-    }
+    //[HttpGet("graph")]
+    //public async Task<IActionResult> Graph(Guid userId)
+    //{
+    //    try
+    //    {
+    //        var user = await serviceManager.UserService.GetUserWithId(userId);
+    //        return Ok(user);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return StatusCode(500, $"Internal server error when fetching user from Graph API: {ex.Message}");
+    //    }
+    //}
 }
