@@ -9,22 +9,22 @@ namespace EventFoodOrders.Controllers;
 public class UserController(IServiceManager serviceManager) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<UserDto[]> GetUsersFromQuery(string queryString)
+    public async Task<ActionResult<UserDto[]>> GetUsersFromQuery(string queryString)
     {
         Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
         //var users = await serviceManager.UserService.GetUsersFromQuery(queryString);
 
-        var users = serviceManager.UserService.GetUsersFromQuery(queryString);
+        var users = await serviceManager.UserService.GetUsersFromQuery(queryString);
         users.RemoveAll(u => u.UserId == userId);
         return users.ToArray();
     }
 
     [HttpPost]
     [Route("userId")]
-    public ActionResult<UserDto[]> GetUsers([FromBody] UserIdsDto userIds)
+    public async Task<ActionResult<UserDto[]>> GetUsers([FromBody] UserIdsDto userIds)
     {
         //var users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
-        var users = serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
+        List<UserDto> users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
         return users.ToArray();
     }
 }

@@ -40,7 +40,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
             }
         }
 
-        return _mapper.MapToEventForResponseDto(newEvent, owner);
+        return _mapper.MapToEventForResponseDto(newEvent, owner!);
     }
 
     public EventForResponseDto UpdateEvent(Guid eventId, EventForUpdateDto updatedEventDto)
