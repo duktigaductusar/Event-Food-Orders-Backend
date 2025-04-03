@@ -1,7 +1,12 @@
-using EventFoodOrders.Api;
 using EventFoodOrders.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using DotNetEnv;
+using EventFoodOrders.Extensions;
+using EventFoodOrders.Middleware;
+using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Services;
+using EventFoodOrders.Mock;
 
 namespace EventFoodOrders;
 
@@ -9,11 +14,24 @@ public class Program
 {
     public static void Main(string[] args)
     {
-
-
         var builder = WebApplication.CreateBuilder(args);
         var isDevelopment = builder.Environment.IsDevelopment();
-
+        
+        builder.Services.AddControllers();
+        //Auth thingies
+        Env.Load();
+        builder.Configuration.AddEnvironmentVariables();
+        builder.Services.AddHttpClient<IUserService, MockUserService>();
+        builder.Services.ConfigureScopedServices(isDevelopment);
+        builder.Services.ConfigureSingletonServices();
+        builder.Services.AddDistributedMemoryCache();
+        builder.Services.ConfigureSessions();
+        builder.Services.ConfigureAuths(builder.Configuration);
+        // No more auth thingies
+        builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
+        opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
+        builder.Services.ConfigureCORS(isDevelopment);
+ 
         if (isDevelopment)
         {
             builder.Services.AddSwaggerGen(c =>
@@ -22,46 +40,16 @@ public class Program
             });
         }
 
-
-        builder.Services.AddControllers();
-        builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
-        opt.UseSqlServer(builder.Configuration.GetConnectionString("EventFoodOrdersProdServer")));
-        builder.Services.AddTransient<IEventFoodOrdersApi, EventFoodOrdersApi>();
-
-
-        if (isDevelopment)
-        {
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AngularFontendDEV", policyBuilder =>
-                {
-                    policyBuilder.AllowAnyOrigin();
-                    policyBuilder.AllowAnyHeader();
-                    policyBuilder.AllowAnyMethod();
-                    //policyBuilder.AllowCredentials();
-                });
-            });
-        }
-        else
-        {
-
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AngularFontendProd", policyBuilder =>
-                {
-                    policyBuilder.AllowAnyOrigin();
-                    policyBuilder.AllowAnyHeader();
-                    policyBuilder.AllowAnyMethod();
-                    //policyBuilder.AllowCredentials();
-                });
-            });
-        }
-
         var app = builder.Build();
 
+        app.UseCustomExceptionHandler();
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseDataSeedExtension();
+        
         if (isDevelopment)
         {
-            app.UseCors("AngularFontendDEV");
+            app.UseCors("FrontendDEV");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -73,21 +61,14 @@ public class Program
             app.UseCors("AngularFontendProd");
         }
 
-
-        // Configure the HTTP request pipeline.
-
-        app.UseHttpsRedirection();
-
+        app.UseAuthentication();
         app.UseAuthorization();
+        app.UseSession();
 
-        if (isDevelopment)
+        app.UseEndpoints(endpoints =>
         {
-            app.UsePathBase("/efobackend");
-        }
-        else
-        {
-            app.UsePathBase("");
-        }
+            endpoints.MapControllers();
+        });
 
         app.MapControllers();
 

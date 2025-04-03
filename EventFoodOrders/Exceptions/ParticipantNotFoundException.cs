@@ -1,11 +1,16 @@
-﻿namespace EventFoodOrders.Exceptions
+﻿namespace EventFoodOrders.Exceptions;
+
+public class ParticipantNotFoundException : CustomException
 {
-    public class ParticipantNotFoundException : Exception
-    {
-        private ParticipantNotFoundException() { }
+    public ParticipantNotFoundException() :
+        base(StatusCodes.Status400BadRequest, message: "Participant not found.")
+    { }
 
-        public ParticipantNotFoundException(string message) : base(message) { }
+    public ParticipantNotFoundException(string message = "Participant not found.") :
+        base(StatusCodes.Status400BadRequest, message: message)
+    { }
 
-        public ParticipantNotFoundException(string message, Exception innerException) : base(message, innerException) { }
-    }
+    public ParticipantNotFoundException(Guid participantId) :
+        this(message: $"Participant with id {participantId} not found.")
+    { }
 }
