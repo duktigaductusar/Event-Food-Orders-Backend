@@ -15,20 +15,9 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     [HttpPost]
     public ActionResult<EventForResponseDto> CreateEvent(EventForCreationDto newEvent)
     {
-        if (User.Identity?.IsAuthenticated == true)
-        {
-            string? userIdAsString = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value;
-            if (userIdAsString != null)
-            {
-                if (Guid.TryParse(userIdAsString, out Guid userId) == true)
-                {
-                    EventForResponseDto response = _service.CreateEvent(userId, newEvent);
-                    return Created(uri: "", value: response);
-                }
-            }
-        }
-
-        throw new UnauthorizedUserException();
+        Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
+        EventForResponseDto response = _service.CreateEvent(userId, newEvent);
+        return Created(uri: "", value: response);
     }
 
     [HttpPut]
