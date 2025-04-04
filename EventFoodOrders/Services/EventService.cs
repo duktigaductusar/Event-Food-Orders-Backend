@@ -91,8 +91,8 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
         return events;
     }
 
-    public EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto dto, IEnumerable<ParticipantForResponseDto> participants, IEnumerable<UserDto> users)
+    public EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participantDtos, IEnumerable<UserDto> users)
     {
-        return _mapper.MapToEventForResponseWithUsersDto(dto, participants, users);
+        return _mapper.MapToEventForResponseWithUsersDto(eventDto, participantDtos, users);
     }
 }

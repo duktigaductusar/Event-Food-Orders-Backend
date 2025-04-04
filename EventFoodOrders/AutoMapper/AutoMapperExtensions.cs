@@ -78,28 +78,28 @@ public static class AutoMapperExtensions
         return dto;
     }
 
-    public static EventForResponseWithUsersDto MapToEventForResponseWithUsersDto(this IMapper mapper, EventForResponseWithDetailsDto dto, IEnumerable<ParticipantForResponseDto> participants, IEnumerable<UserDto> users)
+    public static EventForResponseWithUsersDto MapToEventForResponseWithUsersDto(this IMapper mapper, EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participants, IEnumerable<UserDto> users)
     {
-        var ps = new Collection<ParticipantWithUserDto>();
+        var participantsWithUsers = new Collection<ParticipantWithUserDto>();
 
         foreach(ParticipantForResponseDto participant in participants)
         {
-            ps.Add(mapper.MapToParticipantWithUserDto(participant, users.Where(u => u.UserId == participant.UserId).First()));
+            participantsWithUsers.Add(mapper.MapToParticipantWithUserDto(participant, users.Where(u => u.UserId == participant.UserId).First()));
         }
 
-        var e = mapper.Map<EventForResponseWithUsersDto>(dto);
-        e.Participants = ps;
+        EventForResponseWithUsersDto evetWithUsersDto = mapper.Map<EventForResponseWithUsersDto>(eventDto);
+        evetWithUsersDto.Participants = participantsWithUsers;
 
-        return e;
+        return evetWithUsersDto;
     }
 
-    public static ParticipantWithUserDto MapToParticipantWithUserDto(this IMapper mapper, ParticipantForResponseDto participant, UserDto user)
+    public static ParticipantWithUserDto MapToParticipantWithUserDto(this IMapper mapper, ParticipantForResponseDto participantDto, UserDto user)
     {
-        var p = mapper.Map<ParticipantWithUserDto>(participant);
-        p.UserId = user.UserId;
-        p.UserName = user.Username;
-        p.Email = user.Email;
-        return p;
+        ParticipantWithUserDto participantWithUserDto = mapper.Map<ParticipantWithUserDto>(participantDto);
+        participantWithUserDto.UserId = user.UserId;
+        participantWithUserDto.UserName = user.Username;
+        participantWithUserDto.Email = user.Email;
+        return participantWithUserDto;
     }
 
     public static Participant MapToParticipantFromCreationDto(this IMapper mapper, Guid eventId, ParticipantForCreationDto participantForCreationDto)

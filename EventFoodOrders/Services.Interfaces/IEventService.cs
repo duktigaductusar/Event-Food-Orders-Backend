@@ -43,7 +43,7 @@ public interface IEventService
     /// Gets a single event with all the participant and user information.
     /// </summary>
     /// <returns></returns>
-    EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto dto, IEnumerable<ParticipantForResponseDto> participants, IEnumerable<UserDto> users);
+    EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participantDtos, IEnumerable<UserDto> users);
 
     /// <summary>
     /// Updates an event given its Id and a Dto.
