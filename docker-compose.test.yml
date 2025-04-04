@@ -21,7 +21,7 @@ services:
     depends_on:
       - event-food-orders-db
     env_file:
-       - EventFoodOrders/.env.production
+       - EventFoodOrders/.env
     environment:
         ASPNETCORE_ENVIRONMENT: Production
     ports:
