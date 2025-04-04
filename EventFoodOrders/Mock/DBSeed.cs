@@ -87,7 +87,14 @@ public static class DBSeed
 
         var faker = new Faker("sv");
 
-        Guid userStandinGuid = Guid.Parse("a84c12d5-9075-42d2-b467-6b345b7d8c9f");
+        Guid angeliki = Guid.Parse("e0d301f3-2943-423c-95a5-ee02cfa4be29");
+        Guid riki = Guid.Parse("f9a25aaf-7081-45c1-ae05-3ac38c2e9073");
+        Guid joel = Guid.Parse("c90cbace-5a82-43bf-b8f2-9ea64690a689");
+        Guid daniel = Guid.Parse("8ef89f5a-c315-470c-9f52-2e6a06dd1197");
+
+        Guid[] seededUsers = [angeliki, riki, joel, daniel];
+
+        string[] bools = ["true", "false"];
 
         List<SeedUser> seedUsers = [];
 
@@ -101,61 +108,54 @@ public static class DBSeed
             ));
         }
 
-        int numberOfOwnerEvents = 3;
+        int numberOfEvents = 0;
 
         var eventFaker = new Faker<Event>()
             .CustomInstantiator(f =>
             {
-                Guid ownerId = Guid.NewGuid();
-                if (numberOfOwnerEvents > 0)
-                {
-                    ownerId = userStandinGuid;
-                    numberOfOwnerEvents--;
-                }
-                else
-                {
-                    if (faker.Random.Int(0, 1) == 1)
-                    {
-                        ownerId = seedUsers.ElementAt(faker.Random.Int(0, seedUsers.Count - 1)).UserId;
-                    }
-                    else
-                    {
-                        ownerId = userStandinGuid;
-                    }
-                }
+                Guid ownerId = seededUsers[numberOfEvents % seededUsers.Length];
+                numberOfEvents++;
                     
-                return new Event(ownerId)
+                var e = new Event(ownerId)
                 {
                     Title = f.PickRandom(eventTitles),
                     Description = f.PickRandom(eventDescripotions),
                     Date = f.Date.FutureOffset(2),
                     Deadline = f.Date.FutureOffset(1)
                 };
+
+                return e;
             });
 
-        var events = eventFaker.Generate(12);
+        List<Event> events = eventFaker.Generate(12);
 
-        var participants = new List<Participant>();
+        List<Participant> participants = [];
 
         foreach (var ev in events)
         {
-            var ownerUser = seedUsers.Find(u => u.UserId == ev.OwnerId);
-            var ownerParticipant = new Participant(ev.OwnerId, ev.Id)
+            List<Participant> seedParticipants = [];
+            for (int i = 0; i < seededUsers.Length; i++)
             {
-                Name = ownerUser.Name,
-                ResponseType = faker.PickRandom(Utility.PossibleResponses),
-                WantsMeal = faker.Random.Bool(),
-                Allergies = ownerUser.Allergies,
-                Preferences = ownerUser.Preferences
-            };
+                var rand = new Random();
+                Guid uId = seededUsers[(numberOfEvents + i) % seededUsers.Length];
+                SeedUser user = seedUsers.Find(u => u.UserId == uId)!;
+                seedParticipants.Add(new Participant(uId, ev.Id)
+                {
+                    Name = user.Name,
+                    ResponseType = Utility.PossibleResponses[rand.Next(Utility.PossibleResponses.Length)],
+                    WantsMeal = bool.Parse(bools[rand.Next(2)]),
+                    Allergies = user.Allergies,
+                    Preferences = user.Preferences
+                });
+            }
 
-            participants.Add(ownerParticipant);
+            participants.AddRange(seedParticipants);
 
             var participantFaker = new Faker<Participant>()
                 .CustomInstantiator(f =>
                 {
-                    SeedUser user = seedUsers.Find(u => u.UserId == userStandinGuid);
-                    while (user.UserId == ev.OwnerId)
+                    SeedUser user = seedUsers.Find(u => u.UserId == ev.OwnerId)!;
+                    while (seedParticipants.Where(p => p.UserId == user.UserId).Count() > 0)
                     {
                         user = seedUsers.ElementAt(faker.Random.Int(0, seedUsers.Count - 1));
                     }
@@ -179,7 +179,7 @@ public static class DBSeed
         context.SaveChanges();
     }
 
-    private class SeedUser(Guid userId, string name, string allergies, string preferences)
+    internal class SeedUser(Guid userId, string name, string allergies, string preferences)
     {
         public Guid UserId { get; } = userId;
         public string Name { get; } = name;
