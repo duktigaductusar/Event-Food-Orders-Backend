@@ -13,5 +13,6 @@ public class AutoMapperEventProfile: Profile
         CreateMap<EventForUpdateDto, Event>();
         CreateMap<Event, EventForResponseDto>();
         CreateMap<Event, EventForResponseWithDetailsDto>();
+        CreateMap<EventForResponseWithDetailsDto, EventForResponseWithUsersDto>();
     }
 }

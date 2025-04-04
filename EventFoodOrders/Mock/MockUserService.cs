@@ -8,7 +8,7 @@ public class MockUserService(IUserSeed seeder) : IUserService
 {
     readonly List<MockUser> users = seeder.Users;
 
-    public string GetNameWithId(Guid userId)
+    public async Task<string> GetNameWithId(Guid userId)
     {
         MockUser? user = users.FirstOrDefault(u => u.UserId == userId);
         if (user is null)
@@ -18,14 +18,14 @@ public class MockUserService(IUserSeed seeder) : IUserService
         return user.Username;
     }
 
-    public List<string> GetNamesWithIds(List<Guid> userIds)
+    public async Task<List<string>> GetNamesWithIds(List<Guid> userIds)
     {
         List<string> userNames = [];
         foreach (var userId in userIds)
         {
             try
             {
-                string name = GetNameWithId(userId);
+                string name = await GetNameWithId(userId);
                 if (name is not null)
                 {
                     userNames.Add(name);
@@ -39,7 +39,7 @@ public class MockUserService(IUserSeed seeder) : IUserService
         return userNames;
     }
 
-    public void SendEmail(List<Guid> userIds, string message)
+    public async Task SendEmail(List<Guid> userIds, string message)
     {
         foreach (var userId in userIds)
         {
@@ -47,7 +47,7 @@ public class MockUserService(IUserSeed seeder) : IUserService
         }
     }
 
-    public List<UserDto> GetUsersFromQuery(string queryString)
+    public async Task<List<UserDto>> GetUsersFromQuery(string queryString)
     {
         List<MockUser> filteredUsers = [.. users
             .Where(u => u.Username.StartsWith(queryString, StringComparison.OrdinalIgnoreCase) ||
@@ -68,7 +68,7 @@ public class MockUserService(IUserSeed seeder) : IUserService
         return dtos;
     }
 
-    public List<UserDto> GetUsersFromIds(Guid[] userIds)
+    public async Task<List<UserDto>> GetUsersFromIds(Guid[] userIds)
     {
         List<MockUser> filteredUsers = [.. users
             .Where(u => userIds.Contains(u.UserId)).ToList()];

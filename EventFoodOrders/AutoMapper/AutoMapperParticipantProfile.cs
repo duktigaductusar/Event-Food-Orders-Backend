@@ -21,5 +21,6 @@ public class AutoMapperParticipantProfile: Profile
             .ForMember(dest => dest.ResponseType, opt => opt.Ignore());
 
         CreateMap<Participant, ParticipantForResponseDto>();
+        CreateMap<ParticipantForResponseDto, ParticipantWithUserDto>();
     }
 }

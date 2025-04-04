@@ -2,6 +2,7 @@
 using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
+using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
@@ -40,7 +41,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
             }
         }
 
-        return _mapper.MapToEventForResponseDto(newEvent, owner);
+        return _mapper.MapToEventForResponseDto(newEvent, owner!);
     }
 
     public EventForResponseDto UpdateEvent(Guid eventId, EventForUpdateDto updatedEventDto)
@@ -88,5 +89,10 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
         events.Sort((i, p) => i.Title.CompareTo(p.Title));
         events.Sort((i, p) => i.Date.CompareTo(p.Date));
         return events;
+    }
+
+    public EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participantDtos, IEnumerable<UserDto> users)
+    {
+        return _mapper.MapToEventForResponseWithUsersDto(eventDto, participantDtos, users);
     }
 }
