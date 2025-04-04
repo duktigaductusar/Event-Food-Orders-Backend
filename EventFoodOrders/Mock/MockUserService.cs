@@ -4,7 +4,7 @@ using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Mock;
 
-public class MockUserService(IUserSeed seeder) : IUserService
+public class MockUserService(IUserSeed seeder)// : IUserService
 {
     readonly List<MockUser> users = seeder.Users;
 

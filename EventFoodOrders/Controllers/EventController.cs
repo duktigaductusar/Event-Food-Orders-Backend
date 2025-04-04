@@ -1,11 +1,13 @@
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph.Models;
 
 namespace EventFoodOrders.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("/api/event")]
 public class EventController(IServiceManager serviceManager) : ControllerBase

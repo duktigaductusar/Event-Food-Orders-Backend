@@ -4,13 +4,13 @@ using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController(IServiceManager serviceManager) : ControllerBase
 {
     private readonly IAuthService _authService = serviceManager.AuthService;
 
-    [Authorize]
     [HttpGet("status")]
     public IActionResult Status()
     {

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace EventFoodOrders.Services;
 
-public class UserService//: IUserService
+public class UserService : IUserService
 {
     private readonly IGraphTokenService _graphTokenService;
     private readonly HttpClient _httpClient;
@@ -21,17 +21,25 @@ public class UserService//: IUserService
         _httpClient.BaseAddress = new Uri("https://graph.microsoft.com/v1.0/");
         _config = config;
     }
-    public async Task<UserDto[]> GetUsersFromQuery(string queryString)
+    public async Task<List<UserDto>> GetUsersFromQuery(string queryString)
     {
         await SetAccessToken();
         var encodedSearchString = Uri.EscapeDataString(queryString);
-        var query = $"users?$filter=startswith(displayName,'{encodedSearchString}')";
-        var response = await _httpClient.GetAsync(query);
-        response.EnsureSuccessStatusCode();
+        var queryGroup = $"groups?$filter=startswith(displayName, '{encodedSearchString}')";
+        var groupResponse = await _httpClient.GetAsync(queryGroup);
+        groupResponse.EnsureSuccessStatusCode();
+        var queryUser = $"users?$filter=startswith(displayName,'{encodedSearchString}')";
+        var userResponse = await _httpClient.GetAsync(queryUser);
+        userResponse.EnsureSuccessStatusCode();
         
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<GraphUsersResponse>(content)!;
-        return result.Value ?? [];
+        var userContent = await userResponse.Content.ReadAsStringAsync();
+        var groupContent = await groupResponse.Content.ReadAsStringAsync();
+        List<UserDto> result = [];
+        var groupResult = JsonConvert.DeserializeObject<GraphUsersResponse>(groupContent)!.Value;
+        var userResult= JsonConvert.DeserializeObject<GraphUsersResponse>(userContent)!.Value;
+        result.AddRange(groupResult);
+        result.AddRange(userResult);
+        return result;
     }
 
     public async Task<UserDto> GetUserWithId(Guid userId)
@@ -45,12 +53,12 @@ public class UserService//: IUserService
         return JsonConvert.DeserializeObject<UserDto>(content)!;
     }
 
-    public List<string> GetNamesWithIds(Guid[] userIds)
+    public List<string> GetNamesWithIds(List<Guid> userIds)
     {
         throw new NotImplementedException();
     }
 
-    public async Task SendEmail(Guid[] userIds)
+    public async Task SendEmail(List<Guid> userIds)
     {
         Console.WriteLine("Email sending method starting");
         Collection<string> recipients = [];
@@ -87,7 +95,7 @@ public class UserService//: IUserService
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task <UserDto[]> GetUsersFromIds(Guid[] userIds)
+    public async Task <List<UserDto>> GetUsersFromIds(Guid[] userIds)
     {
         Collection<UserDto> users = [];
         foreach (Guid id in userIds)
@@ -95,7 +103,7 @@ public class UserService//: IUserService
             var user = await GetUserWithId(id);
             users.Add(user);
         }
-        return users.ToArray();
+        return users.ToList();
     }
     
     private async Task SetAccessToken()

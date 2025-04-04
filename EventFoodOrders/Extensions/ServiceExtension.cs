@@ -14,8 +14,8 @@ public static class ServiceExtension
         if (isDev)
         {
             services.AddScoped<IUserSeed, UserSeed>();
-            services.AddScoped<IUserService, MockUserService>();
-            //services.AddScoped<IUserService, UserService>();
+            // services.AddScoped<IUserService, MockUserService>();
+            services.AddScoped<IUserService, UserService>();
         }
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IEventService, EventService>();

@@ -100,9 +100,9 @@ public class AuthService : IAuthService
             AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
             ClientId = _clientId,
             TenantId = _tenantId,
-            // Callback function that receives the user prompt
+            // Callback function that receives the user prompt.
             // Prompt contains the generated device code that user must
-            // enter during the auth process in the browser
+            // enter during the auth process in the browser.
             DeviceCodeCallback = (code, cancellation) =>
             {
                 Console.WriteLine(code.Message);

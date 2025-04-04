@@ -21,7 +21,7 @@ public class Program
         //Auth thingies
         Env.Load();
         builder.Configuration.AddEnvironmentVariables();
-        builder.Services.AddHttpClient<IUserService, MockUserService>();
+        builder.Services.AddHttpClient<IUserService, UserService>();
         builder.Services.ConfigureScopedServices(isDevelopment);
         builder.Services.ConfigureSingletonServices();
         builder.Services.AddDistributedMemoryCache();
