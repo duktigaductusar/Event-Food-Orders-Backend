@@ -1,9 +1,11 @@
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventFoodOrders.Controllers;
 
+//[Authorize] //Un-comment when ready for full auth flow
 [ApiController]
 [Route("/api/participant")]
 public class ParticipantController(IServiceManager serviceManager) : ControllerBase

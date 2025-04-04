@@ -1,9 +1,11 @@
 ﻿using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventFoodOrders.Controllers;
 
+//[Authorize] //Un-comment when ready for full auth flow
 [ApiController]
 [Route("api/user")]
 public class UserController(IServiceManager serviceManager) : ControllerBase
