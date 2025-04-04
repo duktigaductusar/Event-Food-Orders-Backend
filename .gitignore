@@ -7,6 +7,7 @@
 #Files we who don't know what we are doing have added
 global.json
 .env
+.env.production
 
 # Node artifact files
 node_modules/

@@ -11,12 +11,15 @@ public static class ServiceExtension
 {
     public static void ConfigureScopedServices(this IServiceCollection services, bool isDev)
     {
-        if (isDev)
-        {
-            services.AddScoped<IUserSeed, UserSeed>();
-            services.AddScoped<IUserService, MockUserService>();
-            //services.AddScoped<IUserService, UserService>();
-        }
+        //if (isDev)
+        //{
+        //    services.AddScoped<IUserSeed, UserSeed>();
+        //    services.AddScoped<IUserService, MockUserService>();
+        //    //services.AddScoped<IUserService, UserService>();
+        //}
+        services.AddScoped<IUserSeed, UserSeed>();
+        services.AddScoped<IUserService, MockUserService>();
+
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<IParticipantService, ParticipantService>();
