@@ -4,7 +4,7 @@ using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Controllers;
 
-[Authorize]
+//[Authorize] //Un-comment when ready for full auth flow
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController(IServiceManager serviceManager) : ControllerBase

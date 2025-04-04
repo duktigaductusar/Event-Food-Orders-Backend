@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace EventFoodOrders.Controllers;
 
-[Authorize]
+//[Authorize] //Un-comment when ready for full auth flow
 [ApiController]
 [Route("/api/participant")]
 public class ParticipantController(IServiceManager serviceManager) : ControllerBase

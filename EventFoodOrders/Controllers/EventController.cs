@@ -7,7 +7,7 @@ using Microsoft.Graph.Models;
 
 namespace EventFoodOrders.Controllers;
 
-[Authorize]
+//[Authorize] //Un-comment when ready for full auth flow
 [ApiController]
 [Route("/api/event")]
 public class EventController(IServiceManager serviceManager) : ControllerBase
