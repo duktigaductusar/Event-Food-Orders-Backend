@@ -27,10 +27,10 @@ public class UserService : IUserService
         var encodedSearchString = Uri.EscapeDataString(queryString);
         var queryGroup = $"groups?$filter=startswith(displayName, '{encodedSearchString}')";
         var groupResponse = await _httpClient.GetAsync(queryGroup);
-        groupResponse.EnsureSuccessStatusCode();
+        //groupResponse.EnsureSuccessStatusCode();
         var queryUser = $"users?$filter=startswith(displayName,'{encodedSearchString}')";
         var userResponse = await _httpClient.GetAsync(queryUser);
-        userResponse.EnsureSuccessStatusCode();
+        //userResponse.EnsureSuccessStatusCode();
         
         var userContent = await userResponse.Content.ReadAsStringAsync();
         var groupContent = await groupResponse.Content.ReadAsStringAsync();
@@ -53,12 +53,12 @@ public class UserService : IUserService
         return JsonConvert.DeserializeObject<UserDto>(content)!;
     }
 
-    public List<string> GetNamesWithIds(List<Guid> userIds)
+    public async Task<List<string>> GetNamesWithIds(List<Guid> userIds)
     {
         throw new NotImplementedException();
     }
 
-    public async Task SendEmail(List<Guid> userIds)
+    public async Task SendEmail(List<Guid> userIds, string message = "")
     {
         Console.WriteLine("Email sending method starting");
         Collection<string> recipients = [];
