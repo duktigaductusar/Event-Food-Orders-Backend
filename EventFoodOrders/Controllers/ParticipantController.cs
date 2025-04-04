@@ -46,8 +46,9 @@ public class ParticipantController(IServiceManager serviceManager) : ControllerB
     [HttpGet]
     //[Route("/get/{userId}/all")]
     [Route("{eventId}/all")]
-    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(Guid userId, Guid eventId)
+    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(Guid eventId)
     {
+        Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
         IEnumerable <ParticipantForResponseDto> response = _participantService.GetAllParticipantsForEvent(userId, eventId);
         return Ok(response);
     }
