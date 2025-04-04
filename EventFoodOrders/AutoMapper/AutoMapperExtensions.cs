@@ -4,6 +4,8 @@ using EventFoodOrders.Exceptions;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Utilities;
+using EventFoodOrders.Dto.UserDTOs;
+using System.Collections.ObjectModel;
 
 namespace EventFoodOrders.AutoMapper;
 
@@ -74,6 +76,30 @@ public static class AutoMapperExtensions
         ));
 
         return dto;
+    }
+
+    public static EventForResponseWithUsersDto MapToEventForResponseWithUsersDto(this IMapper mapper, EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participants, IEnumerable<UserDto> users)
+    {
+        var participantsWithUsers = new Collection<ParticipantWithUserDto>();
+
+        foreach(ParticipantForResponseDto participant in participants)
+        {
+            participantsWithUsers.Add(mapper.MapToParticipantWithUserDto(participant, users.Where(u => u.UserId == participant.UserId).First()));
+        }
+
+        EventForResponseWithUsersDto evetWithUsersDto = mapper.Map<EventForResponseWithUsersDto>(eventDto);
+        evetWithUsersDto.Participants = participantsWithUsers;
+
+        return evetWithUsersDto;
+    }
+
+    public static ParticipantWithUserDto MapToParticipantWithUserDto(this IMapper mapper, ParticipantForResponseDto participantDto, UserDto user)
+    {
+        ParticipantWithUserDto participantWithUserDto = mapper.Map<ParticipantWithUserDto>(participantDto);
+        participantWithUserDto.UserId = user.UserId;
+        participantWithUserDto.UserName = user.Username;
+        participantWithUserDto.Email = user.Email;
+        return participantWithUserDto;
     }
 
     public static Participant MapToParticipantFromCreationDto(this IMapper mapper, Guid eventId, ParticipantForCreationDto participantForCreationDto)

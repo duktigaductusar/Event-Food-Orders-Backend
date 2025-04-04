@@ -26,7 +26,7 @@ public class UserController(IServiceManager serviceManager) : ControllerBase
     public async Task<ActionResult<UserDto[]>> GetUsers([FromBody] UserIdsDto userIds)
     {
         //var users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
-        var users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
+        List<UserDto> users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
         return users.ToArray();
     }
 }

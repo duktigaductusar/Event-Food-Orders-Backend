@@ -88,9 +88,4 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
 
         return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants);
     }
-
-    public Participant CreateParticipant(Guid userId, Guid eventId)
-    {
-        return new Participant(userId, eventId);
-    }
 }
