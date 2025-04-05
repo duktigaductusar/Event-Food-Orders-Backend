@@ -1,8 +1,10 @@
 name: QA Platform build and test workflow
 
 on:
-  pull_request:
+  push:
     branches: [ "main", "spike/deployment" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   run-tests:
