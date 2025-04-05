@@ -13,23 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Start Database with Docker Compose
-      run: docker compose -f docker-compose.test.yml up -d event-food-orders
-
-    - name: Start API Container
-      run: docker compose -f docker-compose.test.yml up -d event-food-orders-db
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --no-restore
-
     - name: Create and inject secrets into .env file
       run: |
         cp EventFoodOrders/.env.template EventFoodOrders/.env
@@ -46,6 +29,23 @@ jobs:
       with:
         name: env-file
         path: EventFoodOrders/.env
+
+    - name: Start Database with Docker Compose
+      run: docker compose -f docker-compose.test.yml up -d event-food-orders
+
+    - name: Start API Container
+      run: docker compose -f docker-compose.test.yml up -d event-food-orders-db
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
 
     - name: Stop and clean up containers
       run: docker compose -f docker-compose.test.yml down
