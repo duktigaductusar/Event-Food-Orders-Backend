@@ -8,7 +8,7 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - sql_data:/var/opt/mssql
+      - event-food-orders-volume:/var/opt/mssql
     networks:
       - event-food-orders-net
     restart: unless-stopped
@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  sql_data:
+  event-food-orders-volume:
 
 networks:
   event-food-orders-net:
