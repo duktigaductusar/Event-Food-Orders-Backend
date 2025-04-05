@@ -1,4 +1,4 @@
-name: QA Platform build and test workflow
+name: EventFoodOrders build and test workflow
 
 on:
   push:
@@ -30,6 +30,23 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
+    - name: Create and inject secrets into .env file
+      run: |
+        cp EventFoodOrders/.env.template EventFoodOrders/.env
+        sed -i "s|\${AZURE_AD_TENANT_ID}|${{ secrets.AZURE_AD_TENANT_ID }}|g" EventFoodOrders/.env
+        sed -i "s|\${AZURE_AD_CLIENT_ID}|${{ secrets.AZURE_AD_CLIENT_ID }}|g" EventFoodOrders/.env
+        sed -i "s|\${AZURE_AD_CLIENT_SECRET}|${{ secrets.AZURE_AD_CLIENT_SECRET }}|g" EventFoodOrders/.env
+        sed -i "s|\${AZURE_AD_REDIRECT_URI}|${{ secrets.AZURE_AD_REDIRECT_URI }}|g" EventFoodOrders/.env
+        sed -i "s|\${JWT_ISSUER}|${{ secrets.JWT_ISSUER }}|g" EventFoodOrders/.env
+        sed -i "s|\${JWT_AUDIENCE}|${{ secrets.JWT_AUDIENCE }}|g" EventFoodOrders/.env
+        sed -i "s|\${JWT_SECRET}|${{ secrets.JWT_SECRET }}|g" EventFoodOrders/.env
+
+    - name: Upload .env as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: env-file
+        path: EventFoodOrders/.env
+
     - name: Stop and clean up containers
       run: docker compose -f docker-compose.test.yml down
 
@@ -37,35 +54,30 @@ jobs:
     needs: [run-tests]
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       packages: write
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+    - name: Download .env artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: env-file
+        path: EventFoodOrders
 
-      - name: Inject Secrets into appsettings.json
-        run: |
-          cd QAPlatformAPI
-          cp .env.template .env
-          sed -i "s|\${AZURE_AD_TENANT_ID}|${{ secrets.AZURE_AD_TENANT_ID }}|g" EventFoodOrders/.env
-          sed -i "s|\${AZURE_AD_CLIENT_ID}|${{ secrets.AZURE_AD_CLIENT_ID }}|g" EventFoodOrders/.env
-          sed -i "s|\${AZURE_AD_CLIENT_SECRET}|${{ secrets.AZURE_AD_CLIENT_SECRET }}|g" EventFoodOrders/.env
-          sed -i "s|\${AZURE_AD_REDIRECT_URI}|${{ secrets.AZURE_AD_REDIRECT_URI }}|g" EventFoodOrders/.env
-          
-          sed -i "s|\${JWT_ISSUER}|${{ secrets.JWT_ISSUER }}|g" EventFoodOrders/.env
-          sed -i "s|\${JWT_AUDIENCE}|${{ secrets.JWT_AUDIENCE }}|g" EventFoodOrders/.env
-          sed -i "s|\${JWT_SECRET}|${{ secrets.JWT_SECRET }}|g" EventFoodOrders/.env
+    - name: Log in to GitHub Container Registry
+      run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
 
-      - name: Determine Image Tag
-        run: echo "IMAGE_TAG=pr-${{ github.event.pull_request.number || github.sha }}" >> $GITHUB_ENV
+    - name: Determine Image Tag
+      run: echo "IMAGE_TAG=pr-${{ github.event.pull_request.number || github.sha }}" >> $GITHUB_ENV
 
-      - name: Define lowercase image name
-        run: echo "IMAGE_NAME=$(echo ghcr.io/${{ github.repository_owner }}/ductus-event-food-service-app:${{ env.IMAGE_TAG }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+    - name: Define lowercase image name
+      run: echo "IMAGE_NAME=$(echo ghcr.io/${{ github.repository_owner }}/ductus-event-food-service-api:${{ env.IMAGE_TAG }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Build Docker image
-        run: docker build -t ghcr.io/${{ env.IMAGE_NAME }} .
+    - name: Build Docker image
+      run: docker build -t "$IMAGE_NAME" .
 
-      - name: Push Docker image to GitHub Container Registry
-        run: docker push ghcr.io/${{ env.IMAGE_NAME }}
+    - name: Push Docker image to GitHub Container Registry
+      run: docker push "$IMAGE_NAME"
