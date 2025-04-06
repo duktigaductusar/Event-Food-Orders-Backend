@@ -37,5 +37,5 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 # ENV ASPNETCORE_ENVIRONMENT=Testing
 
 # Image entry point
-ENTRYPOINT ["tail", "-f", "/dev/null"]
-# ENTRYPOINT ["dotnet", "EventFoodOrders.dll"]
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
+ENTRYPOINT ["dotnet", "EventFoodOrders.dll"]
