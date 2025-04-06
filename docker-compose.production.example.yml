@@ -12,7 +12,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: event-food-orders-db
     environment:
-      SA_PASSWORD: MnjAHVu@k3^a7re&xXvA&&mS$*7vT3E&#ZFQm5
+      SA_PASSWORD: <ADD_STRONG_PASSWORD_HERE>
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
