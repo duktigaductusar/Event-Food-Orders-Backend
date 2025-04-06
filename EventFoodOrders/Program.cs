@@ -45,7 +45,7 @@ public class Program
         app.UseCustomExceptionHandler();
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseDataSeedExtension();
+        app.UseDbExtension();
         
         if (isDevelopment)
         {

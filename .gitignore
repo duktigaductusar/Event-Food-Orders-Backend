@@ -4,9 +4,13 @@
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
 
-#Files we who don't know what we are doing have added
+# Env files
 global.json
 .env
+appsettings.Production.json
+
+# Docker Files
+docker-compose.production.yml
 
 # Node artifact files
 node_modules/
@@ -342,4 +346,5 @@ FakesAssemblies/
 /EventFoodOrders/Properties/serviceDependencies.json
 /EventFoodOrders/Properties/serviceDependencies.local.json
 /EventFoodOrders/Properties/serviceDependencies.local.json.user
-/EventFoodOrders/Migrations
+
+# /EventFoodOrders/Migrations

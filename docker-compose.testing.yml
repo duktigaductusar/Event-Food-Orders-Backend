@@ -8,22 +8,22 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - event-food-orders-volume:/var/opt/mssql
+      - sql_data:/var/opt/mssql
     networks:
       - event-food-orders-net
     restart: unless-stopped
 
-  event-food-orders:
+  event-food-orders-api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Containers/app/Dockerfile
     container_name: event-food-orders
     depends_on:
       - event-food-orders-db
     env_file:
        - EventFoodOrders/.env
     environment:
-        ASPNETCORE_ENVIRONMENT: Production
+        ASPNETCORE_ENVIRONMENT: Testing
     ports:
       - "8080:8080"
     networks:
@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  event-food-orders-volume:
+  sql_data:
 
 networks:
   event-food-orders-net:
