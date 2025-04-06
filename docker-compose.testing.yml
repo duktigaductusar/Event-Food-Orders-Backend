@@ -13,7 +13,7 @@ services:
       - event-food-orders-net
     restart: unless-stopped
 
-  event-food-orders:
+  event-food-orders-api:
     build:
       context: .
       dockerfile: Dockerfile
