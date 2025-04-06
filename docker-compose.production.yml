@@ -23,7 +23,7 @@ services:
     restart: always
 
   event-food-orders-api:
-    image: ghcr.io/martelleur/ductus-event-food-service-api:pr-8ed7624659ff5d3cd208747b0976c4663e04707e
+    image: ghcr.io/martelleur/ductus-event-food-service-api:pr-fa21bc603e5371feca1265b7b5f47fca2503f0b4
     container_name: event-food-orders-api
     depends_on:
       - event-food-orders-db
