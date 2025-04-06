@@ -33,8 +33,9 @@ COPY --from=publish /app/publish .
 RUN apt update && apt install -y iproute2 net-tools curl
 
 # Ensure the environment is set to Production
-ENV DOTNET_ENVIRONMENT=Production
+ENV ASPNETCORE_ENVIRONMENT=Production
+# ENV ASPNETCORE_ENVIRONMENT=Testing
 
 # Image entry point
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
-ENTRYPOINT ["dotnet", "EventFoodOrders.dll"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
+# ENTRYPOINT ["dotnet", "EventFoodOrders.dll"]
