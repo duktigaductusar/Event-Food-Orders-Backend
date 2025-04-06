@@ -30,7 +30,7 @@ jobs:
         sed -i "s|\${DB_CONNECTION_STRING}|${{ secrets.DB_CONNECTION_STRING }}|g" EventFoodOrders/appsettings.Production.json
 
     - name: Start Database with Docker Compose
-      run: docker compose -f docker-compose.production.yml up -d event-food-orders
+      run: docker compose -f docker-compose.production.yml up -d event-food-orders-api
 
     - name: Start API Container
       run: docker compose -f docker-compose.production.yml up -d event-food-orders-db
