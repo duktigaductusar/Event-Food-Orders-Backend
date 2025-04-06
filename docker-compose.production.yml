@@ -12,7 +12,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: event-food-orders-db
     environment:
-      SA_PASSWORD: <ADD_YOUR_STRONG_PASSWORD_HERE>
+      SA_PASSWORD: MnjAHVu@k3^a7re&xXvA&&mS$*7vT3E&#ZFQm5
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
@@ -23,7 +23,7 @@ services:
     restart: always
 
   event-food-orders-api:
-    image: ghcr.io/martelleur/ductus-event-food-service-api:pr-3c8d0fdc2bdfd2cb7f412d57e2ee41ed07b8e7dd
+    image: ghcr.io/martelleur/ductus-event-food-service-api:pr-8ed7624659ff5d3cd208747b0976c4663e04707e
     container_name: event-food-orders-api
     depends_on:
       - event-food-orders-db
