@@ -346,6 +346,5 @@ FakesAssemblies/
 /EventFoodOrders/Properties/serviceDependencies.json
 /EventFoodOrders/Properties/serviceDependencies.local.json
 /EventFoodOrders/Properties/serviceDependencies.local.json.user
-/EventFoodOrders/Migrations
 
-# Env files
+# /EventFoodOrders/Migrations
