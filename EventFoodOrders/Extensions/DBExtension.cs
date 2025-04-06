@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventFoodOrders.Extensions;
 
-public static class SeedExtension
+public static class DBExtension
 {
-    public static void UseDataSeedExtension(this IApplicationBuilder app)
+    public static void UseDbExtension(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
         var serviceProvider = scope.ServiceProvider;
