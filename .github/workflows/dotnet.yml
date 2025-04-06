@@ -24,16 +24,11 @@ jobs:
         sed -i "s|\${JWT_AUDIENCE}|${{ secrets.JWT_AUDIENCE }}|g" EventFoodOrders/.env
         sed -i "s|\${JWT_SECRET}|${{ secrets.JWT_SECRET }}|g" EventFoodOrders/.env
 
-    - name: Create and inject secrets into appsettings.Production.json file
-      run: |
-        cp EventFoodOrders/appsettings.Production.template.json EventFoodOrders/appsettings.Production.json
-        sed -i "s|\${DB_CONNECTION_STRING}|${{ secrets.DB_CONNECTION_STRING }}|g" EventFoodOrders/appsettings.Production.json
-
     - name: Start Database with Docker Compose
-      run: docker compose -f docker-compose.production.yml up -d event-food-orders-api
+      run: docker compose -f docker-compose.testing.yml up -d event-food-orders-api
 
     - name: Start API Container
-      run: docker compose -f docker-compose.production.yml up -d event-food-orders-db
+      run: docker compose -f docker-compose.testing.yml up -d event-food-orders-db
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -47,7 +42,7 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Stop and clean up containers
-      run: docker compose -f docker-compose.production.yml down
+      run: docker compose -f docker-compose.testing.yml down
 
   build-and-push:
     needs: [run-tests]
