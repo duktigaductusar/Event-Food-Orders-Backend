@@ -16,7 +16,7 @@ services:
   event-food-orders-api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Containers/app/Dockerfile
     container_name: event-food-orders
     depends_on:
       - event-food-orders-db
