@@ -41,7 +41,7 @@ public class UserService : IUserService
         result.AddRange(userResult);
         return result.Where(i => i.Email!=null).ToList();
     }
-
+    //testcomment
     public async Task<UserDto> GetUserWithId(Guid userId)
     {
         await SetAccessToken();
