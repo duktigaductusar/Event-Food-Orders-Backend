@@ -19,7 +19,7 @@ public static class ServiceExtension
             // services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserService, MockWithGraphUserService>();
         }
-        services.AddScoped<IAuthService, AuthService>();
+        //services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<IParticipantService, ParticipantService>();
         services.AddScoped<IServiceManager, ServiceManager>();
