@@ -6,6 +6,7 @@ using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Utilities;
 using EventFoodOrders.Dto.UserDTOs;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace EventFoodOrders.AutoMapper;
 
@@ -100,6 +101,14 @@ public static class AutoMapperExtensions
         participantWithUserDto.UserName = user.Username;
         participantWithUserDto.Email = user.Email;
         return participantWithUserDto;
+    }
+
+    public static Event MapToEventFromUpdateDto(this IMapper mapper, EventForUpdateDto eventUpdate, Guid eventId, Guid ownerId)
+    {
+        Event newEvent = mapper.Map<Event>(eventUpdate);
+        newEvent.Id = eventId;
+        newEvent.OwnerId = ownerId;
+        return newEvent;
     }
 
     public static Participant MapToParticipantFromCreationDto(this IMapper mapper, Guid eventId, ParticipantForCreationDto participantForCreationDto)
