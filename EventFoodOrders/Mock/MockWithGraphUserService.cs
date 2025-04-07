@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using EventFoodOrders.Dto.UserDTOs;
+﻿using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Services;
 using EventFoodOrders.Services.Interfaces;
 

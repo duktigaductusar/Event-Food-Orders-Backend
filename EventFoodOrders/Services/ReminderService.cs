@@ -22,7 +22,6 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
         
         logger.LogInformation($"Reminder service will start in {initialDelay.TotalSeconds} seconds.");
 
-        // _timer = new Timer(DoWork, null, initialDelay, TimeSpan.FromDays(1));
         _timer = new Timer(async void (state) =>
         {
             try

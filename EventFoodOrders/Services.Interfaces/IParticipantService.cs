@@ -1,5 +1,4 @@
 ﻿using EventFoodOrders.Dto.ParticipantDTOs;
-using EventFoodOrders.Entities;
 
 namespace EventFoodOrders.Services.Interfaces;
 

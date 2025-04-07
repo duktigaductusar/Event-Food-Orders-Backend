@@ -1,7 +1,6 @@
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using EventFoodOrders.IdHandling;
 
 namespace EventFoodOrders.Controllers;

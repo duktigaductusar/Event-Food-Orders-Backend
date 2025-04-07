@@ -15,11 +15,11 @@ public static class ServiceExtension
         if (isDev)
         {
             services.AddScoped<IUserSeed, UserSeed>();
+            // ToDo: Swap in real user service for prod
             // services.AddScoped<IUserService, MockUserService>();
             // services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserService, MockWithGraphUserService>();
         }
-        //services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<IParticipantService, ParticipantService>();
         services.AddScoped<IServiceManager, ServiceManager>();
