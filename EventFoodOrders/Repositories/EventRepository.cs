@@ -24,22 +24,24 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
 
     public Event UpdateEvent(Guid eventId, Event updatedEvent)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        if (eventId == updatedEvent.Id)
         {
-            Event? eventToUpdate = context.Events
-                .Where(e => e.Id == eventId)
-                .FirstOrDefault();
-
-            if (eventToUpdate is Event)
+            using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
             {
-                UpdateEventEntity(updatedEvent, eventToUpdate);
+                Event? eventToUpdate = context.Events
+                    .Where(e => e.Id == eventId)
+                    .Include(e => e.Participants)
+                    .FirstOrDefault();
+
+                if (eventToUpdate is Event)
+                {
+                    context.Entry(eventToUpdate).CurrentValues.SetValues(updatedEvent);
+                    context.SaveChanges();
+                    return eventToUpdate;
+                }
             }
-            else throw new EventNotFoundException(eventId);
-
-            context.SaveChanges();
         }
-
-        return updatedEvent;
+        throw new EventNotFoundException(eventId);
     }
 
     public void DeleteEvent(Guid eventId)

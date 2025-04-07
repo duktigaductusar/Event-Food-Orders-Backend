@@ -51,5 +51,5 @@ public interface IEventService
     /// <param name="eventId"></param>
     /// <param name="updatedEventDto"></param>
     /// <returns></returns>
-    EventForResponseDto UpdateEvent(Guid eventId, EventForUpdateDto updatedEventDto);
+    EventForResponseDto UpdateEvent(Guid eventId, Guid userId, EventForUpdateDto updatedEventDto);
 }

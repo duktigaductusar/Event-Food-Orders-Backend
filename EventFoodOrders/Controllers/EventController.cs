@@ -28,7 +28,9 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     [Route("{eventId}")]
     public ActionResult<EventForResponseDto> UpdateEvent(Guid eventId, EventForUpdateDto eventToUpdate)
     {
-        EventForResponseDto response = _service.UpdateEvent(eventId, eventToUpdate);
+        //Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
+        Guid userId = Guid.Parse("8ef89f5a-c315-470c-9f52-2e6a06dd1197");
+        EventForResponseDto response = _service.UpdateEvent(eventId, userId, eventToUpdate);
         return Ok(response);
     }
 
