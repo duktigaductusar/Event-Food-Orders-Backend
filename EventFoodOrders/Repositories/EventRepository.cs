@@ -33,7 +33,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
                     .Include(e => e.Participants)
                     .FirstOrDefault();
 
-                if (eventToUpdate is Event)
+                if (eventToUpdate is not null)
                 {
                     context.Entry(eventToUpdate).CurrentValues.SetValues(updatedEvent);
                     context.SaveChanges();
@@ -112,14 +112,5 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         }
 
         return result;
-    }
-
-    // Helper functions
-    private static void UpdateEventEntity(Event source, Event destination)
-    {
-        destination.Title = source.Title;
-        destination.Date = source.Date;
-        destination.Description = source.Description;
-        destination.Deadline = source.Deadline;
     }
 }
