@@ -10,7 +10,8 @@ global.json
 appsettings.Production.json
 
 # Docker Files
-docker-compose.production.yml
+docker-compose.production.private.yml
+docker-compose.production.public.yml
 
 # Node artifact files
 node_modules/
