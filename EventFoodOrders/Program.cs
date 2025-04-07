@@ -7,6 +7,8 @@ using EventFoodOrders.Middleware;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Services;
 using EventFoodOrders.Mock;
+using Microsoft.Graph.Models;
+using WebApplication = Microsoft.AspNetCore.Builder.WebApplication;
 
 namespace EventFoodOrders;
 
@@ -28,6 +30,8 @@ public class Program
         builder.Services.ConfigureSessions();
         builder.Services.ConfigureAuths(builder.Configuration);
         // No more auth thingies
+        builder.Services.AddHostedService<ReminderService>();
+        builder.Logging.AddConsole();
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
         builder.Services.ConfigureCORS(isDevelopment);
@@ -45,7 +49,7 @@ public class Program
         app.UseCustomExceptionHandler();
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseDataSeedExtension();
+        // app.UseDataSeedExtension();
         
         if (isDevelopment)
         {

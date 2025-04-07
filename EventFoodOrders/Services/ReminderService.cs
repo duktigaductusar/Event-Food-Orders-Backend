@@ -4,14 +4,15 @@ using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Services;
 
-public class ReminderService(ILogger<ReminderService> logger, IUoW _uow, IUserService _userService) : BackgroundService
+public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFactory scopeFactory/*IUoW uow, IUserService userService*/) : BackgroundService
 {
     private Timer _timer;
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var now = DateTime.Now;
-        var nextRunTime = DateTime.Today.AddHours(7).AddMinutes(30);
+        // var nextRunTime = DateTime.Today.AddHours(7).AddMinutes(30);
+        var nextRunTime = DateTime.Today.AddHours(10).AddMinutes(53);
         if (now > nextRunTime)
         {
             nextRunTime = nextRunTime.AddDays(1);
@@ -41,22 +42,29 @@ public class ReminderService(ILogger<ReminderService> logger, IUoW _uow, IUserSe
     {
         var now = DateTime.Now;
         logger.LogInformation("Reminder service started at: {time}", DateTimeOffset.Now);
-        // Our logic here
-        var events = await _uow.EventRepository.GetAllEventsAtDeadline(now);
-        if (events.Count > 0)
+        using (var scope = scopeFactory.CreateScope())
         {
-            foreach (var item in events)
+            // Our logic here
+            var uow = scope.ServiceProvider.GetRequiredService<IUoW>();
+            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+            
+            var events = await uow.EventRepository.GetAllEventsAtDeadline(now);
+            if (events.Count > 0)
             {
-                var participants = item.Participants
-                    .Where(p => p.ResponseType == ReType.Pending)
-                    .Select(p  => p.UserId)
-                    .ToList();
-
-                if (participants.Count <= 0) continue;
-                await _userService.SendEmail(participants, "");
+                foreach (var item in events)
+                {
+                    var participants = item.Participants
+                        .Where(p => p.ResponseType == ReType.Pending)
+                        .Select(p  => p.UserId)
+                        .ToList();
+                    participants.Add(item.OwnerId); //ToDo: Remove for prod. Only for testing purposes. Owner should not be reminded?
+                    if (participants.Count <= 0) continue;
+                    // await userService.SendEmail(participants, ""); //ToDo: Uncomment for prod. Commented out during testing. Works as intended with mailing.
+                    logger.LogInformation("Reminder service running for participant list for event: " + item.Title);
+                }
             }
+            //################
         }
-        //################
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)
