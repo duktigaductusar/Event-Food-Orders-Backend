@@ -44,10 +44,35 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
         return _mapper.MapToEventForResponseDto(newEvent, owner!);
     }
 
-    public EventForResponseDto UpdateEvent(Guid eventId, EventForUpdateDto updatedEventDto)
+    public EventForResponseDto UpdateEvent(Guid eventId, Guid userId, EventForUpdateDto updatedEventDto)
     {
-        Event updatedEvent = _mapper.Map<Event>(updatedEventDto);
+        Event eventToUpdate = _eventRepository.GetEventForUser(userId, eventId);
+        Event updatedEvent = _mapper.MapToEventFromUpdateDto(updatedEventDto, eventId, userId);
 
+        if (updatedEventDto.UserIds is not null)
+        {
+            List<Participant> participantsToDelete = [.. eventToUpdate.Participants
+                .Where(p => !updatedEventDto.UserIds.Contains(p.UserId) && p.UserId != userId)];
+
+            foreach (Participant participant in participantsToDelete)
+            {
+                _participantService.DeleteParticipant(participant.Id);
+            }
+
+            HashSet<Guid> existingParticipantIds = [.. eventToUpdate.Participants.Select(p => p.UserId)];
+
+            foreach (Guid id in updatedEventDto.UserIds)
+            {
+                if (existingParticipantIds.Contains(id) == false)
+                {
+                    ParticipantForCreationDto newParticipant = new()
+                    {
+                        UserId = id
+                    };
+                    _participantService.AddParticipantToEvent(updatedEvent.Id, newParticipant);
+                }
+            }
+        }
         updatedEvent = _eventRepository.UpdateEvent(eventId, updatedEvent);
 
         return _mapper.Map<EventForResponseDto>(updatedEvent);
