@@ -10,12 +10,16 @@ public interface IMailerService
     /// </summary>
     /// <param name="focusedEvent"></param>
     /// <param name="ownerId"></param>
+    /// <param name="eventId"></param>
     /// <returns></returns>
-    Task SendInvitationMail(EventForCreationDto focusedEvent, Guid ownerId);
+    Task SendInvitationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId);
     
     /// <summary>
     /// Sends reminder emails at a predetermined time on the deadline day.
     /// </summary>
+    /// <param name="recipients"></param>
+    /// <param name="focusedEvent"></param>
+    /// <param name="eventId"></param>
     /// <returns></returns>
-    Task SendReminderMail(List<Guid> recipients, Event focusedEvent);
+    Task SendReminderMail(List<Guid> recipients, Event focusedEvent, Guid eventId);
 }

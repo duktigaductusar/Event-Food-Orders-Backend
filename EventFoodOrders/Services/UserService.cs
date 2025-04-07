@@ -76,7 +76,7 @@ public class UserService : IUserService
                 subject = message.Subject,
                 body = new
                 {
-                    contentType = "Text",
+                    contentType = "HTML",
                     content = message.Body
                 },
                 toRecipients = recipients.Select(email => new { emailAddress = new { address = email } }).ToArray()
@@ -107,7 +107,6 @@ public class UserService : IUserService
         {
             _accessToken = await _graphTokenService.GetAccessToken();
         }
-        
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
     }
     

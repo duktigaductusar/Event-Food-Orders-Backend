@@ -42,7 +42,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
                 participantService.AddParticipantToEvent(newEvent.Id, newParticipant);
             }
         }
-        await mailerService.SendInvitationMail(eventForCreation, owner.UserId);
+        await mailerService.SendInvitationMail(eventForCreation, owner.UserId, newEvent.Id);
         return _mapper.MapToEventForResponseDto(newEvent, owner!);
     }
 
