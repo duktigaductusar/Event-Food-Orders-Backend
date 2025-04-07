@@ -42,7 +42,7 @@ public class UserService : IUserService
         return result;
     }
 
-    public async Task<UserDto> GetUserWithId(Guid userId)
+    public async Task<UserDto> GetUserWithId(Guid userId) //ToDo: Should be private? Not implemented in interface
     {
         await SetAccessToken();
         var searchId = userId.ToString();
@@ -116,7 +116,6 @@ public class UserService : IUserService
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
     }
     
-    //For testing purposes
     public class GraphUsersResponse
     {
         [JsonProperty("value")]
