@@ -95,9 +95,4 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
     {
         return _mapper.MapToEventForResponseWithUsersDto(eventDto, participantDtos, users);
     }
-
-    public void CheckDeadlines()
-    {
-        
-    }
 }
