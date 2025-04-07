@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Utilities;
 using Newtonsoft.Json;
 
 namespace EventFoodOrders.Services;
@@ -27,10 +28,10 @@ public class UserService : IUserService
         var encodedSearchString = Uri.EscapeDataString(queryString);
         var queryGroup = $"groups?$filter=startswith(displayName, '{encodedSearchString}')";
         var groupResponse = await _httpClient.GetAsync(queryGroup);
-        //groupResponse.EnsureSuccessStatusCode();
+        groupResponse.EnsureSuccessStatusCode();
         var queryUser = $"users?$filter=startswith(displayName,'{encodedSearchString}')";
         var userResponse = await _httpClient.GetAsync(queryUser);
-        //userResponse.EnsureSuccessStatusCode();
+        userResponse.EnsureSuccessStatusCode();
         
         var userContent = await userResponse.Content.ReadAsStringAsync();
         var groupContent = await groupResponse.Content.ReadAsStringAsync();
@@ -58,9 +59,8 @@ public class UserService : IUserService
         throw new NotImplementedException();
     }
 
-    public async Task SendEmail(List<Guid> userIds, string message = "")
+    public async Task SendEmail(List<Guid> userIds, EmailTemplate message)
     {
-        Console.WriteLine("Email sending method starting");
         Collection<string> recipients = [];
         foreach (var userId in userIds)
         {
@@ -68,29 +68,24 @@ public class UserService : IUserService
             var recipientEmail = recipient.Email;
             recipients.Add(recipientEmail);
         }
-        Console.WriteLine("Finished fetching recipients");
-
         await SetAccessToken();
         var mailPayload = new
         {
             message = new
             {
-                subject = "Test Email from Matbeställningar",
+                subject = message.Subject,
                 body = new
                 {
-                    contentType = "Text",
-                    content = "This is a test mail that Matbeställningar sent using its backend Graph API call"
+                    contentType = "HTML",
+                    content = message.Body
                 },
                 toRecipients = recipients.Select(email => new { emailAddress = new { address = email } }).ToArray()
             },
             saveToSentItems = false
         };
-        Console.WriteLine("Finished building email template and recipients");
-        
         var jsonPayload = JsonConvert.SerializeObject(mailPayload);
         var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
         var requestUri = $"users/{_config["Graph:SenderEmail"]}/sendMail";
-        Console.WriteLine("Emails have been sent, returning response status code");
         var response = await _httpClient.PostAsync(requestUri, content);
         response.EnsureSuccessStatusCode();
     }
@@ -112,7 +107,6 @@ public class UserService : IUserService
         {
             _accessToken = await _graphTokenService.GetAccessToken();
         }
-        
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
     }
     

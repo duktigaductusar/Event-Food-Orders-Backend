@@ -17,10 +17,10 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     private readonly IEventService _service = serviceManager.EventService;
 
     [HttpPost]
-    public ActionResult<EventForResponseDto> CreateEvent(EventForCreationDto newEvent)
+    public async Task<ActionResult<EventForResponseDto>> CreateEvent(EventForCreationDto newEvent)
     {
         Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
-        EventForResponseDto response = _service.CreateEvent(userId, newEvent);
+        EventForResponseDto response = await _service.CreateEvent(userId, newEvent);
         return Created(uri: "", value: response);
     }
 
