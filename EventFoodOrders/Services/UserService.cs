@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
 using Newtonsoft.Json;
 
@@ -13,13 +14,20 @@ public class UserService : IUserService
     private readonly HttpClient _httpClient;
     private string _accessToken;
     private IConfiguration _config;
+    private IUoW _uow;
     
-    public UserService(IGraphTokenService graphTokenService, HttpClient httpClient, IConfiguration config)
+    public UserService(
+        IGraphTokenService graphTokenService,
+        HttpClient httpClient,
+        IConfiguration config,
+        IUoW uow
+        )
     {
         _graphTokenService = graphTokenService;
         _httpClient = httpClient;
         _httpClient.BaseAddress = new Uri("https://graph.microsoft.com/v1.0/");
         _config = config;
+        _uow = uow;
     }
     public async Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId)
     {
@@ -38,10 +46,17 @@ public class UserService : IUserService
         var groupResult = JsonConvert.DeserializeObject<GraphUsersResponse>(groupContent)!.Value;
         var userResult= JsonConvert.DeserializeObject<GraphUsersResponse>(userContent)!.Value;
         result.AddRange(groupResult);
-        result.AddRange(userResult);
-        return result.Where(i => i.Email!=null).ToList();
+        result.AddRange(userResult);        
+        result = result.Where(i => i.Email != null).ToList();
+        
+        if (eventId == null) { return result; }       
+        
+        var participantsForEvent = _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
+        var participantIdsForEvent = participantsForEvent.Select(p => p.UserId).ToHashSet();
+
+        return result.Where(u => !participantIdsForEvent.Contains(u.UserId)).ToList();
     }
-    //testcomment
+    
     public async Task<UserDto> GetUserWithId(Guid userId)
     {
         await SetAccessToken();

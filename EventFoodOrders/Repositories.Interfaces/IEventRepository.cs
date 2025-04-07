@@ -34,6 +34,7 @@ public interface IEventRepository
     /// <param name="eventId"></param>
     /// <returns></returns>
     Event GetEventForUser(Guid userId, Guid eventId);
+    IEnumerable<Participant> GetParticipantsByEventId(Guid eventId);
 
     /// <summary>
     /// Gets a single event given a condition.

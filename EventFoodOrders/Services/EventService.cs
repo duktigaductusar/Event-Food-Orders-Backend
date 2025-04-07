@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using EventFoodOrders.AutoMapper;
+using EventFoodOrders.Data;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace EventFoodOrders.Services;
 
@@ -94,5 +96,5 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
     public EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participantDtos, IEnumerable<UserDto> users)
     {
         return _mapper.MapToEventForResponseWithUsersDto(eventDto, participantDtos, users);
-    }
+    }        
 }
