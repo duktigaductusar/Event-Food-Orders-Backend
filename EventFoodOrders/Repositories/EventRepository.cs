@@ -3,6 +3,7 @@ using EventFoodOrders.Exceptions;
 using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
 using EventFoodOrders.Repositories.Interfaces;
+using System.Linq;
 
 namespace EventFoodOrders.Repositories;
 
@@ -113,6 +114,25 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
 
         return result;
     }
+
+    public IEnumerable<Participant> GetParticipantsByEventId(Guid eventId)
+    {
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            var participants = context.Events
+                .AsNoTracking()
+                .Where(e => e.Id == eventId)
+                .Include(e => e.Participants)
+                .SelectMany(e => e.Participants)
+                .ToList();
+
+            return participants;
+        }
+    }
+
+
+    // Helper functions
+    private static void UpdateEventEntity(Event source, Event destination)
     
     //For the reminder IHostedService
     public async Task<List<Event>> GetAllEventsAtDeadline(DateTime now)

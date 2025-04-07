@@ -1,13 +1,21 @@
 ﻿using System.Collections.Generic;
 using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services;
 using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Mock
 {
-    public class MockWithGraphUserService(IGraphTokenService graphTokenService, HttpClient httpClient, IConfiguration config, IUserSeed seeder) : IUserService
+    public class MockWithGraphUserService(
+        IGraphTokenService graphTokenService,
+        HttpClient httpClient,
+        IConfiguration config,
+        IUserSeed seeder,
+        IUoW uow
+    ) : IUserService
     {
-        private IUserService _userService = new UserService(graphTokenService, httpClient, config);
+        private IUserService _userService = new UserService(
+            graphTokenService, httpClient, config, uow);
         private IUserService _mockService = new MockUserService(seeder);
 
         public async Task<List<string>> GetNamesWithIds(List<Guid> userIds)
@@ -25,10 +33,10 @@ namespace EventFoodOrders.Mock
             return uniqueUsers;
         }
 
-        public async Task<List<UserDto>> GetUsersFromQuery(string queryString)
+        public async Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId)
         {
-            List<UserDto> mockUsers = await _mockService.GetUsersFromQuery(queryString);
-            List<UserDto> graphUsers = await _userService.GetUsersFromQuery(queryString);
+            List<UserDto> mockUsers = await _mockService.GetUsersFromQuery(queryString, eventId);
+            List<UserDto> graphUsers = await _userService.GetUsersFromQuery(queryString, eventId);
             List<UserDto> uniqueUsers = GetUniqueUserList(mockUsers, graphUsers);
 
             return uniqueUsers;
