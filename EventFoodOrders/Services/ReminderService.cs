@@ -42,7 +42,6 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
         logger.LogInformation("Reminder service started at: {time}", DateTimeOffset.Now);
         using (var scope = scopeFactory.CreateScope())
         {
-            // Our logic here
             var uow = scope.ServiceProvider.GetRequiredService<IUoW>();
             var mailerService = scope.ServiceProvider.GetRequiredService<IMailerService>();
             
@@ -61,7 +60,6 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
                     logger.LogInformation("Reminder service running for participant list for event: " + item.Title);
                 }
             }
-            //################
         }
     }
 
