@@ -53,11 +53,11 @@ public class UserService : IUserService
         
         var participantsForEvent = _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
         var participantIdsForEvent = participantsForEvent.Select(p => p.UserId).ToHashSet();
-
-        return result.Where(u => !participantIdsForEvent.Contains(u.UserId)).ToList();
+        // result = [.. result.Where(u => !participantIdsForEvent.Any(guid => guid == u.UserId))];
+        result = [.. result.Where(u => !participantIdsForEvent.Contains(u.UserId))];
+        return result;
     }
-    
-    public async Task<UserDto> GetUserWithId(Guid userId)
+     
 
     public async Task<UserDto> GetUserWithId(Guid userId) //ToDo: Should be private? Not implemented in interface
     {

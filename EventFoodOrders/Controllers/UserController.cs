@@ -11,7 +11,7 @@ namespace EventFoodOrders.Controllers;
 public class UserController(IServiceManager serviceManager) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<UserDto[]>> GetUsersFromQuery(string queryString, [FromQuery] Guid eventId)
+    public async Task<ActionResult<UserDto[]>> GetUsersFromQuery([FromQuery] string queryString, [FromQuery] Guid eventId)
     {
         Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
         //var users = await serviceManager.UserService.GetUsersFromQuery(queryString);
