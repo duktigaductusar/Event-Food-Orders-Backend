@@ -113,4 +113,12 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
 
         return result;
     }
+    
+    //For the reminder IHostedService
+    public async Task<List<Event>> GetAllEventsAtDeadline(DateTime now)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var res = await context.Events.Where(e => e.Deadline.Date == now.Date).ToListAsync();
+        return res;
+    }
 }

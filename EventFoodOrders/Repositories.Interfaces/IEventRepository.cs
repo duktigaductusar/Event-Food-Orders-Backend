@@ -49,4 +49,11 @@ public interface IEventRepository
     /// <param name="updatedEvent"></param>
     /// <returns></returns>
     Event UpdateEvent(Guid eventId, Event updatedEvent);
+
+    /// <summary>
+    /// Get all events which have a deadline that is on the DateTime.date sent as parameter.
+    /// </summary>
+    /// <param name="now"></param>
+    /// <returns></returns>
+    Task<List<Event>> GetAllEventsAtDeadline(DateTime now);
 }
