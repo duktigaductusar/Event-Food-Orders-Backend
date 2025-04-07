@@ -47,7 +47,7 @@ public class MockUserService(IUserSeed seeder) : IUserService
         }
     }
 
-    public async Task<List<UserDto>> GetUsersFromQuery(string queryString)
+    public async Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId)
     {
         List<MockUser> filteredUsers = [.. users
             .Where(u => u.Username.StartsWith(queryString, StringComparison.OrdinalIgnoreCase) ||

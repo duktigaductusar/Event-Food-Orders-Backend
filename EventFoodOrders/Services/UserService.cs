@@ -21,7 +21,7 @@ public class UserService : IUserService
         _httpClient.BaseAddress = new Uri("https://graph.microsoft.com/v1.0/");
         _config = config;
     }
-    public async Task<List<UserDto>> GetUsersFromQuery(string queryString)
+    public async Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId)
     {
         await SetAccessToken();
         var encodedSearchString = Uri.EscapeDataString(queryString);

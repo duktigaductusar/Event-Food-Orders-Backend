@@ -25,10 +25,10 @@ namespace EventFoodOrders.Mock
             return uniqueUsers;
         }
 
-        public async Task<List<UserDto>> GetUsersFromQuery(string queryString)
+        public async Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId)
         {
-            List<UserDto> mockUsers = await _mockService.GetUsersFromQuery(queryString);
-            List<UserDto> graphUsers = await _userService.GetUsersFromQuery(queryString);
+            List<UserDto> mockUsers = await _mockService.GetUsersFromQuery(queryString, eventId);
+            List<UserDto> graphUsers = await _userService.GetUsersFromQuery(queryString, eventId);
             List<UserDto> uniqueUsers = GetUniqueUserList(mockUsers, graphUsers);
 
             return uniqueUsers;
