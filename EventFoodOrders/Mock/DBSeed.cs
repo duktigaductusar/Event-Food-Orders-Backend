@@ -141,7 +141,6 @@ public static class DBSeed
                 SeedUser user = seedUsers.Find(u => u.UserId == uId)!;
                 seedParticipants.Add(new Participant(uId, ev.Id)
                 {
-                    Name = user.Name,
                     ResponseType = Utility.PossibleResponses[rand.Next(Utility.PossibleResponses.Length)],
                     WantsMeal = bool.Parse(bools[rand.Next(2)]),
                     Allergies = user.Allergies,
@@ -162,7 +161,6 @@ public static class DBSeed
 
                     return new Participant(user.UserId, ev.Id)
                     {
-                        Name = user.Name,
                         ResponseType = f.PickRandom(Utility.PossibleResponses),
                         WantsMeal = f.Random.Bool(),
                         Allergies = user.Allergies,
