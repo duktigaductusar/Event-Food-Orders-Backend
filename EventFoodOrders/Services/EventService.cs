@@ -58,7 +58,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
 
             foreach (Participant participant in participantsToDelete)
             {
-                _participantService.DeleteParticipant(participant.Id);
+                participantService.DeleteParticipant(participant.Id);
             }
 
             HashSet<Guid> existingParticipantIds = [.. eventToUpdate.Participants.Select(p => p.UserId)];
@@ -71,7 +71,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
                     {
                         UserId = id
                     };
-                    _participantService.AddParticipantToEvent(updatedEvent.Id, newParticipant);
+                    participantService.AddParticipantToEvent(updatedEvent.Id, newParticipant);
                 }
             }
         }
