@@ -39,7 +39,7 @@ public class UserService : IUserService
         var userResult= JsonConvert.DeserializeObject<GraphUsersResponse>(userContent)!.Value;
         result.AddRange(groupResult);
         result.AddRange(userResult);
-        return result;
+        return result.Where(i => i.Email!=null).ToList();
     }
 
     public async Task<UserDto> GetUserWithId(Guid userId)
