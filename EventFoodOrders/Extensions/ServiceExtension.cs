@@ -1,4 +1,5 @@
 ﻿using EventFoodOrders.AutoMapper;
+using EventFoodOrders.IdHandling;
 using EventFoodOrders.Mock;
 using EventFoodOrders.Repositories;
 using EventFoodOrders.Repositories.Interfaces;
@@ -26,6 +27,7 @@ public static class ServiceExtension
         services.AddScoped<IParticipantRepository, ParticipantRepository>();
         services.AddScoped<IUoW, UoW>();
         services.AddScoped<ICustomAutoMapper, CustomAutoMapper>();
+        services.AddScoped<IIdCarrier, CustomIdCarrier>();
     }
 
     public static void ConfigureSingletonServices(this IServiceCollection services)

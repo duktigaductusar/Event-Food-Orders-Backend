@@ -1,6 +1,7 @@
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.IdHandling;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,15 +10,15 @@ namespace EventFoodOrders.Controllers;
 //[Authorize] //Un-comment when ready for full auth flow
 [ApiController]
 [Route("/api/event")]
-public class EventController(IServiceManager serviceManager) : ControllerBase
+public class EventController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase
 {
     private readonly IEventService _service = serviceManager.EventService;
+    private readonly IIdCarrier _carrier = carrier;
 
     [HttpPost]
     public ActionResult<EventForResponseDto> CreateEvent(EventForCreationDto newEvent)
     {
-        Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
-        EventForResponseDto response = _service.CreateEvent(userId, newEvent);
+        EventForResponseDto response = _service.CreateEvent(_carrier.UserId, newEvent);
         return Created(uri: "", value: response);
     }
 
@@ -25,8 +26,7 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     [Route("{eventId}")]
     public ActionResult<EventForResponseDto> UpdateEvent(Guid eventId, EventForUpdateDto eventToUpdate)
     {
-        Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
-        EventForResponseDto response = _service.UpdateEvent(eventId, userId, eventToUpdate);
+        EventForResponseDto response = _service.UpdateEvent(eventId, _carrier.UserId, eventToUpdate);
         return Ok(response);
     }
 
@@ -42,8 +42,7 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     [Route("{eventId}")]
     public ActionResult<EventForResponseWithDetailsDto> GetSingleEventForUser(Guid eventId)
     {
-        Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
-        EventForResponseWithDetailsDto response = _service.GetEventForUser(userId, eventId);
+        EventForResponseWithDetailsDto response = _service.GetEventForUser(_carrier.UserId, eventId);
         return Ok(response);
     }
 
@@ -51,9 +50,8 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     [Route("{eventId}/info")]
     public async Task<ActionResult<EventForResponseWithUsersDto>> GetSingleEventWithAllParticipantsAndUsers(Guid eventId)
     {
-        Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
-        EventForResponseWithDetailsDto response = _service.GetEventForUser(userId, eventId);
-        IEnumerable<ParticipantForResponseDto> participants = serviceManager.ParticipantService.GetAllParticipantsForEvent(userId, eventId);
+        EventForResponseWithDetailsDto response = _service.GetEventForUser(_carrier.UserId, eventId);
+        IEnumerable<ParticipantForResponseDto> participants = serviceManager.ParticipantService.GetAllParticipantsForEvent(_carrier.UserId, eventId);
         IEnumerable<UserDto> users = await serviceManager.UserService.GetUsersFromIds([.. participants.Select(p => p.UserId)]);
         var dto = _service.GetEventWithUsers(response, participants, users);
         return Ok(dto);
@@ -63,9 +61,7 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     [Route("all")]
     public ActionResult<IEnumerable<EventForResponseDto>> GetAllEventsForUser()
     {
-        Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
-        IEnumerable<EventForResponseDto> response = _service.GetAllEventsForUser(userId);
-
+        IEnumerable<EventForResponseDto> response = _service.GetAllEventsForUser(_carrier.UserId);
         return Ok(response);
     }
 }
