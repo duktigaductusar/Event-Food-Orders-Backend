@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using System.Runtime.CompilerServices;
-using EventFoodOrders.Exceptions;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using EventFoodOrders.Exceptions;
 
 namespace EventFoodOrders.Middleware;
 

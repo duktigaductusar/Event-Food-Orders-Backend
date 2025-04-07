@@ -1,11 +1,8 @@
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Dto.UserDTOs;
-using EventFoodOrders.Exceptions;
-using Microsoft.AspNetCore.Authorization;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Graph.Models;
 
 namespace EventFoodOrders.Controllers;
 
