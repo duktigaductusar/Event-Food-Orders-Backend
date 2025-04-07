@@ -11,8 +11,7 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var now = DateTime.Now;
-        // var nextRunTime = DateTime.Today.AddHours(7).AddMinutes(30);
-        var nextRunTime = DateTime.Today.AddHours(10).AddMinutes(53);
+        var nextRunTime = DateTime.Today.AddHours(7).AddMinutes(30); //Run service at 7:30 every morning.
         if (now > nextRunTime)
         {
             nextRunTime = nextRunTime.AddDays(1);
@@ -22,7 +21,6 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
         
         logger.LogInformation($"Reminder service will start in {initialDelay.TotalSeconds} seconds.");
 
-        // _timer = new Timer(DoWork, null, initialDelay, TimeSpan.FromDays(1));
         _timer = new Timer(async void (state) =>
         {
             try
@@ -46,7 +44,7 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
         {
             // Our logic here
             var uow = scope.ServiceProvider.GetRequiredService<IUoW>();
-            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+            var mailerService = scope.ServiceProvider.GetRequiredService<IMailerService>();
             
             var events = await uow.EventRepository.GetAllEventsAtDeadline(now);
             if (events.Count > 0)
@@ -59,7 +57,7 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
                         .ToList();
                     participants.Add(item.OwnerId); //ToDo: Remove for prod. Only for testing purposes. Owner should not be reminded?
                     if (participants.Count <= 0) continue;
-                    // await userService.SendEmail(participants, ""); //ToDo: Uncomment for prod. Commented out during testing. Works as intended with mailing.
+                    // await mailerService.SendReminderMail(participants, item); //ToDo: Uncomment for prod. Commented out during testing. Works as intended with mailing.
                     logger.LogInformation("Reminder service running for participant list for event: " + item.Title);
                 }
             }

@@ -2,6 +2,7 @@
 using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Services;
 using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Mock
 {
@@ -34,7 +35,7 @@ namespace EventFoodOrders.Mock
             return uniqueUsers;
         }
 
-        public async Task SendEmail(List<Guid> userIds, string message)
+        public async Task SendEmail(List<Guid> userIds, EmailTemplate message)
         {
             await _userService.SendEmail(userIds, message);
         }

@@ -3,28 +3,30 @@ using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Dto.UserDTOs;
-using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Utilities;
+using Microsoft.Graph.Models;
+using Event = EventFoodOrders.Entities.Event;
+using Participant = EventFoodOrders.Entities.Participant;
 
 namespace EventFoodOrders.Services;
 
-public class EventService(IParticipantService participantService, IUoW uoW, ICustomAutoMapper mapper, IUserService userService) : IEventService
+public class EventService(IParticipantService participantService, IUoW uoW, ICustomAutoMapper mapper, IUserService userService, IMailerService mailerService) : IEventService
 {
     private readonly IEventRepository _eventRepository = uoW.EventRepository;
     private readonly IParticipantRepository _participantRepository = uoW.ParticipantRepository;
-    private readonly IParticipantService _participantService = participantService;
     private readonly IMapper _mapper = mapper.Mapper;
     private readonly IUserService _userService = userService;
 
-    public EventForResponseDto CreateEvent(Guid userId, EventForCreationDto eventForCreation)
+    public async Task<EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto eventForCreation)
     {
         Event newEvent = _mapper.MapToNewEvent(userId, eventForCreation);
         newEvent = _eventRepository.AddEvent(newEvent);
         
-        _participantService.AddParticipantToEvent(newEvent.Id, new ParticipantForCreationDto()
+        participantService.AddParticipantToEvent(newEvent.Id, new ParticipantForCreationDto
         {
-            UserId = userId,
+            UserId = userId
         });
         
         var owner = _participantRepository.GetParticipantWithEventAndUserId(newEvent.Id, userId);
@@ -37,10 +39,10 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
                 {
                     UserId = id
                 };
-                _participantService.AddParticipantToEvent(newEvent.Id, newParticipant);
+                participantService.AddParticipantToEvent(newEvent.Id, newParticipant);
             }
         }
-
+        await mailerService.SendInvitationMail(eventForCreation, owner.UserId);
         return _mapper.MapToEventForResponseDto(newEvent, owner!);
     }
 

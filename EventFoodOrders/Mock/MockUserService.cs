@@ -1,6 +1,7 @@
 ﻿using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Exceptions;
 using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Mock;
 
@@ -39,7 +40,7 @@ public class MockUserService(IUserSeed seeder) : IUserService
         return userNames;
     }
 
-    public async Task SendEmail(List<Guid> userIds, string message)
+    public async Task SendEmail(List<Guid> userIds, EmailTemplate message)
     {
         foreach (var userId in userIds)
         {
