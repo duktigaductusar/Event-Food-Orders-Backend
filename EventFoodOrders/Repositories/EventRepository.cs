@@ -130,6 +130,7 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
             var nextDeadline = context.Events
                 .Where(e => e.Deadline > DateTime.Now)
                 .OrderBy(e => e.Deadline)
+                .Include(e => e.Participants)
                 .FirstOrDefault();
             return nextDeadline;
         }
