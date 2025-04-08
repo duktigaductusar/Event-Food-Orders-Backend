@@ -44,7 +44,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
                 participantService.AddParticipantToEvent(newEvent.Id, newParticipant);
             }
         }
-        await mailerService.SendInvitationMail(eventForCreation, owner.UserId, newEvent.Id);
+        // await mailerService.SendInvitationMail(eventForCreation, owner.UserId, newEvent.Id); //ToDo: Uncomment for prod.
         return _mapper.MapToEventForResponseDto(newEvent, owner!);
     }
 

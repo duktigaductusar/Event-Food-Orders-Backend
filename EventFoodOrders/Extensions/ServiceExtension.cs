@@ -36,5 +36,11 @@ public static class ServiceExtension
     {
         services.AddSingleton<IGraphTokenService, GraphTokenService>();
     }
+
+    public static void ConfigureHostedServices(this IServiceCollection services)
+    {
+        services.AddHostedService<ReminderService>();
+        services.AddHostedService<SummaryService>();
+    }
     
 }

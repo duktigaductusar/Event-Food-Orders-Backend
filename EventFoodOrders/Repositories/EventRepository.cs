@@ -138,4 +138,18 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         var res = await context.Events.Where(e => e.Deadline.Date == now.Date).ToListAsync();
         return res;
     }
+    
+    //For the summary IHostedService
+    public Event? GetNextUpcomingDeadline()
+    {
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            var nextDeadline = context.Events
+                .Where(e => e.Deadline > DateTime.Now)
+                .OrderBy(e => e.Deadline)
+                .Include(e => e.Participants)
+                .FirstOrDefault();
+            return nextDeadline;
+        }
+    }
 }
