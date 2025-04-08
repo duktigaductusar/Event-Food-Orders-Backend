@@ -1,23 +1,22 @@
 ﻿using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using EventFoodOrders.IdHandling;
 
 namespace EventFoodOrders.Controllers;
 
 //[Authorize] //Un-comment when ready for full auth flow
 [ApiController]
 [Route("api/user")]
-public class UserController(IServiceManager serviceManager) : ControllerBase
+public class UserController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase
 {
+    private readonly IIdCarrier _carrier = carrier;
+
     [HttpGet]
     public async Task<ActionResult<UserDto[]>> GetUsersFromQuery(string queryString)
     {
-        Guid userId = serviceManager.AuthService.GetUserIdFromUserClaims(User.Claims);
-        //var users = await serviceManager.UserService.GetUsersFromQuery(queryString);
-
         var users = await serviceManager.UserService.GetUsersFromQuery(queryString);
-        users.RemoveAll(u => u.UserId == userId);
+        users.RemoveAll(u => u.UserId == _carrier.UserId);
         return users.ToArray();
     }
 

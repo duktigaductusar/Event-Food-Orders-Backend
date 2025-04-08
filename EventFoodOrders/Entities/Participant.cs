@@ -10,7 +10,6 @@ public class Participant
     public Participant()
     {
         Id = Guid.NewGuid();
-        Name = "NAME_MISSING";
         ResponseType = ReType.Pending;
         WantsMeal = false;
         Allergies = "";
@@ -38,10 +37,6 @@ public class Participant
     [Column("event_id")]
     [Required]
     public Guid EventId { get; set; }
-
-    [Column("name")]
-    [Required]
-    public string Name { get; set; }
 
     [Column("response_type")]
     [Required]

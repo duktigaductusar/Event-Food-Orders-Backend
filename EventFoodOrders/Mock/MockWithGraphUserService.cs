@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using EventFoodOrders.Dto.UserDTOs;
+﻿using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Services;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
@@ -37,7 +36,7 @@ namespace EventFoodOrders.Mock
 
         public async Task SendEmail(List<Guid> userIds, EmailTemplate message)
         {
-            await _userService.SendEmail(userIds, message);
+            await _mockService.SendEmail(userIds, message);
         }
 
         private static List<UserDto> GetUniqueUserList(List<UserDto> firstList, List<UserDto> secondList)

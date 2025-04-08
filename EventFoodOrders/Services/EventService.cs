@@ -80,9 +80,9 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
         return _mapper.Map<EventForResponseDto>(updatedEvent);
     }
 
-    public bool DeleteEvent(Guid eventId)
+    public bool DeleteEvent(Guid userId, Guid eventId)
     {
-        _eventRepository.DeleteEvent(eventId);
+        _eventRepository.DeleteEvent(userId, eventId);
 
         return true;
     }
