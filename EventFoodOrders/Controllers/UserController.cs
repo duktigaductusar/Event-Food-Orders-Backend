@@ -13,7 +13,7 @@ public class UserController(IServiceManager serviceManager, IIdCarrier carrier) 
     private readonly IIdCarrier _carrier = carrier;
 
     [HttpGet]
-    public async Task<ActionResult<UserDto[]>> GetUsersFromQuery([FromQuery] string queryString, [FromQuery] Guid eventId)
+    public async Task<ActionResult<UserDto[]>> GetUsersFromQuery([FromQuery] string queryString, [FromQuery] Guid? eventId)
     {   
 
         var users = await serviceManager.UserService.GetUsersFromQuery(queryString, eventId);
