@@ -16,7 +16,7 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
     private readonly IIdCarrier _carrier = carrier;
 
     [HttpPost]
-    public ActionResult<EventForResponseDto> CreateEvent(EventForCreationDto newEvent)
+    public async Task<ActionResult<EventForResponseDto>> CreateEvent(EventForCreationDto newEvent)
     {
         EventForResponseDto response = _service.CreateEvent(_carrier.UserId, newEvent);
         return Created(uri: "", value: response);

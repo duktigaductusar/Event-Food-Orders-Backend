@@ -15,7 +15,7 @@ public interface IEventService
     /// <param name="userId"></param>
     /// <param name="eventForCreation"></param>
     /// <returns></returns>
-    EventForResponseDto CreateEvent(Guid userId, EventForCreationDto eventForCreation);
+    Task <EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto eventForCreation);
 
     /// <summary>
     /// Deletes an event.
