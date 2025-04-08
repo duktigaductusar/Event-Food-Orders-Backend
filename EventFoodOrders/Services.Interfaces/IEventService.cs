@@ -16,14 +16,14 @@ public interface IEventService
     /// <param name="userId"></param>
     /// <param name="eventForCreation"></param>
     /// <returns></returns>
-    EventForResponseDto CreateEvent(Guid userId, EventForCreationDto eventForCreation);
+    Task <EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto eventForCreation);
 
     /// <summary>
     /// Deletes an event.
     /// </summary>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    bool DeleteEvent(Guid eventId);
+    bool DeleteEvent(Guid userId, Guid eventId);
 
     /// <summary>
     /// Gets all the events that a user has been invited to.

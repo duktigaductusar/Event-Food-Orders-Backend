@@ -7,8 +7,7 @@ using System.Linq;
 
 namespace EventFoodOrders.Repositories;
 
-public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) :
-    RepositoryBase<Event, EventNotFoundException>, IEventRepository
+public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : IEventRepository
 {
     private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
@@ -45,20 +44,21 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         throw new EventNotFoundException(eventId);
     }
 
-    public void DeleteEvent(Guid eventId)
+    public void DeleteEvent(Guid userId, Guid eventId)
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToUpdate = context.Events
                 .Where(e => e.Id == eventId)
+                .Where(e => e.OwnerId == userId)
                 .FirstOrDefault();
 
-            if (eventToUpdate is Event)
+            if (eventToUpdate is null)
             {
-                context.Remove(eventToUpdate);
+                throw new EventNotFoundException(eventId);
             }
-            else throw new EventNotFoundException(eventId);
 
+            context.Remove(eventToUpdate);
             context.SaveChanges();
         }
     }
