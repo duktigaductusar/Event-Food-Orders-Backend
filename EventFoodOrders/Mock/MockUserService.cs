@@ -111,7 +111,7 @@ public class MockUserService(IUserSeed seeder, IUoW uow) : IUserService
         return null;
     }
 
-    public async Task<List<UserDto>> GetUsersFromGroup(Guid groupId)
+    public async Task<List<Guid>> GetUsersFromGroup(Guid groupId)
     {
         return [];
     }

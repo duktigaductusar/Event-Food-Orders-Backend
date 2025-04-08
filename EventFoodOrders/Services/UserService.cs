@@ -127,14 +127,16 @@ public class UserService : IUserService
         return [.. users];
     }
 
-    public async Task<List<UserDto>> GetUsersFromGroup(Guid groupId)
+    public async Task<List<Guid>> GetUsersFromGroup(Guid groupId)
     {
-        var group = await _httpClient.GetAsync($"groups/{groupId}?$expand=members($select=id,displayName,mail)");
-        if (group.IsSuccessStatusCode)
+        var groupResponse = await _httpClient.GetAsync($"groups/{groupId}/members");
+        if (groupResponse.IsSuccessStatusCode)
         {
-            var groupContent = await group.Content.ReadAsStringAsync();
-            var groupResult = JsonConvert.DeserializeObject<GraphGroupResponse>(groupContent)!.Members.Users;
-            return [.. groupResult];
+            var groupContent = await groupResponse.Content.ReadAsStringAsync();
+            var groupAsJson = JsonConvert.DeserializeObject<GraphGroupResponse>(groupContent)!;
+            var members = groupAsJson.Members.Where(m => m.Mail is not null);
+            var users = members.Select(m => m.Id).ToList();
+            return [.. users];
         }
         return [];
     }
@@ -156,7 +158,15 @@ public class UserService : IUserService
 
     public class GraphGroupResponse
     {
-        [JsonProperty("members")]
-        public GraphUsersResponse Members { get; set; }
+        [JsonProperty("value")]
+        public GraphGroupUserResponse[] Members { get; set; }
+    }
+
+    public class GraphGroupUserResponse
+    {
+        [JsonProperty("id")]
+        public Guid Id { get; set; }
+        [JsonProperty("mail")]
+        public string? Mail { get; set; }
     }
 }

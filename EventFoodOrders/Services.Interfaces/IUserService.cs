@@ -44,6 +44,18 @@ public interface IUserService
     /// <param name="userIds"></param>
     /// <returns></returns>
     Task<List<UserDto>> GetUsersFromIds(Guid[] userIds);
+
+    /// <summary>
+    /// Returns a user dto using their id.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
     Task<UserDto?> GetUserWithId(Guid userId);
-    Task<List<UserDto>> GetUsersFromGroup(Guid groupId);
+
+    /// <summary>
+    /// Returns a list of ids for the users in a group from the group id.
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <returns></returns>
+    Task<List<Guid>> GetUsersFromGroup(Guid groupId);
 }

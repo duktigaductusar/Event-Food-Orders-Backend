@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
 using EventFoodOrders.AutoMapper;
-using EventFoodOrders.Data;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
-using EventFoodOrders.Utilities;
-using Microsoft.Graph.Models;
 using Event = EventFoodOrders.Entities.Event;
 using Participant = EventFoodOrders.Entities.Participant;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace EventFoodOrders.Services;
 
@@ -37,14 +33,15 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
         {
             foreach (Guid id in eventForCreation.UserIds)
             {
-                if (_userService.GetUserWithId(id) is null)
+                if (await _userService.GetUserWithId(id) is null)
                 {
-                    List<UserDto> maybeGroup = await _userService.GetUsersFromGroup(id);
-                    foreach (UserDto user in maybeGroup)
+                    List<Guid> usersInGroup = await _userService.GetUsersFromGroup(id);
+                    usersInGroup.Remove(userId);
+                    foreach (Guid i in usersInGroup)
                     {
                         ParticipantForCreationDto groupParticipant = new()
                         {
-                            UserId = user.UserId
+                            UserId = i
                         };
                         participantService.AddParticipantToEvent(newEvent.Id, groupParticipant);
                     }

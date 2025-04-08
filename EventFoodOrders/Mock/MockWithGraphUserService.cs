@@ -77,7 +77,7 @@ namespace EventFoodOrders.Mock
             return user;
         }
 
-        public async Task<List<UserDto>> GetUsersFromGroup(Guid groupId)
+        public async Task<List<Guid>> GetUsersFromGroup(Guid groupId)
         {
             return await _userService.GetUsersFromGroup(groupId);
         }
