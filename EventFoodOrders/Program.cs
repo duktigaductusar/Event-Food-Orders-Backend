@@ -49,10 +49,10 @@ public class Program
         app.UseCustomExceptionHandler();
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseDataSeedExtension();
         
         if (isDevelopment)
         {
+            app.UseDataSeedExtension();
             app.UseCors("FrontendDEV");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
