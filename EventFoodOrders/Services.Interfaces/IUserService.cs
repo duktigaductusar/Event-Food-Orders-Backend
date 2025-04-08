@@ -10,13 +10,24 @@ public interface IUserService
     /// </summary>
     /// <param name="queryString"></param>
     /// <returns></returns>
-    Task<List<UserDto>> GetUsersFromQuery(string queryString);
+    //Task<List<UserDto>> GetUsersFromQuery(string queryString);
+
+
+    /// <summary>
+    /// Returns a list of UserDtos whose names start with the queryString.
+    /// </summary>
+    /// <param name="queryString"></param>
+    /// <param name="eventId"></param>
+    /// <returns></returns>
+    Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId);
+
 
     /// <summary>
     /// Gets a list of names of users from their ids.
     /// </summary>
     /// <param name="userIds"></param>
     /// <returns></returns>
+
     Task<List<string>> GetNamesWithIds(List<Guid> userIds);
 
     /// <summary>

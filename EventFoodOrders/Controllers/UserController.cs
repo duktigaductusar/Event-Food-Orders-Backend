@@ -13,9 +13,10 @@ public class UserController(IServiceManager serviceManager, IIdCarrier carrier) 
     private readonly IIdCarrier _carrier = carrier;
 
     [HttpGet]
-    public async Task<ActionResult<UserDto[]>> GetUsersFromQuery(string queryString)
-    {
-        var users = await serviceManager.UserService.GetUsersFromQuery(queryString);
+    public async Task<ActionResult<UserDto[]>> GetUsersFromQuery([FromQuery] string queryString, [FromQuery] Guid eventId)
+    {   
+
+        var users = await serviceManager.UserService.GetUsersFromQuery(queryString, eventId);
         users.RemoveAll(u => u.UserId == _carrier.UserId);
         return users.ToArray();
     }
