@@ -44,4 +44,6 @@ public interface IUserService
     /// <param name="userIds"></param>
     /// <returns></returns>
     Task<List<UserDto>> GetUsersFromIds(Guid[] userIds);
+    Task<UserDto?> GetUserWithId(Guid userId);
+    Task<List<UserDto>> GetUsersFromGroup(Guid groupId);
 }

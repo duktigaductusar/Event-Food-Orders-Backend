@@ -66,5 +66,20 @@ namespace EventFoodOrders.Mock
 
             return uniqueIds;
         }
+
+        public async Task<UserDto?> GetUserWithId(Guid userId)
+        {
+            UserDto? user = await _mockService.GetUserWithId(userId);
+            if (user is null)
+            {
+                user = await _userService.GetUserWithId(userId);
+            }
+            return user;
+        }
+
+        public async Task<List<UserDto>> GetUsersFromGroup(Guid groupId)
+        {
+            return await _userService.GetUsersFromGroup(groupId);
+        }
     }
 }

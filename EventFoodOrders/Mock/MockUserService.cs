@@ -95,4 +95,24 @@ public class MockUserService(IUserSeed seeder, IUoW uow) : IUserService
 
         return dtos;
     }
+
+    public async Task<UserDto?> GetUserWithId(Guid userId)
+    {
+        MockUser? user = users.Where(u => u.UserId == userId).FirstOrDefault();
+        if (user is not null)
+        {
+            return new UserDto()
+            {
+                UserId = userId,
+                Username = user.Username,
+                Email = user.Email
+            };
+        }
+        return null;
+    }
+
+    public async Task<List<UserDto>> GetUsersFromGroup(Guid groupId)
+    {
+        return [];
+    }
 }

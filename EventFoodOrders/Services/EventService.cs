@@ -37,11 +37,26 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
         {
             foreach (Guid id in eventForCreation.UserIds)
             {
-                ParticipantForCreationDto newParticipant = new()
+                if (_userService.GetUserWithId(id) is null)
                 {
-                    UserId = id
-                };
-                participantService.AddParticipantToEvent(newEvent.Id, newParticipant);
+                    List<UserDto> maybeGroup = await _userService.GetUsersFromGroup(id);
+                    foreach (UserDto user in maybeGroup)
+                    {
+                        ParticipantForCreationDto groupParticipant = new()
+                        {
+                            UserId = user.UserId
+                        };
+                        participantService.AddParticipantToEvent(newEvent.Id, groupParticipant);
+                    }
+                }
+                else
+                {
+                    ParticipantForCreationDto newParticipant = new()
+                    {
+                        UserId = id
+                    };
+                    participantService.AddParticipantToEvent(newEvent.Id, newParticipant);
+                }
             }
         }
         await mailerService.SendInvitationMail(eventForCreation, owner.UserId, newEvent.Id);

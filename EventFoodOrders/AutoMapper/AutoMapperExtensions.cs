@@ -84,7 +84,14 @@ public static class AutoMapperExtensions
 
         foreach(ParticipantForResponseDto participant in participants)
         {
-            participantsWithUsers.Add(mapper.MapToParticipantWithUserDto(participant, users.Where(u => u.UserId == participant.UserId).First()));
+            UserDto? user = users
+                .Where(u => u.UserId == participant.UserId)
+                .FirstOrDefault();
+
+            if (user is not null)
+            {
+                participantsWithUsers.Add(mapper.MapToParticipantWithUserDto(participant, user));
+            }
         }
 
         EventForResponseWithUsersDto evetWithUsersDto = mapper.Map<EventForResponseWithUsersDto>(eventDto);
