@@ -9,6 +9,7 @@
 
 # Docker files
 docker-compose.production.yml
+docker-compose.production.debug.yml
 
 # Node artifact files
 node_modules/
