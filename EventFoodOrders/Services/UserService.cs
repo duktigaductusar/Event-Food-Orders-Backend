@@ -56,8 +56,6 @@ public class UserService : IUserService
 
         return result.Where(u => !participantIdsForEvent.Contains(u.UserId)).ToList();
     }
-    
-    public async Task<UserDto> GetUserWithId(Guid userId)
 
     public async Task<UserDto> GetUserWithId(Guid userId) //ToDo: Should be private? Not implemented in interface
     {

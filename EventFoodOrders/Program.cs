@@ -49,7 +49,7 @@ public class Program
         app.UseCustomExceptionHandler();
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseDataSeedExtension();
+        app.UseDBExtension();
         
         if (isDevelopment)
         {

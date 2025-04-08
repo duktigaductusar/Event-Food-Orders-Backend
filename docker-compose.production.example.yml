@@ -1,0 +1,45 @@
+services:
+  event-food-orders-app:
+    image: ghcr.io/duktigaductusar/ductus-event-food-service-app:<ADD_IMAGE_TAG>
+    container_name: event-food-orders-app
+    ports:
+      - "4200:80"
+    networks:
+      - event-food-orders-net
+    restart: always
+
+  event-food-orders-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: event-food-orders-db
+    environment:
+      SA_PASSWORD: <ADD_STRONG_PASSWORD_HERE>
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - event-food-orders-volume:/var/opt/mssql
+    networks:
+      - event-food-orders-net
+    restart: always
+
+  event-food-orders-api:
+    image: ghcr.io/duktigaductusar/ductus-event-food-service-api:<ADD_IMAGE_TAG>
+    container_name: event-food-orders-api
+    depends_on:
+      - event-food-orders-db
+    env_file:
+       - EventFoodOrders/.env
+    environment:
+        ASPNETCORE_ENVIRONMENT: Production
+    ports:
+      - "8080:8080"
+    networks:
+      - event-food-orders-net
+    restart: always
+
+volumes:
+  event-food-orders-volume:
+
+networks:
+  event-food-orders-net:
+    driver: bridge

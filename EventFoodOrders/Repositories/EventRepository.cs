@@ -129,10 +129,6 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
             return participants;
         }
     }
-
-
-    // Helper functions
-    private static void UpdateEventEntity(Event source, Event destination)
     
     //For the reminder IHostedService
     public async Task<List<Event>> GetAllEventsAtDeadline(DateTime now)
