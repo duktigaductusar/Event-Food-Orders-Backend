@@ -1,15 +1,22 @@
-﻿using System.Collections.Generic;
-using EventFoodOrders.Dto.UserDTOs;
+﻿using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Mock
 {
-    public class MockWithGraphUserService(IGraphTokenService graphTokenService, HttpClient httpClient, IConfiguration config, IUserSeed seeder) : IUserService
+    public class MockWithGraphUserService(
+        IGraphTokenService graphTokenService,
+        HttpClient httpClient,
+        IConfiguration config,
+        IUserSeed seeder,
+        IUoW uow
+    ) : IUserService
     {
-        private IUserService _userService = new UserService(graphTokenService, httpClient, config);
-        private IUserService _mockService = new MockUserService(seeder);
+        private IUserService _userService = new UserService(
+            graphTokenService, httpClient, config, uow);
+        private IUserService _mockService = new MockUserService(seeder, uow);
 
         public async Task<List<string>> GetNamesWithIds(List<Guid> userIds)
         {
@@ -26,10 +33,10 @@ namespace EventFoodOrders.Mock
             return uniqueUsers;
         }
 
-        public async Task<List<UserDto>> GetUsersFromQuery(string queryString)
+        public async Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId)
         {
-            List<UserDto> mockUsers = await _mockService.GetUsersFromQuery(queryString);
-            List<UserDto> graphUsers = await _userService.GetUsersFromQuery(queryString);
+            List<UserDto> mockUsers = await _mockService.GetUsersFromQuery(queryString, eventId);
+            List<UserDto> graphUsers = await _userService.GetUsersFromQuery(queryString, eventId);
             List<UserDto> uniqueUsers = GetUniqueUserList(mockUsers, graphUsers);
 
             return uniqueUsers;
@@ -37,7 +44,7 @@ namespace EventFoodOrders.Mock
 
         public async Task SendEmail(List<Guid> userIds, EmailTemplate message)
         {
-            await _userService.SendEmail(userIds, message);
+            await _mockService.SendEmail(userIds, message);
         }
 
         private static List<UserDto> GetUniqueUserList(List<UserDto> firstList, List<UserDto> secondList)

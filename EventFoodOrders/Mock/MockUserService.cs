@@ -1,13 +1,16 @@
 ﻿using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Exceptions;
+using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
+using Sprache;
 
 namespace EventFoodOrders.Mock;
 
-public class MockUserService(IUserSeed seeder) : IUserService
+public class MockUserService(IUserSeed seeder, IUoW uow) : IUserService
 {
     readonly List<MockUser> users = seeder.Users;
+    private readonly IUoW _uow = uow;
 
     public async Task<string> GetNameWithId(Guid userId)
     {
@@ -48,7 +51,7 @@ public class MockUserService(IUserSeed seeder) : IUserService
         }
     }
 
-    public async Task<List<UserDto>> GetUsersFromQuery(string queryString)
+    public async Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId)
     {
         List<MockUser> filteredUsers = [.. users
             .Where(u => u.Username.StartsWith(queryString, StringComparison.OrdinalIgnoreCase) ||
@@ -66,7 +69,11 @@ public class MockUserService(IUserSeed seeder) : IUserService
             });
         }
 
-        return dtos;
+        if (eventId == null) { return dtos; }
+
+        var participantsForEvent = _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
+        var participantIdsForEvent = participantsForEvent.Select(p => p.UserId).ToHashSet();
+        return [.. dtos.Where(u => !participantIdsForEvent.Contains(u.UserId))];
     }
 
     public async Task<List<UserDto>> GetUsersFromIds(Guid[] userIds)

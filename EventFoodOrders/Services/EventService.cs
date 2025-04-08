@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventFoodOrders.AutoMapper;
+using EventFoodOrders.Data;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Dto.UserDTOs;
@@ -9,6 +10,7 @@ using EventFoodOrders.Utilities;
 using Microsoft.Graph.Models;
 using Event = EventFoodOrders.Entities.Event;
 using Participant = EventFoodOrders.Entities.Participant;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace EventFoodOrders.Services;
 
@@ -80,9 +82,9 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
         return _mapper.Map<EventForResponseDto>(updatedEvent);
     }
 
-    public bool DeleteEvent(Guid eventId)
+    public bool DeleteEvent(Guid userId, Guid eventId)
     {
-        _eventRepository.DeleteEvent(eventId);
+        _eventRepository.DeleteEvent(userId, eventId);
 
         return true;
     }
@@ -121,5 +123,5 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
     public EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participantDtos, IEnumerable<UserDto> users)
     {
         return _mapper.MapToEventForResponseWithUsersDto(eventDto, participantDtos, users);
-    }
+    }        
 }

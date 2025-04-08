@@ -18,7 +18,7 @@ public interface IEventRepository
     /// Deletes an event in the database.
     /// </summary>
     /// <param name="eventId"></param>
-    void DeleteEvent(Guid eventId);
+    void DeleteEvent(Guid userId, Guid eventId);
 
     /// <summary>
     /// Gets all the events in which the user is a participant.
@@ -34,6 +34,7 @@ public interface IEventRepository
     /// <param name="eventId"></param>
     /// <returns></returns>
     Event GetEventForUser(Guid userId, Guid eventId);
+    IEnumerable<Participant> GetParticipantsByEventId(Guid eventId);
 
     /// <summary>
     /// Gets a single event given a condition.

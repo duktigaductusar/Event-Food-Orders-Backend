@@ -1,6 +1,7 @@
 ﻿using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.Entities;
 
 namespace EventFoodOrders.Services.Interfaces;
 
@@ -22,7 +23,7 @@ public interface IEventService
     /// </summary>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    bool DeleteEvent(Guid eventId);
+    bool DeleteEvent(Guid userId, Guid eventId);
 
     /// <summary>
     /// Gets all the events that a user has been invited to.
@@ -44,7 +45,7 @@ public interface IEventService
     /// </summary>
     /// <returns></returns>
     EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participantDtos, IEnumerable<UserDto> users);
-
+       
     /// <summary>
     /// Updates an event given its Id and a Dto.
     /// </summary>

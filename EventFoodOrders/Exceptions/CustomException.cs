@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-
-namespace EventFoodOrders.Exceptions;
+﻿namespace EventFoodOrders.Exceptions;
 
 public class CustomException : Exception
 {

@@ -6,7 +6,6 @@ using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Utilities;
 using EventFoodOrders.Dto.UserDTOs;
 using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
 
 namespace EventFoodOrders.AutoMapper;
 

@@ -1,5 +1,4 @@
-﻿
-namespace EventFoodOrders.Mock;
+﻿namespace EventFoodOrders.Mock;
 
 public interface IUserSeed
 {
