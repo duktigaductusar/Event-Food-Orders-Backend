@@ -16,7 +16,7 @@ namespace EventFoodOrders.Mock
     {
         private IUserService _userService = new UserService(
             graphTokenService, httpClient, config, uow);
-        private IUserService _mockService = new MockUserService(seeder);
+        private IUserService _mockService = new MockUserService(seeder, uow);
 
         public async Task<List<string>> GetNamesWithIds(List<Guid> userIds)
         {

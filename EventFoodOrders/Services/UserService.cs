@@ -54,9 +54,7 @@ public class UserService : IUserService
         
         var participantsForEvent = _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
         var participantIdsForEvent = participantsForEvent.Select(p => p.UserId).ToHashSet();
-        // result = [.. result.Where(u => !participantIdsForEvent.Any(guid => guid == u.UserId))];
-        result = [.. result.Where(u => !participantIdsForEvent.Contains(u.UserId))];
-        return result;
+        return [.. result.Where(u => !participantIdsForEvent.Contains(u.UserId))];
     }
      
 
