@@ -1,10 +1,10 @@
-﻿using EventFoodOrders.Repositories.Interfaces;
-using EventFoodOrders.Services.Interfaces;
+﻿using EventFoodOrders.Entities;
+using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Services;
 
-public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFactory scopeFactory/*IUoW uow, IUserService userService*/) : BackgroundService
+public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFactory scopeFactory) : BackgroundService
 {
     private Timer _timer;
 
@@ -29,7 +29,7 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error running BackgroundReminder: ", ex.Message);
+                logger.LogError(ex, ex.Message);
             }
         }, null, initialDelay, TimeSpan.FromDays(1));
 
@@ -38,17 +38,32 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
 
     private async Task DoWork(object state)
     {
-        var now = DateTime.Now;
+        if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday || DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
+        {
+            return;
+        }
+        List<DateTime> daysToCheck = [DateTime.Now.AddDays(1)]; //ToDo: Hardcoded 1 workday before deadline reminders, could be dynamic
+        if (daysToCheck[0].DayOfWeek == DayOfWeek.Saturday)
+        {
+            daysToCheck.Add(DateTime.Now.AddDays(2));
+            daysToCheck.Add(DateTime.Now.AddDays(3));
+        }
+        
         logger.LogInformation("Reminder service started at: {time}", DateTimeOffset.Now);
         using (var scope = scopeFactory.CreateScope())
         {
             var uow = scope.ServiceProvider.GetRequiredService<IUoW>();
             var mailerService = scope.ServiceProvider.GetRequiredService<IMailerService>();
-            
-            var events = await uow.EventRepository.GetAllEventsAtDeadline(now);
-            if (events.Count > 0)
+
+            List<Event> reminderEvents = [];
+            foreach (var dateTime in daysToCheck)
             {
-                foreach (var item in events)
+                reminderEvents.AddRange(await uow.EventRepository.GetAllEventsAtDeadline(dateTime));
+            }
+            
+            if (reminderEvents.Count > 0)
+            {
+                foreach (var item in reminderEvents)
                 {
                     var participants = item.Participants
                         .Where(p => p.ResponseType == ReType.Pending)

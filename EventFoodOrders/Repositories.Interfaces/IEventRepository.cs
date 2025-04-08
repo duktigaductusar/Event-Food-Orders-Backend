@@ -56,4 +56,10 @@ public interface IEventRepository
     /// <param name="now"></param>
     /// <returns></returns>
     Task<List<Event>> GetAllEventsAtDeadline(DateTime now);
+
+    /// <summary>
+    /// Get the next upcoming deadline, based on DateTime.Now.
+    /// </summary>
+    /// <returns></returns>
+    Event? GetNextUpcomingDeadline();
 }

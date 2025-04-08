@@ -30,7 +30,7 @@ public class Program
         builder.Services.ConfigureSessions();
         builder.Services.ConfigureAuths(builder.Configuration);
         // No more auth thingies
-        builder.Services.AddHostedService<ReminderService>();
+        builder.Services.ConfigureHostedServices();
         builder.Logging.AddConsole();
         builder.Services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DbContext")));
