@@ -35,7 +35,7 @@ namespace EventFoodOrders.Mock
 
         public async Task SendEmail(List<Guid> userIds, string message)
         {
-            await _userService.SendEmail(userIds, message);
+            await _mockService.SendEmail(userIds, message);
         }
 
         private static List<UserDto> GetUniqueUserList(List<UserDto> firstList, List<UserDto> secondList)
