@@ -22,7 +22,7 @@ public interface IEventService
     /// </summary>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    bool DeleteEvent(Guid eventId);
+    bool DeleteEvent(Guid userId, Guid eventId);
 
     /// <summary>
     /// Gets all the events that a user has been invited to.

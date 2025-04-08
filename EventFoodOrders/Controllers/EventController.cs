@@ -34,7 +34,7 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
     [Route("{eventId}")]
     public ActionResult<bool> DeleteEvent(Guid eventId)
     {
-        bool response = _service.DeleteEvent(eventId);
+        bool response = _service.DeleteEvent(_carrier.UserId, eventId);
         return Ok(response);
     }
 
