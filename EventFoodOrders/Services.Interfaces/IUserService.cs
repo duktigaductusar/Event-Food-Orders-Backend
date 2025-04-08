@@ -25,7 +25,7 @@ public interface IUserService
     /// <param name="userIds"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    Task SendEmail(List<Guid> userIds, string message);
+    Task SendEmail(List<Guid> userIds, EmailTemplate message);
 
     /// <summary>
     /// Gets a list of UserDtos from a Guid array of user Ids.
