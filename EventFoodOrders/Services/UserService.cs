@@ -44,8 +44,8 @@ public class UserService : IUserService
         var userContent = await userResponse.Content.ReadAsStringAsync();
         var groupContent = await groupResponse.Content.ReadAsStringAsync();
         List<UserDto> result = [];
-        var groupResult = JsonConvert.DeserializeObject<GraphUsersResponse>(groupContent)!.Value;
-        var userResult= JsonConvert.DeserializeObject<GraphUsersResponse>(userContent)!.Value;
+        var groupResult = JsonConvert.DeserializeObject<GraphUsersResponse>(groupContent)!.Users;
+        var userResult= JsonConvert.DeserializeObject<GraphUsersResponse>(userContent)!.Users;
         result.AddRange(groupResult);
         result.AddRange(userResult);        
         result = result.Where(i => i.Email != null).ToList();
@@ -58,15 +58,23 @@ public class UserService : IUserService
     }
      
 
-    public async Task<UserDto> GetUserWithId(Guid userId) //ToDo: Should be private? Not implemented in interface
+    public async Task<UserDto?> GetUserWithId(Guid userId)
     {
         await SetAccessToken();
         var searchId = userId.ToString();
         var response = await _httpClient.GetAsync($"users/{searchId}");
-        response.EnsureSuccessStatusCode();
-        
+        if (response.IsSuccessStatusCode == false)
+        {
+            return null;
+        }
+
         var content = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<UserDto>(content)!;
+        var userDto = JsonConvert.DeserializeObject<UserDto>(content);
+        if (userDto is null || userDto.Username.Length < 1)
+        {
+            return null;
+        }
+        return userDto;
     }
 
     public async Task<List<string>> GetNamesWithIds(List<Guid> userIds)
@@ -111,11 +119,28 @@ public class UserService : IUserService
         foreach (Guid id in userIds)
         {
             var user = await GetUserWithId(id);
-            users.Add(user);
+            if (user is not null)
+            {
+                users.Add(user);
+            }
         }
-        return users.ToList();
+        return [.. users];
     }
-    
+
+    public async Task<List<Guid>> GetUsersFromGroup(Guid groupId)
+    {
+        var groupResponse = await _httpClient.GetAsync($"groups/{groupId}/members");
+        if (groupResponse.IsSuccessStatusCode)
+        {
+            var groupContent = await groupResponse.Content.ReadAsStringAsync();
+            var groupAsJson = JsonConvert.DeserializeObject<GraphGroupResponse>(groupContent)!;
+            var members = groupAsJson.Members.Where(m => m.Mail is not null);
+            var users = members.Select(m => m.Id).ToList();
+            return [.. users];
+        }
+        return [];
+    }
+
     private async Task SetAccessToken()
     {
         if (string.IsNullOrEmpty(_accessToken))
@@ -128,6 +153,20 @@ public class UserService : IUserService
     public class GraphUsersResponse
     {
         [JsonProperty("value")]
-        public UserDto[] Value { get; set; }
+        public UserDto[] Users { get; set; }
+    }
+
+    public class GraphGroupResponse
+    {
+        [JsonProperty("value")]
+        public GraphGroupUserResponse[] Members { get; set; }
+    }
+
+    public class GraphGroupUserResponse
+    {
+        [JsonProperty("id")]
+        public Guid Id { get; set; }
+        [JsonProperty("mail")]
+        public string? Mail { get; set; }
     }
 }
