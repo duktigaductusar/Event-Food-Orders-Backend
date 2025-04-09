@@ -3,11 +3,11 @@ using EventFoodOrders.Exceptions;
 using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
 using EventFoodOrders.Repositories.Interfaces;
+using System.Linq;
 
 namespace EventFoodOrders.Repositories;
 
-public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) :
-    RepositoryBase<Event, EventNotFoundException>, IEventRepository
+public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : IEventRepository
 {
     private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
@@ -24,38 +24,41 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
 
     public Event UpdateEvent(Guid eventId, Event updatedEvent)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        if (eventId == updatedEvent.Id)
         {
-            Event? eventToUpdate = context.Events
-                .Where(e => e.Id == eventId)
-                .FirstOrDefault();
-
-            if (eventToUpdate is Event)
+            using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
             {
-                UpdateEventEntity(updatedEvent, eventToUpdate);
+                Event? eventToUpdate = context.Events
+                    .Where(e => e.Id == eventId)
+                    .Include(e => e.Participants)
+                    .FirstOrDefault();
+
+                if (eventToUpdate is not null)
+                {
+                    context.Entry(eventToUpdate).CurrentValues.SetValues(updatedEvent);
+                    context.SaveChanges();
+                    return eventToUpdate;
+                }
             }
-            else throw new EventNotFoundException(eventId);
-
-            context.SaveChanges();
         }
-
-        return updatedEvent;
+        throw new EventNotFoundException(eventId);
     }
 
-    public void DeleteEvent(Guid eventId)
+    public void DeleteEvent(Guid userId, Guid eventId)
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Event? eventToUpdate = context.Events
                 .Where(e => e.Id == eventId)
+                .Where(e => e.OwnerId == userId)
                 .FirstOrDefault();
 
-            if (eventToUpdate is Event)
+            if (eventToUpdate is null)
             {
-                context.Remove(eventToUpdate);
+                throw new EventNotFoundException(eventId);
             }
-            else throw new EventNotFoundException(eventId);
 
+            context.Remove(eventToUpdate);
             context.SaveChanges();
         }
     }
@@ -112,12 +115,41 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         return result;
     }
 
-    // Helper functions
-    private static void UpdateEventEntity(Event source, Event destination)
+    public IEnumerable<Participant> GetParticipantsByEventId(Guid eventId)
     {
-        destination.Title = source.Title;
-        destination.Date = source.Date;
-        destination.Description = source.Description;
-        destination.Deadline = source.Deadline;
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            var participants = context.Events
+                .AsNoTracking()
+                .Where(e => e.Id == eventId)
+                .Include(e => e.Participants)
+                .SelectMany(e => e.Participants)
+                .ToList();
+
+            return participants;
+        }
+    }
+
+    
+    //For the reminder IHostedService
+    public async Task<List<Event>> GetAllEventsAtDeadline(DateTime now)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var res = await context.Events.Where(e => e.Deadline.Date == now.Date).ToListAsync();
+        return res;
+    }
+    
+    //For the summary IHostedService
+    public Event? GetNextUpcomingDeadline()
+    {
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            var nextDeadline = context.Events
+                .Where(e => e.Deadline > DateTime.Now)
+                .OrderBy(e => e.Deadline)
+                .Include(e => e.Participants)
+                .FirstOrDefault();
+            return nextDeadline;
+        }
     }
 }

@@ -18,7 +18,7 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
     {
         Event? desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == eventId) ?? throw new EventNotFoundException();
 
-        if (desiredEvent.Participants.Where(p => p.UserId == newParticipant.UserId).Any())
+        if (desiredEvent.Participants.Where(p => p.UserId == newParticipant.UserId).Count() > 0)
         {
             // This could be more specific but would reveal that a user is invited to an event.
             throw new EventNotFoundException();
@@ -63,7 +63,7 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
     {
         Event participantsEvent = _eventRepository.GetEventForUser(userId, eventId);
         Participant? participant = participantsEvent.Participants
-            .Where(p => p.Id == userId)
+            .Where(p => p.UserId == userId)
             .FirstOrDefault();
 
         if (participant is null)
@@ -87,10 +87,5 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
         IEnumerable<Participant> participants = _participantRepository.GetAllParticipantsForUser(userId);
 
         return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants);
-    }
-
-    public Participant CreateParticipant(Guid userId, Guid eventId)
-    {
-        return new Participant(userId, eventId);
     }
 }

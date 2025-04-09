@@ -1,5 +1,4 @@
 ﻿using EventFoodOrders.Dto.ParticipantDTOs;
-using EventFoodOrders.Entities;
 
 namespace EventFoodOrders.Services.Interfaces;
 
@@ -16,14 +15,6 @@ public interface IParticipantService
     /// <param name="newParticipant"></param>
     /// <returns></returns>
     ParticipantForResponseDto AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant);
-
-    /// <summary>
-    /// Creates a participant and adds a reference to an event.
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="eventId"></param>
-    /// <returns></returns>
-    Participant CreateParticipant(Guid userId, Guid eventId);
 
     /// <summary>
     /// Deletes a participant.

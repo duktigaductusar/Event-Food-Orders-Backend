@@ -1,4 +1,7 @@
 ﻿using EventFoodOrders.Dto.EventDTOs;
+using EventFoodOrders.Dto.ParticipantDTOs;
+using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.Entities;
 
 namespace EventFoodOrders.Services.Interfaces;
 
@@ -13,14 +16,14 @@ public interface IEventService
     /// <param name="userId"></param>
     /// <param name="eventForCreation"></param>
     /// <returns></returns>
-    EventForResponseDto CreateEvent(Guid userId, EventForCreationDto eventForCreation);
+    Task <EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto eventForCreation);
 
     /// <summary>
     /// Deletes an event.
     /// </summary>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    bool DeleteEvent(Guid eventId);
+    bool DeleteEvent(Guid userId, Guid eventId);
 
     /// <summary>
     /// Gets all the events that a user has been invited to.
@@ -38,10 +41,16 @@ public interface IEventService
     EventForResponseWithDetailsDto GetEventForUser(Guid userId, Guid eventId);
 
     /// <summary>
+    /// Gets a single event with all the participant and user information.
+    /// </summary>
+    /// <returns></returns>
+    EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participantDtos, IEnumerable<UserDto> users);
+       
+    /// <summary>
     /// Updates an event given its Id and a Dto.
     /// </summary>
     /// <param name="eventId"></param>
     /// <param name="updatedEventDto"></param>
     /// <returns></returns>
-    EventForResponseDto UpdateEvent(Guid eventId, EventForUpdateDto updatedEventDto);
+    EventForResponseDto UpdateEvent(Guid eventId, Guid userId, EventForUpdateDto updatedEventDto);
 }

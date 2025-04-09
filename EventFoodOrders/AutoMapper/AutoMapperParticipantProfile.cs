@@ -16,10 +16,11 @@ public class AutoMapperParticipantProfile: Profile
         CreateMap<ParticipantForCreationDto, Participant>()
             .AfterMap((src, dest) => dest.ResponseType = ReType.Pending);
 
-        // Update using extension method MapToParticipantFromUpdateDto to include ResponseType
+        // ToDo: Update using extension method MapToParticipantFromUpdateDto to include ResponseType
         CreateMap<ParticipantForUpdateDto, Participant>()
             .ForMember(dest => dest.ResponseType, opt => opt.Ignore());
 
         CreateMap<Participant, ParticipantForResponseDto>();
+        CreateMap<ParticipantForResponseDto, ParticipantWithUserDto>();
     }
 }

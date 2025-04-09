@@ -1,19 +1,24 @@
 using EventFoodOrders.Dto.EventDTOs;
+using EventFoodOrders.Dto.ParticipantDTOs;
+using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.IdHandling;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventFoodOrders.Controllers;
 
+//[Authorize] //ToDo: Un-comment when ready for full auth flow
 [ApiController]
 [Route("/api/event")]
-public class EventController(IServiceManager serviceManager) : ControllerBase
+public class EventController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase
 {
     private readonly IEventService _service = serviceManager.EventService;
+    private readonly IIdCarrier _carrier = carrier;
 
     [HttpPost]
-    public ActionResult<EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto newEvent)
+    public async Task<ActionResult<EventForResponseDto>> CreateEvent(EventForCreationDto newEvent)
     {
-        EventForResponseDto response = _service.CreateEvent(userId, newEvent);
+        EventForResponseDto response = await _service.CreateEvent(_carrier.UserId, newEvent);
         return Created(uri: "", value: response);
     }
 
@@ -21,7 +26,7 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     [Route("{eventId}")]
     public ActionResult<EventForResponseDto> UpdateEvent(Guid eventId, EventForUpdateDto eventToUpdate)
     {
-        EventForResponseDto response = _service.UpdateEvent(eventId, eventToUpdate);
+        EventForResponseDto response = _service.UpdateEvent(eventId, _carrier.UserId, eventToUpdate);
         return Ok(response);
     }
 
@@ -29,28 +34,34 @@ public class EventController(IServiceManager serviceManager) : ControllerBase
     [Route("{eventId}")]
     public ActionResult<bool> DeleteEvent(Guid eventId)
     {
-        bool response = _service.DeleteEvent(eventId);
+        bool response = _service.DeleteEvent(_carrier.UserId, eventId);
         return Ok(response);
     }
 
     [HttpGet]
-    //[Route("/get/{userId}/{eventId}")]
     [Route("{eventId}")]
-    public ActionResult<EventForResponseWithDetailsDto> GetSingleEventForUser(Guid eventId, Guid userId)
+    public ActionResult<EventForResponseWithDetailsDto> GetSingleEventForUser(Guid eventId)
     {
-        EventForResponseWithDetailsDto response = _service.GetEventForUser(userId, eventId);
+        EventForResponseWithDetailsDto response = _service.GetEventForUser(_carrier.UserId, eventId);
         return Ok(response);
     }
 
     [HttpGet]
-    //[Route("/get/{userId}/all")]
+    [Route("{eventId}/info")]
+    public async Task<ActionResult<EventForResponseWithUsersDto>> GetSingleEventWithAllParticipantsAndUsers(Guid eventId)
+    {
+        EventForResponseWithDetailsDto response = _service.GetEventForUser(_carrier.UserId, eventId);
+        IEnumerable<ParticipantForResponseDto> participants = serviceManager.ParticipantService.GetAllParticipantsForEvent(_carrier.UserId, eventId);
+        IEnumerable<UserDto> users = await serviceManager.UserService.GetUsersFromIds([.. participants.Select(p => p.UserId)]);
+        var dto = _service.GetEventWithUsers(response, participants, users);
+        return Ok(dto);
+    }
+
+    [HttpGet]
     [Route("all")]
     public ActionResult<IEnumerable<EventForResponseDto>> GetAllEventsForUser()
     {
-        //ToDo: Update how the controller gets the user id, this is a temp Guid as string
-        Guid userId = Guid.Parse("a84c12d5-9075-42d2-b467-6b345b7d8c9f");
-        IEnumerable<EventForResponseDto> response = _service.GetAllEventsForUser(userId);
-
+        IEnumerable<EventForResponseDto> response = _service.GetAllEventsForUser(_carrier.UserId);
         return Ok(response);
     }
 }

@@ -1,14 +1,17 @@
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using EventFoodOrders.IdHandling;
 
 namespace EventFoodOrders.Controllers;
 
+//[Authorize] //ToDo: Un-comment when ready for full auth flow
 [ApiController]
 [Route("/api/participant")]
-public class ParticipantController(IServiceManager serviceManager) : ControllerBase
+public class ParticipantController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase
 {
     private readonly IParticipantService _participantService = serviceManager.ParticipantService;
+    private readonly IIdCarrier _carrier = carrier;
 
     [HttpPost]
     [Route("{eventId}")]
@@ -46,9 +49,9 @@ public class ParticipantController(IServiceManager serviceManager) : ControllerB
     [HttpGet]
     //[Route("/get/{userId}/all")]
     [Route("{eventId}/all")]
-    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(Guid userId, Guid eventId)
+    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(Guid eventId)
     {
-        IEnumerable <ParticipantForResponseDto> response = _participantService.GetAllParticipantsForEvent(userId, eventId);
+        IEnumerable <ParticipantForResponseDto> response = _participantService.GetAllParticipantsForEvent(_carrier.UserId, eventId);
         return Ok(response);
     }
 }

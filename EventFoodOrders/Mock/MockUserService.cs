@@ -1,14 +1,18 @@
 ﻿using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Exceptions;
+using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Utilities;
+using Sprache;
 
 namespace EventFoodOrders.Mock;
 
-public class MockUserService(IUserSeed seeder) : IUserService
+public class MockUserService(IUserSeed seeder, IUoW uow) : IUserService
 {
     readonly List<MockUser> users = seeder.Users;
+    private readonly IUoW _uow = uow;
 
-    public string GetNameWithId(Guid userId)
+    public async Task<string> GetNameWithId(Guid userId)
     {
         MockUser? user = users.FirstOrDefault(u => u.UserId == userId);
         if (user is null)
@@ -18,14 +22,14 @@ public class MockUserService(IUserSeed seeder) : IUserService
         return user.Username;
     }
 
-    public List<string> GetNamesWithIds(List<Guid> userIds)
+    public async Task<List<string>> GetNamesWithIds(List<Guid> userIds)
     {
         List<string> userNames = [];
         foreach (var userId in userIds)
         {
             try
             {
-                string name = GetNameWithId(userId);
+                string name = await GetNameWithId(userId);
                 if (name is not null)
                 {
                     userNames.Add(name);
@@ -39,7 +43,7 @@ public class MockUserService(IUserSeed seeder) : IUserService
         return userNames;
     }
 
-    public void SendEmail(List<Guid> userIds, string message)
+    public async Task SendEmail(List<Guid> userIds, EmailTemplate message)
     {
         foreach (var userId in userIds)
         {
@@ -47,7 +51,7 @@ public class MockUserService(IUserSeed seeder) : IUserService
         }
     }
 
-    public List<UserDto> GetUsersFromQuery(string queryString)
+    public async Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId)
     {
         List<MockUser> filteredUsers = [.. users
             .Where(u => u.Username.StartsWith(queryString, StringComparison.OrdinalIgnoreCase) ||
@@ -65,10 +69,14 @@ public class MockUserService(IUserSeed seeder) : IUserService
             });
         }
 
-        return dtos;
+        if (eventId == null) { return dtos; }
+
+        var participantsForEvent = _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
+        var participantIdsForEvent = participantsForEvent.Select(p => p.UserId).ToHashSet();
+        return [.. dtos.Where(u => !participantIdsForEvent.Contains(u.UserId))];
     }
 
-    public List<UserDto> GetUsersFromIds(Guid[] userIds)
+    public async Task<List<UserDto>> GetUsersFromIds(Guid[] userIds)
     {
         List<MockUser> filteredUsers = [.. users
             .Where(u => userIds.Contains(u.UserId)).ToList()];
@@ -86,5 +94,25 @@ public class MockUserService(IUserSeed seeder) : IUserService
         }
 
         return dtos;
+    }
+
+    public async Task<UserDto?> GetUserWithId(Guid userId)
+    {
+        MockUser? user = users.Where(u => u.UserId == userId).FirstOrDefault();
+        if (user is not null)
+        {
+            return new UserDto()
+            {
+                UserId = userId,
+                Username = user.Username,
+                Email = user.Email
+            };
+        }
+        return null;
+    }
+
+    public async Task<List<Guid>> GetUsersFromGroup(Guid groupId)
+    {
+        return [];
     }
 }

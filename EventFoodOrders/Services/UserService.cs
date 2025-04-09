@@ -2,57 +2,88 @@
 using System.Net.Http.Headers;
 using System.Text;
 using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Utilities;
 using Newtonsoft.Json;
 
 namespace EventFoodOrders.Services;
 
-public class UserService//: IUserService
+public class UserService : IUserService
 {
     private readonly IGraphTokenService _graphTokenService;
     private readonly HttpClient _httpClient;
     private string _accessToken;
     private IConfiguration _config;
+    private IUoW _uow;
     
-    public UserService(IGraphTokenService graphTokenService, HttpClient httpClient, IConfiguration config)
+    public UserService(
+        IGraphTokenService graphTokenService,
+        HttpClient httpClient,
+        IConfiguration config,
+        IUoW uow
+        )
     {
         _graphTokenService = graphTokenService;
         _httpClient = httpClient;
         _httpClient.BaseAddress = new Uri("https://graph.microsoft.com/v1.0/");
         _config = config;
+        _uow = uow;
     }
-    public async Task<UserDto[]> GetUsersFromQuery(string queryString)
+    public async Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId)
     {
         await SetAccessToken();
         var encodedSearchString = Uri.EscapeDataString(queryString);
-        var query = $"users?$filter=startswith(displayName,'{encodedSearchString}')";
-        var response = await _httpClient.GetAsync(query);
-        response.EnsureSuccessStatusCode();
+        var queryGroup = $"groups?$filter=startswith(displayName, '{encodedSearchString}')";
+        var groupResponse = await _httpClient.GetAsync(queryGroup);
+        groupResponse.EnsureSuccessStatusCode();
+        var queryUser = $"users?$filter=startswith(displayName,'{encodedSearchString}')";
+        var userResponse = await _httpClient.GetAsync(queryUser);
+        userResponse.EnsureSuccessStatusCode();
         
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<GraphUsersResponse>(content)!;
-        return result.Value ?? [];
+        var userContent = await userResponse.Content.ReadAsStringAsync();
+        var groupContent = await groupResponse.Content.ReadAsStringAsync();
+        List<UserDto> result = [];
+        var groupResult = JsonConvert.DeserializeObject<GraphUsersResponse>(groupContent)!.Users;
+        var userResult= JsonConvert.DeserializeObject<GraphUsersResponse>(userContent)!.Users;
+        result.AddRange(groupResult);
+        result.AddRange(userResult);        
+        result = result.Where(i => i.Email != null).ToList();
+        
+        if (eventId == null) { return result; }       
+        
+        var participantsForEvent = _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
+        var participantIdsForEvent = participantsForEvent.Select(p => p.UserId).ToHashSet();
+        return [.. result.Where(u => !participantIdsForEvent.Contains(u.UserId))];
     }
+     
 
-    public async Task<UserDto> GetUserWithId(Guid userId)
+    public async Task<UserDto?> GetUserWithId(Guid userId)
     {
         await SetAccessToken();
         var searchId = userId.ToString();
         var response = await _httpClient.GetAsync($"users/{searchId}");
-        response.EnsureSuccessStatusCode();
-        
+        if (response.IsSuccessStatusCode == false)
+        {
+            return null;
+        }
+
         var content = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<UserDto>(content)!;
+        var userDto = JsonConvert.DeserializeObject<UserDto>(content);
+        if (userDto is null || userDto.Username.Length < 1)
+        {
+            return null;
+        }
+        return userDto;
     }
 
-    public List<string> GetNamesWithIds(Guid[] userIds)
+    public async Task<List<string>> GetNamesWithIds(List<Guid> userIds)
     {
         throw new NotImplementedException();
     }
 
-    public async Task SendEmail(Guid[] userIds)
+    public async Task SendEmail(List<Guid> userIds, EmailTemplate message)
     {
-        Console.WriteLine("Email sending method starting");
         Collection<string> recipients = [];
         foreach (var userId in userIds)
         {
@@ -60,58 +91,82 @@ public class UserService//: IUserService
             var recipientEmail = recipient.Email;
             recipients.Add(recipientEmail);
         }
-        Console.WriteLine("Finished fetching recipients");
-
         await SetAccessToken();
         var mailPayload = new
         {
             message = new
             {
-                subject = "Test Email from Matbeställningar",
+                subject = message.Subject,
                 body = new
                 {
-                    contentType = "Text",
-                    content = "This is a test mail that Matbeställningar sent using its backend Graph API call"
+                    contentType = "HTML",
+                    content = message.Body
                 },
                 toRecipients = recipients.Select(email => new { emailAddress = new { address = email } }).ToArray()
             },
             saveToSentItems = false
         };
-        Console.WriteLine("Finished building email template and recipients");
-        
         var jsonPayload = JsonConvert.SerializeObject(mailPayload);
         var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
         var requestUri = $"users/{_config["Graph:SenderEmail"]}/sendMail";
-        Console.WriteLine("Emails have been sent, returning response status code");
         var response = await _httpClient.PostAsync(requestUri, content);
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task <UserDto[]> GetUsersFromIds(Guid[] userIds)
+    public async Task <List<UserDto>> GetUsersFromIds(Guid[] userIds)
     {
         Collection<UserDto> users = [];
         foreach (Guid id in userIds)
         {
             var user = await GetUserWithId(id);
-            users.Add(user);
+            if (user is not null)
+            {
+                users.Add(user);
+            }
         }
-        return users.ToArray();
+        return [.. users];
     }
-    
+
+    public async Task<List<Guid>> GetUsersFromGroup(Guid groupId)
+    {
+        var groupResponse = await _httpClient.GetAsync($"groups/{groupId}/members");
+        if (groupResponse.IsSuccessStatusCode)
+        {
+            var groupContent = await groupResponse.Content.ReadAsStringAsync();
+            var groupAsJson = JsonConvert.DeserializeObject<GraphGroupResponse>(groupContent)!;
+            var members = groupAsJson.Members.Where(m => m.Mail is not null);
+            var users = members.Select(m => m.Id).ToList();
+            return [.. users];
+        }
+        return [];
+    }
+
     private async Task SetAccessToken()
     {
         if (string.IsNullOrEmpty(_accessToken))
         {
             _accessToken = await _graphTokenService.GetAccessToken();
         }
-        
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
     }
     
-    //For testing purposes
     public class GraphUsersResponse
     {
         [JsonProperty("value")]
-        public UserDto[] Value { get; set; }
+        public UserDto[] Users { get; set; }
+    }
+
+    public class GraphGroupResponse
+    {
+        [JsonProperty("value")]
+        public GraphGroupUserResponse[] Members { get; set; }
+    }
+
+    public class GraphGroupUserResponse
+    {
+        [JsonProperty("id")]
+        public Guid Id { get; set; }
+        [JsonProperty("mail")]
+        public string? Mail { get; set; }
     }
 }

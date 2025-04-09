@@ -6,8 +6,7 @@ using EventFoodOrders.Repositories.Interfaces;
 
 namespace EventFoodOrders.Repositories;
 
-public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) :
-    RepositoryBase<Participant, ParticipantNotFoundException>, IParticipantRepository
+public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : IParticipantRepository
 {
     private readonly IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
