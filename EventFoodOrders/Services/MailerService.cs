@@ -17,7 +17,7 @@ public class MailerService(IUserService userService) : IMailerService
         var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
         var emails = focusedEvent.UserIds.ToList();
         EmailTemplate message = new(
-            "Ibjudan till nytt event",
+            "Inbjudan till nytt event",
             $@"<html>
                         <body>
                             <p>{ownerInfo[0].Username} bjuder in dig till {focusedEvent.Title}.</p>

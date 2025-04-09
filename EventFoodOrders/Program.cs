@@ -23,6 +23,7 @@ public class Program
         builder.Services.ConfigureDatabaseExtension(builder.Configuration);
         builder.Services.ConfigureScopedServices(isDevelopment);
         builder.Services.ConfigureSingletonServices();
+        builder.Services.ConfigureHostedServices();
         builder.Services.AddDistributedMemoryCache();
         builder.Services.ConfigureSessions();
         builder.Services.ConfigureAuths(builder.Configuration);
