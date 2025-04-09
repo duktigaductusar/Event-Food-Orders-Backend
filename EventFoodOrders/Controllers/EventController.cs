@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventFoodOrders.Controllers;
 
-//[Authorize] //Un-comment when ready for full auth flow
+//[Authorize] //ToDo: Un-comment when ready for full auth flow
 [ApiController]
 [Route("/api/event")]
 public class EventController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase

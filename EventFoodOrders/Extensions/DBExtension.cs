@@ -19,11 +19,12 @@ public static class DBExtension
         var context = serviceProvider.GetRequiredService<EventFoodOrdersDbContext>();
         context.Database.Migrate();        
 
-        if (isDevelopment)
-        {
-            var userSeed = serviceProvider.GetRequiredService<IUserSeed>();
-            Console.WriteLine("Seeding data...");
-            DBSeed.Run(context, userSeed);
-        }
+        // ToDo: Comment in.
+        //if (isDevelopment)
+        //{
+        //    var userSeed = serviceProvider.GetRequiredService<IUserSeed>();
+        //    Console.WriteLine("Seeding data...");
+        //    DBSeed.Run(context, userSeed);
+        //}
     }
 }

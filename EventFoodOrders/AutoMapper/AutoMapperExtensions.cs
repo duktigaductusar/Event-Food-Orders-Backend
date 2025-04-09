@@ -132,8 +132,6 @@ public static class AutoMapperExtensions
     public static Participant MapToParticipantFromUpdateDto(this IMapper mapper, Participant participant, ParticipantForUpdateDto participantForUpdateDto)
     {
         participant = mapper.Map(participantForUpdateDto, participant);
-        
-        // If the input response type is invalid, set it to PENDING
         participant.ResponseType = ReType.Pending;
         
         foreach (string responseType in Utility.PossibleResponses)

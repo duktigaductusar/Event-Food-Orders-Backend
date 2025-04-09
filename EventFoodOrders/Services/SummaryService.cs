@@ -37,8 +37,11 @@ public class SummaryService(ILogger<SummaryService> logger, IServiceScopeFactory
         _nextUpcomingEvent = uow.EventRepository.GetNextUpcomingDeadline();
         if (_nextUpcomingEvent == null)
         {
-            logger.LogInformation("Next upcoming deadline was found null, checking again in 1 hour");
-            _timer.Change(TimeSpan.FromHours(1), Timeout.InfiniteTimeSpan);
+            if (_timer != null)
+            {
+                logger.LogInformation("Next upcoming deadline was found null, checking again in 1 hour");
+                _timer.Change(TimeSpan.FromHours(1), Timeout.InfiniteTimeSpan);
+            }
         }
         else
         { 

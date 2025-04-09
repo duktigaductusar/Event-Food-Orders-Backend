@@ -9,10 +9,10 @@ public class MailerService(IUserService userService) : IMailerService
 {
     private readonly string baseUrl = $"http://localhost:4200/"; //ToDo: Dynamic URL call from env or config.
     
-    //ToDo: eventId parameter needed? Should be findable in focusedEvent entity.
+    //ToDo: Link not working, Frontend redirects to Home page.
     public async Task SendInvitationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId)
     {
-        var eventUrl = $"{baseUrl}{eventId}/"; 
+        var eventUrl = $"{baseUrl}event-details/{eventId}"; 
         Guid[] ownerIdArray = [ownerId];
         var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
         var emails = focusedEvent.UserIds.ToList();

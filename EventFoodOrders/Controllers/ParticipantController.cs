@@ -5,7 +5,7 @@ using EventFoodOrders.IdHandling;
 
 namespace EventFoodOrders.Controllers;
 
-//[Authorize] //Un-comment when ready for full auth flow
+//[Authorize] //ToDo: Un-comment when ready for full auth flow
 [ApiController]
 [Route("/api/participant")]
 public class ParticipantController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase

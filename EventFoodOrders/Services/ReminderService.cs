@@ -69,7 +69,7 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
                         .Where(p => p.ResponseType == ReType.Pending)
                         .Select(p  => p.UserId)
                         .ToList();
-                    participants.Add(item.OwnerId); //ToDo: Remove for prod. Only for testing purposes. Owner should not be reminded?
+                    participants.Add(item.OwnerId);
                     if (participants.Count <= 0) continue;
                     // await mailerService.SendReminderMail(participants, item); //ToDo: Uncomment for prod. Commented out during testing. Works as intended with mailing.
                     logger.LogInformation("Reminder service running for participant list for event: " + item.Title);
