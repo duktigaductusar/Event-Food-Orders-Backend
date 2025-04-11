@@ -7,6 +7,7 @@
         public string? Description { get; set; }
         public DateTimeOffset Date { get; set; }
         public DateTimeOffset Deadline { get; set; }
+        public DateTimeOffset? EndTime { get; init; }
     }
 
     internal class ParticipantForCreationObject
@@ -16,6 +17,7 @@
         public string? Description { get; set; }
         public DateTimeOffset Date { get; set; }
         public DateTimeOffset Deadline { get; set; }
+        public DateTimeOffset? EndTime { get; init; }
     }
 
     internal class ParticipantForUpdateObject

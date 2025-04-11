@@ -41,12 +41,13 @@ public class Event
     [Column("date")]
     public DateTimeOffset Date { get; set; }
 
+    [Column("end_time")]
+    public DateTimeOffset? EndTime { get; set; }
+
     [Required]
     [Column("deadline")]
     public DateTimeOffset Deadline { get; set; }
 
-    // Foreign key
-    //[Required]
     [ForeignKey("owner_id")]
     [Column("owner_id")]
     public Guid OwnerId { get; set; }
