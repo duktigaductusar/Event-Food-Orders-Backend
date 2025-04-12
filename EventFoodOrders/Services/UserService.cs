@@ -19,10 +19,10 @@ public class UserService : IUserService
     private readonly int _graphBatchLimit = 20;
     private readonly IGraphTokenService _graphTokenService;
     private readonly HttpClient _httpClient;
-    private string _accessToken;
-    private IConfiguration _config;
-    private IUoW _uow;
-    
+    private readonly IConfiguration _config;
+    private readonly IUoW _uow;
+    private string _accessToken = String.Empty;
+
     public UserService(
         IGraphTokenService graphTokenService,
         HttpClient httpClient,

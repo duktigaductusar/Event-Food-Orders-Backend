@@ -7,6 +7,7 @@ using EventFoodOrders.Exceptions;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
+using Microsoft.Graph.Models;
 using Event = EventFoodOrders.Entities.Event;
 using Participant = EventFoodOrders.Entities.Participant;
 
@@ -69,7 +70,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
         return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
 
-    public EventForResponseDto UpdateEvent(Guid eventId, Guid ownerId, EventForUpdateDto updatedEventDto)
+    public async Task<EventForResponseDto> UpdateEvent(Guid eventId, Guid ownerId, EventForUpdateDto updatedEventDto)
     {
         var eventToUpdate = _eventRepository.GetEventForUser(ownerId, eventId);
         var updatedEvent = _mapper.MapToEventFromUpdateDto(updatedEventDto, eventId, ownerId);
@@ -89,13 +90,29 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
 
         var participantsToAdd = new List<Participant>();
 
-        foreach (Guid id in updatedEventDto.UserIds ?? [])
+        foreach (Guid userId in updatedEventDto.UserIds ?? [])
         {
-            if (existingParticipantIds.Contains(id) == false)
+            if (await _userService.GetUserWithId(userId) is null)
+            {
+                List<Guid> usersInGroup = await _userService.GetUsersFromGroup(userId);
+                usersInGroup.Remove(ownerId);
+                foreach (Guid userIdFromGroup in usersInGroup)
+                {
+                    if (existingParticipantIds.Contains(userId) == false)
+                    {
+                        participantsToAdd.Add(new Participant
+                        {
+                            UserId = userIdFromGroup,
+                            EventId = eventId,
+                        });
+                    }
+                }
+            }
+            else if (existingParticipantIds.Contains(userId) == false)
             {
                 participantsToAdd.Add(new Participant
                 {
-                    UserId = id,
+                    UserId = userId,
                     EventId = eventId
                 });
             }

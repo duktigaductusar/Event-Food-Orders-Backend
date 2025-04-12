@@ -45,12 +45,12 @@ public interface IEventService
     /// </summary>
     /// <returns></returns>
     EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participantDtos, IEnumerable<UserDto> users);
-       
+
     /// <summary>
     /// Updates an event given its Id and a Dto.
     /// </summary>
     /// <param name="eventId"></param>
     /// <param name="updatedEventDto"></param>
     /// <returns></returns>
-    EventForResponseDto UpdateEvent(Guid eventId, Guid userId, EventForUpdateDto updatedEventDto);
+    Task<EventForResponseDto> UpdateEvent(Guid eventId, Guid userId, EventForUpdateDto updatedEventDto);
 }

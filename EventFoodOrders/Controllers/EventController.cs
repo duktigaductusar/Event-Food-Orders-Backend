@@ -24,9 +24,9 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
 
     [HttpPut]
     [Route("{eventId}")]
-    public ActionResult<EventForResponseDto> UpdateEvent(Guid eventId, EventForUpdateDto eventToUpdate)
+    public async Task<ActionResult<EventForResponseDto>> UpdateEvent(Guid eventId, EventForUpdateDto eventToUpdate)
     {
-        EventForResponseDto response = _service.UpdateEvent(eventId, _carrier.UserId, eventToUpdate);
+        EventForResponseDto response = await _service.UpdateEvent(eventId, _carrier.UserId, eventToUpdate);
         return Ok(response);
     }
 
