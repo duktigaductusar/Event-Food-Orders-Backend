@@ -34,6 +34,13 @@ public interface IEventRepository
     /// <param name="eventId"></param>
     /// <returns></returns>
     Event GetEventForUser(Guid userId, Guid eventId);
+
+
+    /// <summary>
+    /// Get participants by event id;
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <returns></returns>
     IEnumerable<Participant> GetParticipantsByEventId(Guid eventId);
 
     /// <summary>
@@ -63,4 +70,12 @@ public interface IEventRepository
     /// </summary>
     /// <returns></returns>
     Event? GetNextUpcomingDeadline();
+
+    /// <summary>
+    /// Get ordered attending office participants by user IDs.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="participants"></param>
+    /// <returns></returns>
+    IEnumerable<Participant> GetAttendingOfficeParticipantsDescendingByUpdate(IEnumerable<Guid> userIds);
 }

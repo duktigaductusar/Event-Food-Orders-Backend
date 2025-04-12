@@ -3,8 +3,10 @@ using EventFoodOrders.AutoMapper;
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.Exceptions;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
+using EventFoodOrders.Utilities;
 using Event = EventFoodOrders.Entities.Event;
 using Participant = EventFoodOrders.Entities.Participant;
 
@@ -17,80 +19,85 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
     private readonly IMapper _mapper = mapper.Mapper;
     private readonly IUserService _userService = userService;
 
-    public async Task<EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto eventForCreation)
+    public async Task<EventForResponseDto> CreateEvent(Guid ownerId, EventForCreationDto eventForCreation)
     {
-        Event newEvent = _mapper.MapToNewEvent(userId, eventForCreation);
-        newEvent = _eventRepository.AddEvent(newEvent);
-        
-        participantService.AddParticipantToEvent(newEvent.Id, new ParticipantForCreationDto
-        {
-            UserId = userId
-        });
-        
-        var owner = _participantRepository.GetParticipantWithEventAndUserId(newEvent.Id, userId);
+        var newEvent = _eventRepository.AddEvent(
+            _mapper.MapToNewEvent(ownerId, eventForCreation));
 
-        if (eventForCreation.UserIds is not null)
+        var participantsToAdd = new List<Participant>();
+
+        var owner = new Participant
         {
-            foreach (Guid id in eventForCreation.UserIds)
+            UserId = ownerId,
+            EventId = newEvent.Id,
+            WantsMeal = true,
+            ResponseType = ReType.AttendingOffice
+        };
+        participantsToAdd.Add(owner);
+
+        foreach (Guid userId in eventForCreation.UserIds ?? [])
+        {
+            if (await _userService.GetUserWithId(userId) is null)
             {
-                if (await _userService.GetUserWithId(id) is null)
+                List<Guid> usersInGroup = await _userService.GetUsersFromGroup(userId);
+                usersInGroup.Remove(ownerId);
+                foreach (Guid userIdFromGroup in usersInGroup)
                 {
-                    List<Guid> usersInGroup = await _userService.GetUsersFromGroup(id);
-                    usersInGroup.Remove(userId);
-                    foreach (Guid i in usersInGroup)
+                    participantsToAdd.Add(new Participant
                     {
-                        ParticipantForCreationDto groupParticipant = new()
-                        {
-                            UserId = i
-                        };
-                        participantService.AddParticipantToEvent(newEvent.Id, groupParticipant);
-                    }
-                }
-                else
-                {
-                    ParticipantForCreationDto newParticipant = new()
-                    {
-                        UserId = id
-                    };
-                    participantService.AddParticipantToEvent(newEvent.Id, newParticipant);
+                        UserId = userIdFromGroup,
+                        EventId = newEvent.Id,
+                    });
                 }
             }
+            else
+            {
+                participantsToAdd.Add(new Participant
+                {
+                    UserId = userId,
+                    EventId = newEvent.Id,
+                });
+            }
         }
+        participantService.AddParticipantsToNewEvent(newEvent, participantsToAdd);
         await mailerService.SendInvitationMail(eventForCreation, owner.UserId, newEvent.Id);
-        return _mapper.MapToEventForResponseDto(newEvent, owner!);
+        return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
 
-    public EventForResponseDto UpdateEvent(Guid eventId, Guid userId, EventForUpdateDto updatedEventDto)
+    public EventForResponseDto UpdateEvent(Guid eventId, Guid ownerId, EventForUpdateDto updatedEventDto)
     {
-        Event eventToUpdate = _eventRepository.GetEventForUser(userId, eventId);
-        Event updatedEvent = _mapper.MapToEventFromUpdateDto(updatedEventDto, eventId, userId);
+        var eventToUpdate = _eventRepository.GetEventForUser(ownerId, eventId);
+        var updatedEvent = _mapper.MapToEventFromUpdateDto(updatedEventDto, eventId, ownerId);
 
-        if (updatedEventDto.UserIds is not null)
+        var participantsToDelete = eventToUpdate.Participants
+            .Where(p => !(updatedEventDto.UserIds ?? []).Contains(p.UserId) && p.UserId != ownerId)
+            .ToList();
+
+        foreach (Participant participant in participantsToDelete)
         {
-            List<Participant> participantsToDelete = [.. eventToUpdate.Participants
-                .Where(p => !updatedEventDto.UserIds.Contains(p.UserId) && p.UserId != userId)];
+            participantService.DeleteParticipant(participant.Id);
+        }
 
-            foreach (Participant participant in participantsToDelete)
+        var existingParticipantIds = eventToUpdate.Participants
+            .Select(p => p.UserId)
+            .ToHashSet();
+
+        var participantsToAdd = new List<Participant>();
+
+        foreach (Guid id in updatedEventDto.UserIds ?? [])
+        {
+            if (existingParticipantIds.Contains(id) == false)
             {
-                participantService.DeleteParticipant(participant.Id);
-            }
-
-            HashSet<Guid> existingParticipantIds = [.. eventToUpdate.Participants.Select(p => p.UserId)];
-
-            foreach (Guid id in updatedEventDto.UserIds)
-            {
-                if (existingParticipantIds.Contains(id) == false)
+                participantsToAdd.Add(new Participant
                 {
-                    ParticipantForCreationDto newParticipant = new()
-                    {
-                        UserId = id
-                    };
-                    participantService.AddParticipantToEvent(updatedEvent.Id, newParticipant);
-                }
+                    UserId = id,
+                    EventId = eventId
+                });
             }
         }
-        updatedEvent = _eventRepository.UpdateEvent(eventId, updatedEvent);
 
+        participantService.AddParticipantsToNewEvent(updatedEvent, participantsToAdd);
+        updatedEvent = _eventRepository.UpdateEvent(eventId, updatedEvent);
         return _mapper.Map<EventForResponseDto>(updatedEvent);
     }
 
@@ -103,10 +110,12 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
 
     public EventForResponseWithDetailsDto GetEventForUser(Guid userId, Guid eventId)
     {
-        Event returnEvent = _eventRepository.GetEventForUser(userId, eventId);
-        Participant eventParticipant = _participantRepository.GetParticipantWithEventAndUserId(eventId, userId)!;
+        var returnEvent = _eventRepository.GetEventForUser(userId, eventId);
+        var eventParticipant = _participantRepository.GetParticipantWithEventAndUserId(eventId, userId);
 
-        return _mapper.MapToEventForResponseWithDetailsDto(returnEvent, eventParticipant);
+        return eventParticipant == null
+            ? throw new EventNotFoundException(eventId)
+            : _mapper.MapToEventForResponseWithDetailsDto(returnEvent, eventParticipant);
     }
 
     public IEnumerable<EventForResponseDto> GetAllEventsForUser(Guid userId)
@@ -135,5 +144,5 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
     public EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participantDtos, IEnumerable<UserDto> users)
     {
         return _mapper.MapToEventForResponseWithUsersDto(eventDto, participantDtos, users);
-    }        
+    }
 }

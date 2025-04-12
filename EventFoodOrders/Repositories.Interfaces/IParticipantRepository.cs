@@ -48,4 +48,5 @@ public interface IParticipantRepository
     /// <param name="updatedParticipant"></param>
     /// <returns></returns>
     Participant UpdateParticipant(Guid participantId, Participant updatedParticipant);
+    IEnumerable<Participant> AddParticipants(IEnumerable<Participant> participants);
 }

@@ -6,6 +6,7 @@ using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace EventFoodOrders.Services;
 
@@ -77,6 +78,45 @@ public class UserService : IUserService
         return userDto;
     }
 
+    public async Task<List<UserDto>> GetUsersFromIdsBatch(Guid[] userIds)
+    {
+        await SetAccessToken();
+
+        var batchRequests = userIds.Select((id, index) => new
+        {
+            id = (index + 1).ToString(),
+            method = "GET",
+            url = $"/users/{id}"
+        }).ToList();
+
+        var batchPayload = new
+        {
+            requests = batchRequests
+        };
+
+        var requestContent = new StringContent(
+            JsonConvert.SerializeObject(batchPayload),
+            Encoding.UTF8,
+            "application/json");
+
+        var response = await _httpClient.PostAsync("$batch", requestContent);
+
+        if (response.IsSuccessStatusCode == false)
+        {
+            return [];
+        }
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var batchResponse = JsonConvert.DeserializeObject<GraphBatchResponse>(responseContent);
+
+        return batchResponse?.Responses
+            .Where(r => r.Status == 200)
+            .Select(r => JsonConvert.DeserializeObject<UserDto>(r.Body.ToString()))
+            .Where(u => u is not null)
+            .ToList()!;
+    }
+
+
     public async Task<List<string>> GetNamesWithIds(List<Guid> userIds)
     {
         throw new NotImplementedException();
@@ -115,16 +155,26 @@ public class UserService : IUserService
 
     public async Task <List<UserDto>> GetUsersFromIds(Guid[] userIds)
     {
-        Collection<UserDto> users = [];
-        foreach (Guid id in userIds)
+    //Collection<UserDto> users = [];
+    //foreach (Guid id in userIds)
+    //{
+    //    var user = await GetUserWithId(id);
+    //    if (user is not null)
+    //    {
+    //        users.Add(user);
+    //    }
+    //}
+    //return [.. users];
+    // return await GetUsersFromIdsBatch(userIds);
+
+    // TODO Batch info: https://learn.microsoft.com/en-us/graph/json-batching?tabs=http#json-batching-restrictions
+        List<UserDto> allUsers = [];
+        foreach (var chunk in userIds.Chunk(20))
         {
-            var user = await GetUserWithId(id);
-            if (user is not null)
-            {
-                users.Add(user);
-            }
+            var users = await GetUsersFromIdsBatch(chunk);
+            allUsers.AddRange(users);
         }
-        return [.. users];
+        return allUsers;
     }
 
     public async Task<List<Guid>> GetUsersFromGroup(Guid groupId)
@@ -169,4 +219,25 @@ public class UserService : IUserService
         [JsonProperty("mail")]
         public string? Mail { get; set; }
     }
+
+
+    public class GraphBatchResponse
+    {
+        [JsonProperty("responses")]
+        public List<GraphBatchResponseItem> Responses { get; set; } = [];
+    }
+
+    public class GraphBatchResponseItem
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; } = string.Empty;
+
+        [JsonProperty("status")]
+        public int Status { get; set; }
+
+        [JsonProperty("body")]
+        public JObject Body { get; set; } = new();
+    }
+
+
 }

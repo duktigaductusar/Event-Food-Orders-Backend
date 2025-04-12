@@ -4,6 +4,7 @@ using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
 using EventFoodOrders.Repositories.Interfaces;
 using System.Linq;
+using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Repositories;
 
@@ -96,6 +97,24 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
                 .ToList();
 
             return events;
+        }
+    }
+
+
+    public IEnumerable<Participant> GetAttendingOfficeParticipantsDescendingByUpdate(IEnumerable<Guid> userIds)
+    {
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            var latestParticipants = context.Events
+                .AsNoTracking()
+                .Include(e => e.Participants)
+                .Where(e => e.Participants.Any(p => userIds.Contains(p.UserId)))
+                .SelectMany(e => e.Participants.Where(p => userIds.Contains(p.UserId)))
+                .Where(p => p.ResponseType == ReType.AttendingOffice)
+                .OrderByDescending(p => p.LastUpdated)
+                .ToList();
+
+            return latestParticipants;
         }
     }
 
