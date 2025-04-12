@@ -5,14 +5,21 @@ using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Services;
 
+/**
+ * TODO! HTML encode or use template engine (.NET Razor) to prevent HTML injection.
+ * E.g.:      
+ *       var safeTitle = System.Net.WebUtility.HtmlEncode(focusedEvent.Title);
+ *       var safeDescription = System.Net.WebUtility.HtmlEncode(focusedEvent.Description);
+ *       var safeUsername = System.Net.WebUtility.HtmlEncode(ownerInfo[0].Username);
+ */
 public class MailerService(IUserService userService) : IMailerService
 {
     private readonly string baseUrl = $"http://localhost:4200/"; //ToDo: Dynamic URL call from env or config.
-    
+
     //ToDo: Link not working, Frontend redirects to Home page.
     public async Task SendInvitationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId)
     {
-        var eventUrl = $"{baseUrl}event-details/{eventId}"; 
+        var eventUrl = $"{baseUrl}event-details/{eventId}";
         Guid[] ownerIdArray = [ownerId];
         var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
         var emails = focusedEvent.UserIds?.ToList() ?? [];
@@ -25,28 +32,28 @@ public class MailerService(IUserService userService) : IMailerService
         EmailTemplate message = new(
             "Inbjudan till nytt event",
             $@"<html>
-                        <body>
-                            <p>{ownerInfo[0].Username} bjuder in dig till {focusedEvent.Title}.</p>
-                            <p>{focusedEvent.Description}</p>
-                            <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
-                        </body>
-                    </html>");
+                <body>
+                    <p>{ownerInfo[0].Username} bjuder in dig till {focusedEvent.Title}.</p>
+                    <p>{focusedEvent.Description}</p>
+                    <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
+                </body>
+            </html>");
         await userService.SendEmail(emails, message);
     }
 
     public async Task SendCreatorConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId)
     {
         var eventUrl = $"{baseUrl}event-management/{eventId}";
-        var ownerIdArray = new List<Guid>(){ ownerId };
+        var ownerIdArray = new List<Guid>() { ownerId };
         EmailTemplate message = new(
-            "Inbjudan till nytt event",
+            "Bekräftelse nytt event skapat",
             $@"<html>
-                        <body>
-                            <p>Event '{focusedEvent.Title}' har skapats.</p>
-                            <p>{focusedEvent.Description}</p>
-                            <p><a href=""{eventUrl}"">Klicka här för att hantera eventet.</a></p>
-                        </body>
-                    </html>");
+                <body>
+                    <p>Event '{focusedEvent.Title}' har skapats.</p>
+                    <p>{focusedEvent.Description}</p>
+                    <p><a href=""{eventUrl}"">Klicka här för att hantera eventet.</a></p>
+                </body>
+            </html>");
         await userService.SendEmail(ownerIdArray, message);
     }
 
@@ -56,12 +63,12 @@ public class MailerService(IUserService userService) : IMailerService
         EmailTemplate message = new(
             $"Påminnelse om {focusedEvent.Title}",
             $@"<html>
-                      <body>
-                        <p>Deadline för att svara på inbjudan till {focusedEvent.Title} är idag klockan {focusedEvent.Deadline.Hour}:{focusedEvent.Deadline.Minute}</p>
-                        <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
-                      </body>
-                    </html>");
-        await userService.SendEmail(recipients, message);        
+                <body>
+                    <p>Deadline för att svara på inbjudan till {focusedEvent.Title} är idag klockan {focusedEvent.Deadline.Hour}:{focusedEvent.Deadline.Minute}</p>
+                    <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
+                 </body>
+            </html>");
+        await userService.SendEmail(recipients, message);
     }
 
     public async Task SendSummaryMail(Event focusedEvent)
@@ -76,17 +83,17 @@ public class MailerService(IUserService userService) : IMailerService
         EmailTemplate message = new(
             $"Sammanfattning för {focusedEvent.Title}",
             $@"<html>
-                      <body>
-                        <p>Deadline för {focusedEvent.Title} har gått ut.</p>
-                        <p>{office.Count} personer kommer närvara på plats.</p>
-                        <p>{wantsFood.Count} personer önskar mat, {allergies.Count} person(er) har anmält allergier och {preferences.Count} person(er) har anmält matpreferenser.</p>
-                        <p></p>
-                        <p>Allergier: {allergiesString}</p>
-                        <p></p>
-                        <p>Matpreferenser: {preferencesString}</p>
-                      </body>
-                    </html>");
+                <body>
+                    <p>Deadline för {focusedEvent.Title} har gått ut.</p>
+                    <p>{office.Count} personer kommer närvara på plats.</p>
+                    <p>{wantsFood.Count} personer önskar mat, {allergies.Count} person(er) har anmält allergier och {preferences.Count} person(er) har anmält matpreferenser.</p>
+                    <p></p>
+                    <p>Allergier: {allergiesString}</p>
+                    <p></p>
+                    <p>Matpreferenser: {preferencesString}</p>
+                </body>
+            </html>");
         await userService.SendEmail(ownerId, message);
-        
+
     }
 }
