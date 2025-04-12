@@ -136,8 +136,29 @@ public static class AutoMapperExtensions
         
         foreach (string responseType in Utility.PossibleResponses)
         {
+            if (participantForUpdateDto.ResponseType == responseType
+                && responseType == ReType.AttendingOffice)
+            {
+                participant.ResponseType = responseType;
+                break;
+            } else if (participantForUpdateDto.ResponseType == responseType)
+            {
+                participant.ResponseType = responseType;
+                participant.WantsMeal = false;
+                break;
+            }
+        }
+
+        return participant;
+    }
+
+    public static Participant MapToParticipantFromUpdateResponseTypeDto(this IMapper mapper, Participant participant, ParticipantForUpdateResponseTypeDto participantForUpdateDto)
+    {
+        foreach (string responseType in Utility.PossibleResponses)
+        {
             if (participantForUpdateDto.ResponseType == responseType)
             {
+                participant.WantsMeal = responseType == ReType.AttendingOffice;
                 participant.ResponseType = responseType;
                 break;
             }

@@ -53,4 +53,5 @@ public interface IParticipantService
     /// <param name="updatedParticipantDto"></param>
     /// <returns></returns>
     ParticipantForResponseDto UpdateParticipant(Guid participantId, ParticipantForUpdateDto updatedParticipantDto);
+    ParticipantForResponseDto UpdateParticipantResponseType(Guid participantId, ParticipantForUpdateResponseTypeDto dto);
 }

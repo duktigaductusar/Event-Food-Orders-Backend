@@ -43,10 +43,19 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
         return _mapper.Map<ParticipantForResponseDto>(participant);
     }
 
-    public ParticipantForResponseDto UpdateParticipant(Guid participantId, ParticipantForUpdateDto updatedParticipantDto)
+    public ParticipantForResponseDto UpdateParticipant(Guid participantId, ParticipantForUpdateDto dto)
     {
         Participant participant = _participantRepository.GetParticipantWithParticipantId(participantId) ?? throw new ParticipantNotFoundException();
-        participant = _mapper.MapToParticipantFromUpdateDto(participant, updatedParticipantDto);
+        participant = _mapper.MapToParticipantFromUpdateDto(participant, dto);
+        _participantRepository.UpdateParticipant(participantId, participant);
+
+        return _mapper.Map<ParticipantForResponseDto>(participant);
+    }
+
+    public ParticipantForResponseDto UpdateParticipantResponseType(Guid participantId, ParticipantForUpdateResponseTypeDto dto)
+    {
+        Participant participant = _participantRepository.GetParticipantWithParticipantId(participantId) ?? throw new ParticipantNotFoundException();
+        participant = _mapper.MapToParticipantFromUpdateResponseTypeDto(participant, dto);
         _participantRepository.UpdateParticipant(participantId, participant);
 
         return _mapper.Map<ParticipantForResponseDto>(participant);
