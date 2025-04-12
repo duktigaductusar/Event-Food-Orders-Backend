@@ -15,17 +15,25 @@ public class ParticipantController(IServiceManager serviceManager, IIdCarrier ca
 
     [HttpPost]
     [Route("{eventId}")]
-    public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant)
+    public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(Guid eventId, ParticipantForCreationDto dto)
     {
-        ParticipantForResponseDto response = _participantService.AddParticipantToEvent(eventId, newParticipant);
+        ParticipantForResponseDto response = _participantService.AddParticipantToEvent(eventId, dto);
         return Created(uri: "", value: response);
     }
 
     [HttpPut]
     [Route("{participantId}")]
-    public ActionResult<ParticipantForResponseDto> UpdateParticipant(Guid participantId, ParticipantForUpdateDto participantToUpdate)
+    public ActionResult<ParticipantForResponseDto> UpdateParticipant(Guid participantId, ParticipantForUpdateDto dto)
     {
-        ParticipantForResponseDto response = _participantService.UpdateParticipant(participantId, participantToUpdate);
+        ParticipantForResponseDto response = _participantService.UpdateParticipant(participantId, dto);
+        return Ok(response);
+    }
+
+    [HttpPut]
+    [Route("{participantId}/response-type")]
+    public ActionResult<ParticipantForResponseDto> UpdateParticipantResponse(Guid participantId, ParticipantForUpdateResponseTypeDto dto)
+    {
+        ParticipantForResponseDto response = _participantService.UpdateParticipantResponseType(participantId, dto);
         return Ok(response);
     }
 
@@ -38,7 +46,6 @@ public class ParticipantController(IServiceManager serviceManager, IIdCarrier ca
     }
 
     [HttpGet]
-    //[Route("/get/{userId}/{eventId}")]
     [Route("{participantId}")]
     public ActionResult<ParticipantForResponseDto> GetSingleParticipantInEvent(Guid eventId, Guid participantId)
     {
@@ -47,7 +54,6 @@ public class ParticipantController(IServiceManager serviceManager, IIdCarrier ca
     }
 
     [HttpGet]
-    //[Route("/get/{userId}/all")]
     [Route("{eventId}/all")]
     public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(Guid eventId)
     {
