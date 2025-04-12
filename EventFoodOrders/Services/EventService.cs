@@ -60,7 +60,12 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
             }
         }
         participantService.AddParticipantsToNewEvent(newEvent, participantsToAdd);
-        await mailerService.SendInvitationMail(eventForCreation, owner.UserId, newEvent.Id);
+        if (eventForCreation.UserIds?.Length != null && eventForCreation.UserIds?.Length > 0)
+        {
+            await mailerService.SendInvitationMail(eventForCreation, owner.UserId, newEvent.Id);
+        }
+        await mailerService.SendCreatorConfirmationMail(eventForCreation, owner.UserId, newEvent.Id);
+
         return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
 
