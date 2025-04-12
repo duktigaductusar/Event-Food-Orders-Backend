@@ -13,41 +13,50 @@ public class ParticipantController(IServiceManager serviceManager, IIdCarrier ca
     private readonly IParticipantService _participantService = serviceManager.ParticipantService;
     private readonly IIdCarrier _carrier = carrier;
 
-    [HttpPost]
-    [Route("{eventId}")]
-    public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant)
-    {
-        ParticipantForResponseDto response = _participantService.AddParticipantToEvent(eventId, newParticipant);
-        return Created(uri: "", value: response);
-    }
+    // TODO! Should this endpoint be used?
+    //[HttpDelete]
+    //[Route("{participantId}")]
+    //public ActionResult<bool> DeleteParticipant(Guid participantId)
+    //{
+    //    bool response = _participantService.DeleteParticipant(participantId);
+    //    return Ok(response);
+    //}
+
+    // TODO! Should this endpoint be used?
+    //[HttpGet]
+    //[Route("{participantId}")]
+    //public ActionResult<ParticipantForResponseDto> GetSingleParticipantInEvent(Guid eventId, Guid participantId)
+    //{
+    //    ParticipantForResponseDto response = _participantService.GetParticipant(participantId, eventId);
+    //    return Ok(response);
+    //}
+
+    // TODO! Should this endpoint be used?
+    //[HttpPost]
+    //[Route("{eventId}")]
+    //public ActionResult<ParticipantForResponseDto> AddParticipantToEvent(Guid eventId, ParticipantForCreationDto dto)
+    //{
+    //    ParticipantForResponseDto response = _participantService.AddParticipantToEvent(eventId, dto);
+    //    return Created(uri: "", value: response);
+    //}
 
     [HttpPut]
     [Route("{participantId}")]
-    public ActionResult<ParticipantForResponseDto> UpdateParticipant(Guid participantId, ParticipantForUpdateDto participantToUpdate)
+    public ActionResult<ParticipantForResponseDto> UpdateParticipant(Guid participantId, ParticipantForUpdateDto dto)
     {
-        ParticipantForResponseDto response = _participantService.UpdateParticipant(participantId, participantToUpdate);
+        ParticipantForResponseDto response = _participantService.UpdateParticipant(participantId, dto);
         return Ok(response);
     }
 
-    [HttpDelete]
-    [Route("{participantId}")]
-    public ActionResult<bool> DeleteParticipant(Guid participantId)
+    [HttpPut]
+    [Route("{participantId}/response-type")]
+    public ActionResult<ParticipantForResponseDto> UpdateParticipantResponse(Guid participantId, ParticipantForUpdateResponseTypeDto dto)
     {
-        bool response = _participantService.DeleteParticipant(participantId);
-        return Ok(response);
-    }
-
-    [HttpGet]
-    //[Route("/get/{userId}/{eventId}")]
-    [Route("{participantId}")]
-    public ActionResult<ParticipantForResponseDto> GetSingleParticipantInEvent(Guid eventId, Guid participantId)
-    {
-        ParticipantForResponseDto response = _participantService.GetParticipant(participantId, eventId);
+        ParticipantForResponseDto response = _participantService.UpdateParticipantResponseType(participantId, dto);
         return Ok(response);
     }
 
     [HttpGet]
-    //[Route("/get/{userId}/all")]
     [Route("{eventId}/all")]
     public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(Guid eventId)
     {

@@ -41,6 +41,10 @@ namespace EventFoodOrders.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
 
+                    b.Property<DateTimeOffset?>("EndTime")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("end_time");
+
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("owner_id");

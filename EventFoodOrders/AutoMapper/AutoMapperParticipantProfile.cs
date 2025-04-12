@@ -16,7 +16,7 @@ public class AutoMapperParticipantProfile: Profile
         CreateMap<ParticipantForCreationDto, Participant>()
             .AfterMap((src, dest) => dest.ResponseType = ReType.Pending);
 
-        // ToDo: Update using extension method MapToParticipantFromUpdateDto to include ResponseType
+        // Using map extension method to include ResponseType
         CreateMap<ParticipantForUpdateDto, Participant>()
             .ForMember(dest => dest.ResponseType, opt => opt.Ignore());
 

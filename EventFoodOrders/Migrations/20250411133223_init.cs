@@ -19,6 +19,7 @@ namespace EventFoodOrders.Migrations
                     title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    end_time = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     deadline = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     owner_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },

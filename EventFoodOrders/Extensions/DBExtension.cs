@@ -17,14 +17,13 @@ public static class DBExtension
         using var scope = app.ApplicationServices.CreateScope();
         var serviceProvider = scope.ServiceProvider;
         var context = serviceProvider.GetRequiredService<EventFoodOrdersDbContext>();
-        context.Database.Migrate();        
+        context.Database.Migrate();
 
-        // ToDo: Comment in.
-        //if (isDevelopment)
-        //{
-        //    var userSeed = serviceProvider.GetRequiredService<IUserSeed>();
-        //    Console.WriteLine("Seeding data...");
-        //    DBSeed.Run(context, userSeed);
-        //}
+        if (isDevelopment)
+        {
+            var userSeed = serviceProvider.GetRequiredService<IUserSeed>();
+            Console.WriteLine("Seeding data...");
+            DBSeed.Run(context, userSeed);
+        }
     }
 }

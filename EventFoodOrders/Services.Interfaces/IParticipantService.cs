@@ -1,4 +1,5 @@
 ﻿using EventFoodOrders.Dto.ParticipantDTOs;
+using EventFoodOrders.Entities;
 
 namespace EventFoodOrders.Services.Interfaces;
 
@@ -8,13 +9,23 @@ namespace EventFoodOrders.Services.Interfaces;
 public interface IParticipantService
 {
     /// <summary>
-    /// Adds a participant to an event, given the event's Id and a participant dto.
-    /// Checks whether there is a previous participant with the same user id and if yes fetches allergy and food preferences from it.
+    /// Adds participants to an event, given the event's Id and an enumerable of participants.
+    /// For all participants the method checks whether there is a previous attending office participant
+    /// with the same user id and if yes fetches allergy and food preferences from it.
     /// </summary>
-    /// <param name="eventId"></param>
-    /// <param name="newParticipant"></param>
+    /// <param name="newEvent"></param>
+    /// <param name="participants"></param>
     /// <returns></returns>
-    ParticipantForResponseDto AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant);
+    IEnumerable<ParticipantForResponseDto> AddParticipantsToNewEvent(Event newEvent, IEnumerable<Participant> participants);
+
+    ///// <summary>
+    ///// Adds a participant to an event, given the event's Id and a participant dto.
+    ///// Checks whether there is a previous participant with the same user id and if yes fetches allergy and food preferences from it.
+    ///// </summary>
+    ///// <param name="eventId"></param>
+    ///// <param name="newParticipant"></param>
+    ///// <returns></returns>
+    //ParticipantForResponseDto AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant);
 
     /// <summary>
     /// Deletes a participant.
@@ -53,4 +64,5 @@ public interface IParticipantService
     /// <param name="updatedParticipantDto"></param>
     /// <returns></returns>
     ParticipantForResponseDto UpdateParticipant(Guid participantId, ParticipantForUpdateDto updatedParticipantDto);
+    ParticipantForResponseDto UpdateParticipantResponseType(Guid participantId, ParticipantForUpdateResponseTypeDto dto);
 }

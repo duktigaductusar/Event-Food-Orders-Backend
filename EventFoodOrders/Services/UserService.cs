@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
 using System.Text;
+using EventFoodOrders.Dto.GraphDTOs;
 using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
@@ -9,8 +10,13 @@ using Newtonsoft.Json;
 
 namespace EventFoodOrders.Services;
 
+/**
+ * TODO! Batch requests instead of submitting multiple requests 
+ */
 public class UserService : IUserService
 {
+    // Batch info: https://learn.microsoft.com/en-us/graph/json-batching?tabs=http#json-batching-restrictions
+    private readonly int _graphBatchLimit = 20;
     private readonly IGraphTokenService _graphTokenService;
     private readonly HttpClient _httpClient;
     private string _accessToken;
@@ -30,6 +36,7 @@ public class UserService : IUserService
         _config = config;
         _uow = uow;
     }
+
     public async Task<List<UserDto>> GetUsersFromQuery(string queryString, Guid? eventId)
     {
         await SetAccessToken();
@@ -44,8 +51,8 @@ public class UserService : IUserService
         var userContent = await userResponse.Content.ReadAsStringAsync();
         var groupContent = await groupResponse.Content.ReadAsStringAsync();
         List<UserDto> result = [];
-        var groupResult = JsonConvert.DeserializeObject<GraphUsersResponse>(groupContent)!.Users;
-        var userResult= JsonConvert.DeserializeObject<GraphUsersResponse>(userContent)!.Users;
+        var groupResult = JsonConvert.DeserializeObject<GraphUsersResponseDto>(groupContent)!.Users;
+        var userResult= JsonConvert.DeserializeObject<GraphUsersResponseDto>(userContent)!.Users;
         result.AddRange(groupResult);
         result.AddRange(userResult);        
         result = result.Where(i => i.Email != null).ToList();
@@ -115,16 +122,51 @@ public class UserService : IUserService
 
     public async Task <List<UserDto>> GetUsersFromIds(Guid[] userIds)
     {
-        Collection<UserDto> users = [];
-        foreach (Guid id in userIds)
+        List<UserDto> allUsers = [];
+        foreach (var chunk in userIds.Chunk(_graphBatchLimit))
         {
-            var user = await GetUserWithId(id);
-            if (user is not null)
-            {
-                users.Add(user);
-            }
+            var users = await GetUsersFromIdsBatch(chunk);
+            allUsers.AddRange(users);
         }
-        return [.. users];
+        return allUsers;
+    }
+
+    private async Task<List<UserDto>> GetUsersFromIdsBatch(Guid[] userIds)
+    {
+        await SetAccessToken();
+
+        var batchRequests = userIds.Select((id, index) => new
+        {
+            id = (index + 1).ToString(),
+            method = "GET",
+            url = $"/users/{id}"
+        }).ToList();
+
+        var batchPayload = new
+        {
+            requests = batchRequests
+        };
+
+        var requestContent = new StringContent(
+            JsonConvert.SerializeObject(batchPayload),
+            Encoding.UTF8,
+            "application/json");
+
+        var response = await _httpClient.PostAsync("$batch", requestContent);
+
+        if (response.IsSuccessStatusCode == false)
+        {
+            return [];
+        }
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var batchResponse = JsonConvert.DeserializeObject<GraphBatchResponseDto>(responseContent);
+
+        return batchResponse?.Responses
+            .Where(r => r.Status == 200)
+            .Select(r => JsonConvert.DeserializeObject<UserDto>(r.Body.ToString()))
+            .Where(u => u is not null)
+            .ToList()!;
     }
 
     public async Task<List<Guid>> GetUsersFromGroup(Guid groupId)
@@ -133,7 +175,7 @@ public class UserService : IUserService
         if (groupResponse.IsSuccessStatusCode)
         {
             var groupContent = await groupResponse.Content.ReadAsStringAsync();
-            var groupAsJson = JsonConvert.DeserializeObject<GraphGroupResponse>(groupContent)!;
+            var groupAsJson = JsonConvert.DeserializeObject<GraphGroupResponseDto>(groupContent)!;
             var members = groupAsJson.Members.Where(m => m.Mail is not null);
             var users = members.Select(m => m.Id).ToList();
             return [.. users];
@@ -148,25 +190,5 @@ public class UserService : IUserService
             _accessToken = await _graphTokenService.GetAccessToken();
         }
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
-    }
-    
-    public class GraphUsersResponse
-    {
-        [JsonProperty("value")]
-        public UserDto[] Users { get; set; }
-    }
-
-    public class GraphGroupResponse
-    {
-        [JsonProperty("value")]
-        public GraphGroupUserResponse[] Members { get; set; }
-    }
-
-    public class GraphGroupUserResponse
-    {
-        [JsonProperty("id")]
-        public Guid Id { get; set; }
-        [JsonProperty("mail")]
-        public string? Mail { get; set; }
     }
 }
