@@ -14,33 +14,26 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
     private readonly IEventRepository _eventRepository = uoW.EventRepository;
     private readonly IMapper _mapper = mapper.Mapper;
 
-    public ParticipantForResponseDto AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant)
+    public IEnumerable<ParticipantForResponseDto> AddParticipantsToNewEvent(Event newEvent, IEnumerable<Participant> participants)
     {
-        Event? desiredEvent = _eventRepository.GetSingleEventWithCondition(e => e.Id == eventId) ?? throw new EventNotFoundException();
+        var userIds = participants.Select(p => p.UserId).Distinct();
+        var orderedAttendingOfficeParticipants = _eventRepository.GetAttendingOfficeParticipantsDescendingByUpdate(userIds);
 
-        if (desiredEvent.Participants.Where(p => p.UserId == newParticipant.UserId).Count() > 0)
+        foreach (var participant in participants)
         {
-            // This could be more specific but would reveal that a user is invited to an event.
-            throw new EventNotFoundException();
-        }
+            var latestParticpantForUser = orderedAttendingOfficeParticipants
+                .Where(p => p.UserId == participant.UserId)
+                .FirstOrDefault();
 
-        Participant participant = _mapper.MapToParticipantFromCreationDto(eventId, newParticipant);
-
-        Event? LatestEventForUser = _eventRepository.GetAllEventsForUser(newParticipant.UserId).FirstOrDefault();
-
-        if (LatestEventForUser is not null)
-        {
-            Participant? existingParticipant = LatestEventForUser.Participants.Where(p => p.UserId == newParticipant.UserId).FirstOrDefault();
-
-            if (existingParticipant is not null)
+            if (latestParticpantForUser is not null)
             {
-                participant.Allergies = existingParticipant.Allergies;
-                participant.Preferences = existingParticipant.Preferences;
+                participant.Allergies = latestParticpantForUser.Allergies;
+                participant.Preferences = latestParticpantForUser.Preferences;
             }
         }
 
-        _participantRepository.AddParticipant(participant);
-        return _mapper.Map<ParticipantForResponseDto>(participant);
+        participants = _participantRepository.AddParticipants(participants);
+        return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants);
     }
 
     public ParticipantForResponseDto UpdateParticipant(Guid participantId, ParticipantForUpdateDto dto)

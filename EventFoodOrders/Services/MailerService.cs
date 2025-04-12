@@ -15,7 +15,13 @@ public class MailerService(IUserService userService) : IMailerService
         var eventUrl = $"{baseUrl}event-details/{eventId}"; 
         Guid[] ownerIdArray = [ownerId];
         var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
-        var emails = focusedEvent.UserIds.ToList();
+        var emails = focusedEvent.UserIds?.ToList() ?? [];
+
+        if (emails.Count == 0)
+        {
+            return;
+        }
+
         EmailTemplate message = new(
             "Inbjudan till nytt event",
             $@"<html>
@@ -26,6 +32,22 @@ public class MailerService(IUserService userService) : IMailerService
                         </body>
                     </html>");
         await userService.SendEmail(emails, message);
+    }
+
+    public async Task SendCreatorConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId)
+    {
+        var eventUrl = $"{baseUrl}event-management/{eventId}";
+        var ownerIdArray = new List<Guid>(){ ownerId };
+        EmailTemplate message = new(
+            "Inbjudan till nytt event",
+            $@"<html>
+                        <body>
+                            <p>Event '{focusedEvent.Title}' har skapats.</p>
+                            <p>{focusedEvent.Description}</p>
+                            <p><a href=""{eventUrl}"">Klicka här för att hantera eventet.</a></p>
+                        </body>
+                    </html>");
+        await userService.SendEmail(ownerIdArray, message);
     }
 
     public async Task SendReminderMail(List<Guid> recipients, Event focusedEvent, Guid eventId)

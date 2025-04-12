@@ -21,6 +21,17 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         return participant;
     }
 
+    public IEnumerable<Participant> AddParticipants(IEnumerable<Participant> participants)
+    {
+        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            context.Participants.AddRange(participants);
+            context.SaveChanges();
+        }
+
+        return participants;
+    }
+
     public Participant UpdateParticipant(Guid participantId, Participant updatedParticipant)
     {
         using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())

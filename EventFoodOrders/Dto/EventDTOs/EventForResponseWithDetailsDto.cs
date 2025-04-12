@@ -8,7 +8,7 @@ public record EventForResponseWithDetailsDto
     public string? Description { get; init; }
     public required DateTimeOffset Date { get; init; }
     public required DateTimeOffset Deadline { get; init; }
-    public required DateTimeOffset EndTime { get; init; }
+    public DateTimeOffset? EndTime { get; init; }
     public bool? IsActive { get; init; }
 
     // Participant properties

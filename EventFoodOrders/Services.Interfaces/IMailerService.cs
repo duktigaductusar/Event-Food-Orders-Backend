@@ -6,6 +6,15 @@ namespace EventFoodOrders.Services;
 public interface IMailerService
 {
     /// <summary>
+    /// Sends confirmation mail to creator.
+    /// </summary>
+    /// <param name="focusedEvent"></param>
+    /// <param name="ownerId"></param>
+    /// <param name="eventId"></param>
+    /// <returns></returns>
+    Task SendCreatorConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId);
+
+    /// <summary>
     /// Sends the initial invitation email to all invited participants.
     /// </summary>
     /// <param name="focusedEvent"></param>
