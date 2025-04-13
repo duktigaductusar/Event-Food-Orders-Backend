@@ -6,13 +6,38 @@ namespace EventFoodOrders.Services;
 public interface IMailerService
 {
     /// <summary>
-    /// Sends confirmation mail to creator.
+    /// Sends confirmation mail for new event to creator.
     /// </summary>
     /// <param name="focusedEvent"></param>
     /// <param name="ownerId"></param>
     /// <param name="eventId"></param>
     /// <returns></returns>
     Task SendCreatorConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId);
+
+    /// <summary>
+    /// Sends confirmation mail for updated event to creator.
+    /// </summary>
+    /// <param name="focusedEvent"></param>
+    /// <param name="ownerId"></param>
+    /// <param name="eventId"></param>
+    /// <returns></returns>
+    Task SendCreatorConfirmationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId);
+
+    /// <summary>
+    /// Send delete confirmation mail to the user that deleted the event.
+    /// </summary>
+    /// <param name="focusedEvent"></param>
+    /// <param name="ownerId"></param>
+    /// <returns></returns>
+    Task SendDeleteConfirmationMail(Event focusedEvent, Guid ownerId);
+
+    /// <summary>
+    /// Send event canceled event to participants in the event.
+    /// </summary>
+    /// <param name="focusedEvent"></param>
+    /// <param name="userIds"></param>
+    /// <returns></returns>
+    Task SendEventCanceledMail(Event focusedEvent, IEnumerable<Guid> userIds);
 
     /// <summary>
     /// Sends the initial invitation email to all invited participants.
@@ -22,6 +47,15 @@ public interface IMailerService
     /// <param name="eventId"></param>
     /// <returns></returns>
     Task SendInvitationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId);
+
+    /// <summary>
+    /// Sends the invitation email to newly invited participants.
+    /// </summary>
+    /// <param name="focusedEvent"></param>
+    /// <param name="ownerId"></param>
+    /// <param name="eventId"></param>
+    /// <returns></returns>
+    Task SendInvitationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId);
     
     /// <summary>
     /// Sends reminder emails at a predetermined time on the deadline day.
@@ -38,4 +72,12 @@ public interface IMailerService
     /// <param name="focusedEvent"></param>
     /// <returns></returns>
     Task SendSummaryMail(Event focusedEvent);
+    
+    /// <summary>
+    /// Send revoke invitation mail to deleted participants.
+    /// </summary>
+    /// <param name="focusedEvent"></param>
+    /// <param name="userIds"></param>
+    /// <returns></returns>
+    Task SendRevokeInvitationMail(Event focusedEvent, IEnumerable<Guid> userIds);
 }

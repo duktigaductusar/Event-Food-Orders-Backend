@@ -60,13 +60,23 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
             }
         }
         
-        await participantService.AddParticipantsToNewEvent(newEvent, participantsToAdd);
-        
+        await participantService.AddParticipantsToEvent(newEvent, participantsToAdd);
+
+        // TODO! Mail Should be done after all transition, use in separate method
+        // (e.g) in a MailManagerService instance for clean code.
+        var focusedEvent = eventForCreation with
+        {
+            UserIds = participantsToAdd
+                .Select(p => p.UserId)
+                .ToArray()
+        };
+
         if (eventForCreation.UserIds?.Length != null && eventForCreation.UserIds?.Length > 0)
         {
-            await mailerService.SendInvitationMail(eventForCreation, owner.UserId, newEvent.Id);
+            await mailerService.SendInvitationMail(focusedEvent, owner.UserId, newEvent.Id);
         }
         await mailerService.SendCreatorConfirmationMail(eventForCreation, owner.UserId, newEvent.Id);
+        // End mail
 
         return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
@@ -80,6 +90,16 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
             .Where(p => !(updatedEventDto.UserIds ?? []).Contains(p.UserId) && p.UserId != ownerId)
             .ToList();
 
+        // TODO! FIx Buggy solution. First users may get revoked email notifcation mail.
+        //      Then the user may be in a group and in this method and the receive a new invitaion
+        //      mail to the same event. This will be bad UX.
+        // FIX! Handle after database transation in seaprate manager class/method.
+        // TODO! Mail Should be done after all transition, use in separate method/class
+        //      (e.g) in a MailManagerService instance for clean code. 
+        await mailerService.SendRevokeInvitationMail(
+           eventToUpdate, participantsToDelete.Select(p => p.UserId));
+        // End mail
+        
         foreach (Participant participant in participantsToDelete)
         {
             await participantService.DeleteParticipant(participant.Id);
@@ -119,14 +139,48 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
             }
         }
 
-        await participantService.AddParticipantsToNewEvent(updatedEvent, participantsToAdd);
         updatedEvent = await _eventRepository.UpdateEvent(eventId, updatedEvent);
+
+        await participantService.AddParticipantsToEvent(updatedEvent, participantsToAdd);
+
+        // TODO! Mail Should be done after all transition, use in separate method/class
+        // (e.g) in a MailManagerService instance for clean code.
+        var focusedEvent = updatedEventDto with
+        {
+            UserIds = participantsToAdd
+                .Select(p => p.UserId)
+                .ToArray()
+        };
+        if (updatedEventDto.UserIds?.Length != null && updatedEventDto.UserIds?.Length > 0)
+        {
+            await mailerService.SendInvitationMail(focusedEvent, ownerId, eventId);
+        }
+        await mailerService.SendCreatorConfirmationMail(focusedEvent, ownerId, eventId);
+        // End mail
+
         return _mapper.Map<EventForResponseDto>(updatedEvent);
     }
 
-    public async Task<bool> DeleteEvent(Guid userId, Guid eventId)
+    public async Task<bool> DeleteEvent(Guid ownerId, Guid eventId)
     {
-        await _eventRepository.DeleteEvent(userId, eventId);
+        var eventToDelete = await _eventRepository.GetEventByIdWithParticipants(eventId);
+
+        if (eventToDelete != null) {
+            await _eventRepository.DeleteEvent(ownerId, eventId);
+            // TODO! Mail Should be done after all transition, use in separate method/class
+            // (e.g) in a MailManagerService instance for clean code.
+
+            var eventParticipants = eventToDelete.Participants
+                    .Where(p => p.UserId != ownerId)
+                    .Select(p => p.UserId)
+                    .ToList();
+
+            await mailerService.SendEventCanceledMail(
+                eventToDelete, eventParticipants);
+
+            await mailerService.SendDeleteConfirmationMail(eventToDelete, ownerId);
+            // End mail
+        }
 
         return true;
     }

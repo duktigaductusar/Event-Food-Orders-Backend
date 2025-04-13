@@ -79,4 +79,11 @@ public interface IEventRepository
     /// <param name="participants"></param>
     /// <returns></returns>
     Task<IEnumerable<Participant>> GetAttendingOfficeParticipantsDescendingByUpdate(IEnumerable<Guid> userIds);
+    
+    /// <summary>
+    /// Get an event by id.
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <returns></returns>
+    Task<Event?> GetEventByIdWithParticipants(Guid eventId);
 }

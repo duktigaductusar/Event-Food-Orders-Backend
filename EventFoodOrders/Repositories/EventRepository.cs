@@ -12,6 +12,18 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
 {
     private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
+    public async Task<Event?> GetEventByIdWithParticipants(Guid eventId)
+    {
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            return await context.Events
+                .AsNoTracking()
+                .Where(e => e.Id == eventId)
+                .Include(e => e.Participants)
+                .FirstOrDefaultAsync();
+        }
+    }
+
     public async Task<Event> AddEvent(Event newEvent)
     {
         await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())

@@ -8,7 +8,7 @@ public class UserSeed : IUserSeed
 
     public UserSeed()
     {
-        string filePath = "Mock/UserSeed.json"; // You may need to adjust the path if needed
+        string filePath = "Mock/UserSeed.json";
         string json = File.ReadAllText(filePath);
 
         // Deserialize the JSON into a list of User objects

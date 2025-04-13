@@ -19,15 +19,15 @@ public class MailerService(IUserService userService) : IMailerService
     //ToDo: Link not working, Frontend redirects to Home page.
     public async Task SendInvitationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId)
     {
-        var eventUrl = $"{baseUrl}event-details/{eventId}";
-        Guid[] ownerIdArray = [ownerId];
-        var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
-        var emails = focusedEvent.UserIds?.ToList() ?? [];
-
-        if (emails.Count == 0)
+        var userIds = focusedEvent.UserIds?.ToList() ?? [];
+        if (userIds.Count == 0)
         {
             return;
         }
+
+        var eventUrl = $"{baseUrl}event-details/{eventId}";
+        Guid[] ownerIdArray = [ownerId];
+        var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
 
         EmailTemplate message = new(
             "Inbjudan till nytt event",
@@ -38,7 +38,79 @@ public class MailerService(IUserService userService) : IMailerService
                     <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
                 </body>
             </html>");
-        await userService.SendEmail(emails, message);
+
+        await userService.SendEmail(userIds, message);
+    }
+
+    public async Task SendInvitationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId)
+    {
+        var userIds = focusedEvent.UserIds?.ToList() ?? [];
+        if (userIds.Count == 0)
+        {
+            return;
+        }
+
+        var eventUrl = $"{baseUrl}event-details/{eventId}";
+        Guid[] ownerIdArray = [ownerId];
+        var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
+
+        EmailTemplate message = new(
+            "Inbjudan till nytt event",
+            $@"<html>
+                <body>
+                    <p>{ownerInfo[0].Username} bjuder in dig till {focusedEvent.Title}.</p>
+                    <p>{focusedEvent.Description}</p>
+                    <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
+                </body>
+            </html>");
+
+        await userService.SendEmail(userIds, message);
+    }
+
+    public async Task SendEventCanceledMail(
+        Event focusedEvent,
+        IEnumerable<Guid> userIds
+    )
+    {
+        if (!userIds.Any()) { return; }
+        
+        Guid[] ownerIdArray = [focusedEvent.OwnerId];
+        var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
+
+        EmailTemplate message = new(
+        "Eventet har blivit borttaget",
+        $@"<html>
+            <body>
+                <p>Eventet <strong>{focusedEvent.Title}</strong> har blivit borttaget av {ownerInfo[0].Username}.</p>
+                <p>Det innebär att din inbjudan inte längre gäller.</p>
+                <p>Ingen åtgärd krävs från dig.</p>
+            </body>
+        </html>");
+
+        await userService.SendEmail(userIds.ToList(), message);
+    }
+
+    public async Task SendRevokeInvitationMail(
+        Event focusedEvent,
+        IEnumerable<Guid> userIds
+    )
+    {
+        if (!userIds.Any()) { return; }
+
+        Guid[] ownerIdArray = [focusedEvent.OwnerId];
+        var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
+
+        EmailTemplate message = new(
+        "Din inbjudan har blivit avbokad",
+        $@"<html>
+            <body>
+                <p>Din inbjudan har blivit avbokad till eventet <strong>{focusedEvent.Title}</strong>.</p>
+                <p>{ownerInfo[0].Username} har tagit bort dig från deltagarlistan.</p>
+                <p>Ingen åtgärd krävs från dig.</p>
+            </body>
+        </html>");
+
+        await userService.SendEmail(userIds.ToList(), message);
     }
 
     public async Task SendCreatorConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId)
@@ -51,7 +123,40 @@ public class MailerService(IUserService userService) : IMailerService
                 <body>
                     <p>Event '{focusedEvent.Title}' har skapats.</p>
                     <p>{focusedEvent.Description}</p>
+                    <p>Event Id: {eventId}</p>
                     <p><a href=""{eventUrl}"">Klicka här för att hantera eventet.</a></p>
+                </body>
+            </html>");
+        await userService.SendEmail(ownerIdArray, message);
+    }
+
+    public async Task SendCreatorConfirmationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId)
+    {
+        var eventUrl = $"{baseUrl}event-management/{eventId}";
+        var ownerIdArray = new List<Guid>() { ownerId };
+        EmailTemplate message = new(
+            "Bekräftelse event uppdaterat",
+            $@"<html>
+                <body>
+                    <p>Event '{focusedEvent.Title}' har uppdaterats.</p>
+                    <p>{focusedEvent.Description}</p>   
+                    <p>Event Id: {eventId}</p>
+                    <p><a href=""{eventUrl}"">Klicka här för att hantera eventet.</a></p>
+                </body>
+            </html>");
+        await userService.SendEmail(ownerIdArray, message);
+    }
+
+    public async Task SendDeleteConfirmationMail(Event focusedEvent, Guid ownerId)
+    {
+        var ownerIdArray = new List<Guid>() { ownerId };
+        EmailTemplate message = new(
+            "Bekräftelse event stängt",
+            $@"<html>
+                <body>
+                    <p>Event '{focusedEvent.Title}' har stängts.</p>
+                    <p>{focusedEvent.Description}</p>
+                    <p>Event Id: {focusedEvent.Id}</p>
                 </body>
             </html>");
         await userService.SendEmail(ownerIdArray, message);
@@ -59,6 +164,8 @@ public class MailerService(IUserService userService) : IMailerService
 
     public async Task SendReminderMail(List<Guid> recipients, Event focusedEvent, Guid eventId)
     {
+        if (recipients.Count == 0) { return; }
+
         var eventUrl = $"{baseUrl}{eventId}/";
         EmailTemplate message = new(
             $"Påminnelse om {focusedEvent.Title}",

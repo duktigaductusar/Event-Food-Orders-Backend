@@ -3,8 +3,10 @@
 # Learn more about .gitignore:
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
+# Generated mock mail
+MockMails
 
-#Environment files
+# Environment files
 .env
 
 # Node artifact files

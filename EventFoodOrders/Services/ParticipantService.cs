@@ -14,7 +14,7 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
     private readonly IEventRepository _eventRepository = uoW.EventRepository;
     private readonly IMapper _mapper = mapper.Mapper;
 
-    public async Task<IEnumerable<ParticipantForResponseDto>> AddParticipantsToNewEvent(Event newEvent, IEnumerable<Participant> participants)
+    public async Task<IEnumerable<ParticipantForResponseDto>> AddParticipantsToEvent(Event newEvent, IEnumerable<Participant> participants)
     {
         var userIds = participants.Select(p => p.UserId).Distinct();
         var orderedAttendingOfficeParticipants = await _eventRepository.GetAttendingOfficeParticipantsDescendingByUpdate(userIds);
