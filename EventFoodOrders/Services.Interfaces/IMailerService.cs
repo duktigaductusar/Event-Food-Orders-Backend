@@ -12,7 +12,7 @@ public interface IMailerService
     /// <param name="ownerId"></param>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    Task SendCreatorConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId);
+    Task SendCreateEventConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId);
 
     /// <summary>
     /// Sends confirmation mail for updated event to creator.
@@ -21,7 +21,7 @@ public interface IMailerService
     /// <param name="ownerId"></param>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    Task SendCreatorConfirmationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId);
+    Task SendUpdateEventConfirmationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId);
 
     /// <summary>
     /// Send delete confirmation mail to the user that deleted the event.
@@ -29,7 +29,7 @@ public interface IMailerService
     /// <param name="focusedEvent"></param>
     /// <param name="ownerId"></param>
     /// <returns></returns>
-    Task SendDeleteConfirmationMail(Event focusedEvent, Guid ownerId);
+    Task SendDeleteEventConfirmationMail(Event focusedEvent, Guid ownerId);
 
     /// <summary>
     /// Send event canceled event to participants in the event.

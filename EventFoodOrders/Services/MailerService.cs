@@ -2,6 +2,7 @@
 using EventFoodOrders.Entities;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace EventFoodOrders.Services;
 
@@ -34,6 +35,8 @@ public class MailerService(IUserService userService) : IMailerService
             $@"<html>
                 <body>
                     <p>{ownerInfo[0].Username} bjuder in dig till {focusedEvent.Title}.</p>
+                    <p>Antal Deltagare: {userIds.Count}</p>
+                    <br/>
                     <p>{focusedEvent.Description}</p>
                     <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
                 </body>
@@ -55,10 +58,12 @@ public class MailerService(IUserService userService) : IMailerService
         var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
 
         EmailTemplate message = new(
-            "Inbjudan till nytt event",
+            "Event har uppdaterats",
             $@"<html>
                 <body>
                     <p>{ownerInfo[0].Username} bjuder in dig till {focusedEvent.Title}.</p>
+                    <p>Antal Deltagare: {userIds.Count}</p>
+                    <br/>
                     <p>{focusedEvent.Description}</p>
                     <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
                 </body>
@@ -81,7 +86,9 @@ public class MailerService(IUserService userService) : IMailerService
         "Eventet har blivit borttaget",
         $@"<html>
             <body>
-                <p>Eventet <strong>{focusedEvent.Title}</strong> har blivit borttaget av {ownerInfo[0].Username}.</p>
+                <p>Eventet <strong>{focusedEvent.Title}</strong> har ställts av {ownerInfo[0].Username}.</p>
+                <p>Datum för det borttagna eventet: {focusedEvent.Date.LocalDateTime}<p>
+                <br/>
                 <p>Det innebär att din inbjudan inte längre gäller.</p>
                 <p>Ingen åtgärd krävs från dig.</p>
             </body>
@@ -105,6 +112,8 @@ public class MailerService(IUserService userService) : IMailerService
         $@"<html>
             <body>
                 <p>Din inbjudan har blivit avbokad till eventet <strong>{focusedEvent.Title}</strong>.</p>
+                <p>Datum för det avbokade eventet: {focusedEvent.Date.LocalDateTime}<p>
+                <br/>
                 <p>{ownerInfo[0].Username} har tagit bort dig från deltagarlistan.</p>
                 <p>Ingen åtgärd krävs från dig.</p>
             </body>
@@ -113,7 +122,7 @@ public class MailerService(IUserService userService) : IMailerService
         await userService.SendEmail(userIds.ToList(), message);
     }
 
-    public async Task SendCreatorConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId)
+    public async Task SendCreateEventConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId)
     {
         var eventUrl = $"{baseUrl}event-management/{eventId}";
         var ownerIdArray = new List<Guid>() { ownerId };
@@ -124,13 +133,14 @@ public class MailerService(IUserService userService) : IMailerService
                     <p>Event '{focusedEvent.Title}' har skapats.</p>
                     <p>{focusedEvent.Description}</p>
                     <p>Event Id: {eventId}</p>
+                    <br/>
                     <p><a href=""{eventUrl}"">Klicka här för att hantera eventet.</a></p>
                 </body>
             </html>");
         await userService.SendEmail(ownerIdArray, message);
     }
 
-    public async Task SendCreatorConfirmationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId)
+    public async Task SendUpdateEventConfirmationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId)
     {
         var eventUrl = $"{baseUrl}event-management/{eventId}";
         var ownerIdArray = new List<Guid>() { ownerId };
@@ -141,13 +151,14 @@ public class MailerService(IUserService userService) : IMailerService
                     <p>Event '{focusedEvent.Title}' har uppdaterats.</p>
                     <p>{focusedEvent.Description}</p>   
                     <p>Event Id: {eventId}</p>
+                    <br/>
                     <p><a href=""{eventUrl}"">Klicka här för att hantera eventet.</a></p>
                 </body>
             </html>");
         await userService.SendEmail(ownerIdArray, message);
     }
 
-    public async Task SendDeleteConfirmationMail(Event focusedEvent, Guid ownerId)
+    public async Task SendDeleteEventConfirmationMail(Event focusedEvent, Guid ownerId)
     {
         var ownerIdArray = new List<Guid>() { ownerId };
         EmailTemplate message = new(
@@ -155,6 +166,9 @@ public class MailerService(IUserService userService) : IMailerService
             $@"<html>
                 <body>
                     <p>Event '{focusedEvent.Title}' har stängts.</p>
+                    <p>Event Id: {focusedEvent.Id}</p>
+                    <p>Datum för det stängda eventet: {focusedEvent.Date.LocalDateTime}<p>
+                    <br/>
                     <p>{focusedEvent.Description}</p>
                     <p>Event Id: {focusedEvent.Id}</p>
                 </body>

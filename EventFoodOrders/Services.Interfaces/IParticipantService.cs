@@ -16,7 +16,7 @@ public interface IParticipantService
     /// <param name="newEvent"></param>
     /// <param name="participants"></param>
     /// <returns></returns>
-    Task<IEnumerable<ParticipantForResponseDto>> AddParticipantsToEvent(Event newEvent, IEnumerable<Participant> participants);
+    Task<IEnumerable<Participant>> AddParticipantsToEvent(Event newEvent, IEnumerable<Participant> participants);
 
     /// <summary>
     /// Deletes a participant.

@@ -49,7 +49,7 @@ public class MockUserService(IUserSeed seeder, IUoW uow) : IUserService
     {
         foreach (var userId in userIds)
         {
-            var userFolderPath = Path.Combine(_mockEmailRootFolder, userId.ToString());
+            var userFolderPath = Path.Combine(_mockEmailRootFolder, $"UserId__{userId}");
             Directory.CreateDirectory(userFolderPath);
 
             var fileName = MakeSafeFileName(GetEmailTitleWithTimeStamp(message)) + ".txt";
