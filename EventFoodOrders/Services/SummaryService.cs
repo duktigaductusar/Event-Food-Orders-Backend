@@ -5,36 +5,41 @@ namespace EventFoodOrders.Services;
 
 public class SummaryService(ILogger<SummaryService> logger, IServiceScopeFactory scopeFactory) : BackgroundService
 {
-    private Timer _timer;
+    private Timer? _timer;
     private readonly DateTime _now = DateTime.Now;
-    private Event _nextUpcomingEvent;
+    private Event? _nextUpcomingEvent;
 
 
-    protected override Task ExecuteAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        ScheduleNextRun();
-        return Task.CompletedTask;
+        await ScheduleNextRun();
     }
 
-    public async void TimerCallback(object state)
+    public void TimerCallback(object? state)
     {
-        try
+        _ = Task.Run(async () =>
         {
-            await DoWork(state);
-            ScheduleNextRun();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, ex.Message);
-            ScheduleNextRun();
-        }
+            try
+            {
+                await DoWork(state);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+            }
+            finally
+            {
+                await ScheduleNextRun();
+            }
+        });
     }
 
-    private void ScheduleNextRun()
+
+    private async Task ScheduleNextRun()
     {
         using var scope = scopeFactory.CreateScope();
         var uow = scope.ServiceProvider.GetRequiredService<IUoW>();
-        _nextUpcomingEvent = uow.EventRepository.GetNextUpcomingDeadline();
+        _nextUpcomingEvent = await uow.EventRepository.GetNextUpcomingDeadline();
         if (_nextUpcomingEvent == null)
         {
             if (_timer != null)
@@ -58,13 +63,18 @@ public class SummaryService(ILogger<SummaryService> logger, IServiceScopeFactory
         }
     }
 
-    private async Task DoWork(object state)
+    private async Task DoWork(object? state)
     {
         logger.LogInformation($"Summary service started at: {_now.Hour}:{_now.Minute}:{_now.Second}.");
         
         using var scope = scopeFactory.CreateScope();
         var mailerService = scope.ServiceProvider.GetService<IMailerService>();
-        await mailerService.SendSummaryMail(_nextUpcomingEvent);
+        
+        if (mailerService != null && _nextUpcomingEvent != null)
+        {
+            await mailerService.SendSummaryMail(_nextUpcomingEvent);
+        }
+        
         _nextUpcomingEvent = null;
     }
 

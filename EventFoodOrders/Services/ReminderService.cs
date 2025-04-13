@@ -6,7 +6,7 @@ namespace EventFoodOrders.Services;
 
 public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFactory scopeFactory) : BackgroundService
 {
-    private Timer _timer;
+    private Timer? _timer;
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -36,7 +36,7 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
         return Task.CompletedTask;
     }
 
-    private async Task DoWork(object state)
+    private async Task DoWork(object? state)
     {
         if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday || DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
         {

@@ -3,6 +3,7 @@ using EventFoodOrders.Exceptions;
 using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
 using EventFoodOrders.Repositories.Interfaces;
+using System.Linq.Expressions;
 
 namespace EventFoodOrders.Repositories;
 
@@ -10,31 +11,31 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
 {
     private readonly IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
-    public Participant AddParticipant(Participant participant)
+    public async Task<Participant> AddParticipant(Participant participant)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             context.Participants.Add(participant);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         return participant;
     }
 
-    public IEnumerable<Participant> AddParticipants(IEnumerable<Participant> participants)
+    public async Task<IEnumerable<Participant>> AddParticipants(IEnumerable<Participant> participants)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             context.Participants.AddRange(participants);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         return participants;
     }
 
-    public Participant UpdateParticipant(Guid participantId, Participant updatedParticipant)
+    public async Task<Participant> UpdateParticipant(Guid participantId, Participant updatedParticipant)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             Participant? participantToUpdate = context.Participants
                 .Where(e => e.Id == participantId)
@@ -46,19 +47,19 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
             }
             else throw new ParticipantNotFoundException(participantId);
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         return updatedParticipant;
     }
 
-    public void DeleteParticipant(Guid participantId)
+    public async Task DeleteParticipant(Guid participantId)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            Participant? participantToUpdate = context.Participants
+            Participant? participantToUpdate = await context.Participants
                 .Where(e => e.Id == participantId)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (participantToUpdate is Participant)
             {
@@ -66,28 +67,28 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
             }
             else throw new ParticipantNotFoundException(participantId);
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 
-    public Participant? GetParticipantWithParticipantId(Guid participantId)
+    public async Task<Participant?> GetParticipantWithParticipantId(Guid participantId)
     {
-        return GetParticipant(p => p.Id == participantId);
+        return await GetParticipantAsync(p => p.Id == participantId);
     }
 
-    public Participant? GetParticipantWithEventAndUserId(Guid eventId, Guid userId)
+    public async Task<Participant?> GetParticipantWithEventAndUserId(Guid eventId, Guid userId)
     {
-        return GetParticipant(p => p.EventId == eventId && p.UserId == userId);
+        return await GetParticipantAsync(p => p.EventId == eventId && p.UserId == userId);
     }
 
-    public IEnumerable<Participant> GetAllParticipantsForUser(Guid userId)
+    public async Task<IEnumerable<Participant>> GetAllParticipantsForUser(Guid userId)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            IEnumerable<Participant> participants = context.Participants
+            IEnumerable<Participant> participants = await context.Participants
                 .Where(p => p.UserId == userId)
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
 
             return participants;
         }
@@ -102,19 +103,14 @@ public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> c
         destination.ResponseType = source.ResponseType;
     }
 
-    private Participant? GetParticipant(Func<Participant, bool> condition)
+    private async Task<Participant?> GetParticipantAsync(Expression<Func<Participant, bool>> condition)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (var context = _contextFactory.CreateDbContext())
         {
-            Participant? participant = context.Participants
-                .Where(condition)
-                .FirstOrDefault();
-
-            if (participant is Participant)
-            {
-                return participant;
-            }
-            return null;
+            return await context.Participants
+            .Where(condition)
+            .FirstOrDefaultAsync();
         }
     }
+
 }

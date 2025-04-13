@@ -1,7 +1,6 @@
-﻿namespace EventFoodOrders.IdHandling
+﻿namespace EventFoodOrders.IdHandling;
+
+public class CustomIdCarrier : IIdCarrier
 {
-    public class CustomIdCarrier : IIdCarrier
-    {
-        public Guid UserId { get; set; }
-    }
+    public Guid UserId { get; set; }
 }

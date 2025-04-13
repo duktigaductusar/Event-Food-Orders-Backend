@@ -32,17 +32,17 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
 
     [HttpDelete]
     [Route("{eventId}")]
-    public ActionResult<bool> DeleteEvent(Guid eventId)
+    public async Task<ActionResult<bool>> DeleteEvent(Guid eventId)
     {
-        bool response = _service.DeleteEvent(_carrier.UserId, eventId);
+        bool response = await _service.DeleteEvent(_carrier.UserId, eventId);
         return Ok(response);
     }
 
     [HttpGet]
     [Route("{eventId}")]
-    public ActionResult<EventForResponseWithDetailsDto> GetSingleEventForUser(Guid eventId)
+    public async Task<ActionResult<EventForResponseWithDetailsDto>> GetSingleEventForUser(Guid eventId)
     {
-        EventForResponseWithDetailsDto response = _service.GetEventForUser(_carrier.UserId, eventId);
+        EventForResponseWithDetailsDto response = await _service.GetEventForUser(_carrier.UserId, eventId);
         return Ok(response);
     }
 
@@ -50,8 +50,8 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
     [Route("{eventId}/info")]
     public async Task<ActionResult<EventForResponseWithUsersDto>> GetSingleEventWithAllParticipantsAndUsers(Guid eventId)
     {
-        EventForResponseWithDetailsDto response = _service.GetEventForUser(_carrier.UserId, eventId);
-        IEnumerable<ParticipantForResponseDto> participants = serviceManager.ParticipantService.GetAllParticipantsForEvent(_carrier.UserId, eventId);
+        EventForResponseWithDetailsDto response = await _service.GetEventForUser(_carrier.UserId, eventId);
+        IEnumerable<ParticipantForResponseDto> participants = await serviceManager.ParticipantService.GetAllParticipantsForEvent(_carrier.UserId, eventId);
         IEnumerable<UserDto> users = await serviceManager.UserService.GetUsersFromIds([.. participants.Select(p => p.UserId)]);
         var dto = _service.GetEventWithUsers(response, participants, users);
         return Ok(dto);
@@ -59,9 +59,9 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
 
     [HttpGet]
     [Route("all")]
-    public ActionResult<IEnumerable<EventForResponseDto>> GetAllEventsForUser()
+    public async Task<ActionResult<IEnumerable<EventForResponseDto>>> GetAllEventsForUser()
     {
-        IEnumerable<EventForResponseDto> response = _service.GetAllEventsForUser(_carrier.UserId);
+        IEnumerable<EventForResponseDto> response = await _service.GetAllEventsForUser(_carrier.UserId);
         return Ok(response);
     }
 }
