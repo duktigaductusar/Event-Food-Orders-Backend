@@ -7,7 +7,6 @@ using EventFoodOrders.Exceptions;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
-using Microsoft.Graph.Models;
 using Event = EventFoodOrders.Entities.Event;
 using Participant = EventFoodOrders.Entities.Participant;
 
@@ -22,7 +21,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
 
     public async Task<EventForResponseDto> CreateEvent(Guid ownerId, EventForCreationDto eventForCreation)
     {
-        var newEvent = _eventRepository.AddEvent(
+        var newEvent = await _eventRepository.AddEvent(
             _mapper.MapToNewEvent(ownerId, eventForCreation));
 
         var participantsToAdd = new List<Participant>();
@@ -60,7 +59,9 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
                 });
             }
         }
-        participantService.AddParticipantsToNewEvent(newEvent, participantsToAdd);
+        
+        await participantService.AddParticipantsToNewEvent(newEvent, participantsToAdd);
+        
         if (eventForCreation.UserIds?.Length != null && eventForCreation.UserIds?.Length > 0)
         {
             await mailerService.SendInvitationMail(eventForCreation, owner.UserId, newEvent.Id);
@@ -72,7 +73,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
 
     public async Task<EventForResponseDto> UpdateEvent(Guid eventId, Guid ownerId, EventForUpdateDto updatedEventDto)
     {
-        var eventToUpdate = _eventRepository.GetEventForUser(ownerId, eventId);
+        var eventToUpdate = await _eventRepository.GetEventForUser(ownerId, eventId);
         var updatedEvent = _mapper.MapToEventFromUpdateDto(updatedEventDto, eventId, ownerId);
 
         var participantsToDelete = eventToUpdate.Participants
@@ -81,7 +82,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
 
         foreach (Participant participant in participantsToDelete)
         {
-            participantService.DeleteParticipant(participant.Id);
+            await participantService.DeleteParticipant(participant.Id);
         }
 
         var existingParticipantIds = eventToUpdate.Participants
@@ -118,34 +119,32 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
             }
         }
 
-        participantService.AddParticipantsToNewEvent(updatedEvent, participantsToAdd);
-        updatedEvent = _eventRepository.UpdateEvent(eventId, updatedEvent);
+        await participantService.AddParticipantsToNewEvent(updatedEvent, participantsToAdd);
+        updatedEvent = await _eventRepository.UpdateEvent(eventId, updatedEvent);
         return _mapper.Map<EventForResponseDto>(updatedEvent);
     }
 
-    public bool DeleteEvent(Guid userId, Guid eventId)
+    public async Task<bool> DeleteEvent(Guid userId, Guid eventId)
     {
-        _eventRepository.DeleteEvent(userId, eventId);
+        await _eventRepository.DeleteEvent(userId, eventId);
 
         return true;
     }
 
-    public EventForResponseWithDetailsDto GetEventForUser(Guid userId, Guid eventId)
+    public async Task<EventForResponseWithDetailsDto> GetEventForUser(Guid userId, Guid eventId)
     {
-        var returnEvent = _eventRepository.GetEventForUser(userId, eventId);
-        var eventParticipant = _participantRepository.GetParticipantWithEventAndUserId(eventId, userId);
+        var returnEvent = await _eventRepository.GetEventForUser(userId, eventId);
+        var eventParticipant = await _participantRepository.GetParticipantWithEventAndUserId(eventId, userId);
 
         return eventParticipant == null
             ? throw new EventNotFoundException(eventId)
             : _mapper.MapToEventForResponseWithDetailsDto(returnEvent, eventParticipant);
     }
 
-    public IEnumerable<EventForResponseDto> GetAllEventsForUser(Guid userId)
+    public async Task<IEnumerable<EventForResponseDto>> GetAllEventsForUser(Guid userId)
     {
-        IEnumerable<Event> returnEvents = _eventRepository.GetAllEventsForUser(userId);
+        IEnumerable<Event> returnEvents = await _eventRepository.GetAllEventsForUser(userId);
         List<EventForResponseDto> events = [];
-
-        // string name = _userService.GetUserWithId(userId);
 
         foreach (Event e in returnEvents)
         {

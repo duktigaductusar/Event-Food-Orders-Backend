@@ -12,34 +12,34 @@ public interface IParticipantRepository
     /// </summary>
     /// <param name="participant"></param>
     /// <returns></returns>
-    Participant AddParticipant(Participant participant);
+    Task<Participant> AddParticipant(Participant participant);
 
     /// <summary>
     /// Deletes a participant in the database.
     /// </summary>
     /// <param name="participantId"></param>
-    void DeleteParticipant(Guid participantId);
+    Task DeleteParticipant(Guid participantId);
 
     /// <summary>
     /// Gets all the participants with a given user Id.
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    IEnumerable<Participant> GetAllParticipantsForUser(Guid userId);
+    Task<IEnumerable<Participant>> GetAllParticipantsForUser(Guid userId);
 
     /// <summary>
     /// Gets a participant using that participant's Id.
     /// </summary>
     /// <param name="participantId"></param>
     /// <returns></returns>
-    Participant? GetParticipantWithParticipantId(Guid participantId);
+    Task<Participant?> GetParticipantWithParticipantId(Guid participantId);
 
     /// <summary>
     /// Gets a participant using that participant's user Id.
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    Participant? GetParticipantWithEventAndUserId(Guid eventId, Guid userId);
+    Task<Participant?> GetParticipantWithEventAndUserId(Guid eventId, Guid userId);
 
     /// <summary>
     /// Updates a participant in the database.
@@ -47,6 +47,12 @@ public interface IParticipantRepository
     /// <param name="participantId"></param>
     /// <param name="updatedParticipant"></param>
     /// <returns></returns>
-    Participant UpdateParticipant(Guid participantId, Participant updatedParticipant);
-    IEnumerable<Participant> AddParticipants(IEnumerable<Participant> participants);
+    Task<Participant> UpdateParticipant(Guid participantId, Participant updatedParticipant);
+
+    /// <summary>
+    /// Add new participants to the database. 
+    /// </summary>
+    /// <param name="participants"></param>
+    /// <returns></returns>
+    Task<IEnumerable<Participant>> AddParticipants(IEnumerable<Participant> participants);
 }

@@ -3,8 +3,8 @@ using EventFoodOrders.Exceptions;
 using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
 using EventFoodOrders.Repositories.Interfaces;
-using System.Linq;
 using EventFoodOrders.Utilities;
+using System.Linq.Expressions;
 
 namespace EventFoodOrders.Repositories;
 
@@ -12,47 +12,51 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
 {
     private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
-    public Event AddEvent(Event newEvent)
+    public async Task<Event> AddEvent(Event newEvent)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            newEvent = context.Events.Add(newEvent).Entity;
-            context.SaveChanges();
+            context.Events.Add(newEvent);
+            await context.SaveChangesAsync();
         }
 
         return newEvent;
     }
 
-    public Event UpdateEvent(Guid eventId, Event updatedEvent)
+    public async Task<Event> UpdateEvent(Guid eventId, Event updatedEvent)
     {
-        if (eventId == updatedEvent.Id)
+        if (eventId != updatedEvent.Id)
         {
-            using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
-            {
-                Event? eventToUpdate = context.Events
-                    .Where(e => e.Id == eventId)
-                    .Include(e => e.Participants)
-                    .FirstOrDefault();
-
-                if (eventToUpdate is not null)
-                {
-                    context.Entry(eventToUpdate).CurrentValues.SetValues(updatedEvent);
-                    context.SaveChanges();
-                    return eventToUpdate;
-                }
-            }
+            throw new EventNotFoundException(eventId);
         }
-        throw new EventNotFoundException(eventId);
+
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            Event? eventToUpdate = await context.Events
+                .Where(e => e.Id == eventId)
+                .Include(e => e.Participants)
+                .FirstOrDefaultAsync();
+
+            if (eventToUpdate is null)
+            {
+                throw new EventNotFoundException(eventId);
+            }
+
+            context.Entry(eventToUpdate).CurrentValues.SetValues(updatedEvent);
+            await context.SaveChangesAsync();
+            
+            return eventToUpdate;
+        }
     }
 
-    public void DeleteEvent(Guid userId, Guid eventId)
+    public async Task DeleteEvent(Guid userId, Guid eventId)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            Event? eventToUpdate = context.Events
+            Event? eventToUpdate = await context.Events
                 .Where(e => e.Id == eventId)
                 .Where(e => e.OwnerId == userId)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (eventToUpdate is null)
             {
@@ -60,115 +64,105 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
             }
 
             context.Remove(eventToUpdate);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 
-    public Event GetEventForUser(Guid userId, Guid eventId)
+    public async Task<Event> GetEventForUser(Guid userId, Guid eventId)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            Event? eventToFind = context.Events
+            Event? eventToFind = await context.Events
                 .Where(e => e.Id == eventId)
                 .AsNoTracking()
                 .Include(e => e.Participants)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
-            if (eventToFind is Event)
+            if (eventToFind is not null &&
+                eventToFind.Participants.Where(p => p.UserId == userId).Any())
             {
-                if (eventToFind.Participants.Where(p => p.UserId == userId).Any())
-                {
-                    return eventToFind;
-                }
+                return eventToFind;
             }
 
             throw new EventNotFoundException(eventId);
         }
     }
 
-    public IEnumerable<Event> GetAllEventsForUser(Guid userId)
+    public async Task<IEnumerable<Event>> GetAllEventsForUser(Guid userId)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            IEnumerable<Event> events = context.Events
+            return await context.Events
                 .AsNoTracking()
                 .Include(e => e.Participants)
                 .Where(e => e.Participants.Where(p => p.UserId == userId).Count() > 0)
-                .ToList();
-
-            return events;
+                .ToListAsync();
         }
     }
 
 
-    public IEnumerable<Participant> GetAttendingOfficeParticipantsDescendingByUpdate(IEnumerable<Guid> userIds)
+    public async Task<IEnumerable<Participant>> GetAttendingOfficeParticipantsDescendingByUpdate(IEnumerable<Guid> userIds)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            var latestParticipants = context.Events
+            return await context.Events
                 .AsNoTracking()
                 .Include(e => e.Participants)
                 .Where(e => e.Participants.Any(p => userIds.Contains(p.UserId)))
                 .SelectMany(e => e.Participants.Where(p => userIds.Contains(p.UserId)))
                 .Where(p => p.ResponseType == ReType.AttendingOffice)
                 .OrderByDescending(p => p.LastUpdated)
-                .ToList();
-
-            return latestParticipants;
+                .ToListAsync();
         }
     }
 
-    public Event? GetSingleEventWithCondition(Func<Event, bool> condition)
+    public async Task<Event?> GetSingleEventWithCondition(Expression<Func<Event, bool>> condition)
     {
-        Event? result;
-
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            result = context.Events
+            return await context.Events
                 .AsNoTracking()
                 .Include(e => e.Participants)
                 .Where(condition)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
         }
-
-        return result;
     }
 
-    public IEnumerable<Participant> GetParticipantsByEventId(Guid eventId)
+    public async Task<IEnumerable<Participant>> GetParticipantsByEventId(Guid eventId)
     {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
-            var participants = context.Events
+            return await context.Events
                 .AsNoTracking()
                 .Where(e => e.Id == eventId)
                 .Include(e => e.Participants)
                 .SelectMany(e => e.Participants)
-                .ToList();
-
-            return participants;
+                .ToListAsync();
         }
     }
 
-    
+
     //For the reminder IHostedService
     public async Task<List<Event>> GetAllEventsAtDeadline(DateTime now)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var res = await context.Events.Where(e => e.Deadline.Date == now.Date).ToListAsync();
-        return res;
-    }
-    
-    //For the summary IHostedService
-    public Event? GetNextUpcomingDeadline()
-    {
-        using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (var context = await _contextFactory.CreateDbContextAsync())
         {
-            var nextDeadline = context.Events
+            return await context.Events
+                .Where(e => e.Deadline.Date == now.Date)
+                .ToListAsync();
+        }
+    }
+
+    //For the summary IHostedService
+    public async Task<Event?> GetNextUpcomingDeadline()
+    {
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            return await context.Events
                 .Where(e => e.Deadline > DateTime.Now)
                 .OrderBy(e => e.Deadline)
                 .Include(e => e.Participants)
-                .FirstOrDefault();
-            return nextDeadline;
+                .FirstOrDefaultAsync();
         }
     }
 }

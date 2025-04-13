@@ -59,7 +59,7 @@ public class UserService : IUserService
         
         if (eventId == null) { return result; }       
         
-        var participantsForEvent = _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
+        var participantsForEvent = await _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
         var participantIdsForEvent = participantsForEvent.Select(p => p.UserId).ToHashSet();
         return [.. result.Where(u => !participantIdsForEvent.Contains(u.UserId))];
     }

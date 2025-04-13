@@ -71,7 +71,7 @@ public class MockUserService(IUserSeed seeder, IUoW uow) : IUserService
 
         if (eventId == null) { return dtos; }
 
-        var participantsForEvent = _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
+        var participantsForEvent = await _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
         var participantIdsForEvent = participantsForEvent.Select(p => p.UserId).ToHashSet();
         return [.. dtos.Where(u => !participantIdsForEvent.Contains(u.UserId))];
     }

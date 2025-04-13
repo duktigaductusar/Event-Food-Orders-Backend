@@ -42,25 +42,25 @@ public class ParticipantController(IServiceManager serviceManager, IIdCarrier ca
 
     [HttpPut]
     [Route("{participantId}")]
-    public ActionResult<ParticipantForResponseDto> UpdateParticipant(Guid participantId, ParticipantForUpdateDto dto)
+    public async Task<ActionResult<ParticipantForResponseDto>> UpdateParticipant(Guid participantId, ParticipantForUpdateDto dto)
     {
-        ParticipantForResponseDto response = _participantService.UpdateParticipant(participantId, dto);
+        ParticipantForResponseDto response = await _participantService.UpdateParticipant(participantId, dto);
         return Ok(response);
     }
 
     [HttpPut]
     [Route("{participantId}/response-type")]
-    public ActionResult<ParticipantForResponseDto> UpdateParticipantResponse(Guid participantId, ParticipantForUpdateResponseTypeDto dto)
+    public async Task<ActionResult<ParticipantForResponseDto>> UpdateParticipantResponse(Guid participantId, ParticipantForUpdateResponseTypeDto dto)
     {
-        ParticipantForResponseDto response = _participantService.UpdateParticipantResponseType(participantId, dto);
+        ParticipantForResponseDto response = await _participantService.UpdateParticipantResponseType(participantId, dto);
         return Ok(response);
     }
 
     [HttpGet]
     [Route("{eventId}/all")]
-    public ActionResult<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsInEvent(Guid eventId)
+    public async Task<ActionResult<IEnumerable<ParticipantForResponseDto>>> GetAllParticipantsInEvent(Guid eventId)
     {
-        IEnumerable <ParticipantForResponseDto> response = _participantService.GetAllParticipantsForEvent(_carrier.UserId, eventId);
+        IEnumerable <ParticipantForResponseDto> response = await _participantService.GetAllParticipantsForEvent(_carrier.UserId, eventId);
         return Ok(response);
     }
 }
