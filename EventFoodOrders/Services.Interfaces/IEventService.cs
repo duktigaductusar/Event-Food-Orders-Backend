@@ -16,21 +16,21 @@ public interface IEventService
     /// <param name="userId"></param>
     /// <param name="eventForCreation"></param>
     /// <returns></returns>
-    Task <EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto eventForCreation);
+    Task<EventForResponseDto> CreateEvent(Guid userId, EventForCreationDto eventForCreation);
 
     /// <summary>
     /// Deletes an event.
     /// </summary>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    bool DeleteEvent(Guid userId, Guid eventId);
+    Task<bool> DeleteEvent(Guid userId, Guid eventId);
 
     /// <summary>
     /// Gets all the events that a user has been invited to.
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    IEnumerable<EventForResponseDto> GetAllEventsForUser(Guid userId);
+    Task<IEnumerable<EventForResponseDto>> GetAllEventsForUser(Guid userId);
 
     /// <summary>
     /// Gets a single event, given that the user has been invited to it.
@@ -38,19 +38,19 @@ public interface IEventService
     /// <param name="userId"></param>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    EventForResponseWithDetailsDto GetEventForUser(Guid userId, Guid eventId);
+    Task<EventForResponseWithDetailsDto> GetEventForUser(Guid userId, Guid eventId);
 
     /// <summary>
     /// Gets a single event with all the participant and user information.
     /// </summary>
     /// <returns></returns>
     EventForResponseWithUsersDto GetEventWithUsers(EventForResponseWithDetailsDto eventDto, IEnumerable<ParticipantForResponseDto> participantDtos, IEnumerable<UserDto> users);
-       
+
     /// <summary>
     /// Updates an event given its Id and a Dto.
     /// </summary>
     /// <param name="eventId"></param>
     /// <param name="updatedEventDto"></param>
     /// <returns></returns>
-    EventForResponseDto UpdateEvent(Guid eventId, Guid userId, EventForUpdateDto updatedEventDto);
+    Task<EventForResponseDto> UpdateEvent(Guid eventId, Guid userId, EventForUpdateDto updatedEventDto);
 }

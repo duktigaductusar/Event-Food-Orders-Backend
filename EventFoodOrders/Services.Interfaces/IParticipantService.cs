@@ -16,23 +16,14 @@ public interface IParticipantService
     /// <param name="newEvent"></param>
     /// <param name="participants"></param>
     /// <returns></returns>
-    IEnumerable<ParticipantForResponseDto> AddParticipantsToNewEvent(Event newEvent, IEnumerable<Participant> participants);
-
-    ///// <summary>
-    ///// Adds a participant to an event, given the event's Id and a participant dto.
-    ///// Checks whether there is a previous participant with the same user id and if yes fetches allergy and food preferences from it.
-    ///// </summary>
-    ///// <param name="eventId"></param>
-    ///// <param name="newParticipant"></param>
-    ///// <returns></returns>
-    //ParticipantForResponseDto AddParticipantToEvent(Guid eventId, ParticipantForCreationDto newParticipant);
+    Task<IEnumerable<Participant>> AddParticipantsToEvent(Event newEvent, IEnumerable<Participant> participants);
 
     /// <summary>
     /// Deletes a participant.
     /// </summary>
     /// <param name="participantId"></param>
     /// <returns></returns>
-    bool DeleteParticipant(Guid participantId);
+    Task<bool> DeleteParticipant(Guid participantId);
 
     /// <summary>
     /// Gets all the participants in an event, given that the user is a registered participant.
@@ -40,14 +31,14 @@ public interface IParticipantService
     /// <param name="userId"></param>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    IEnumerable<ParticipantForResponseDto> GetAllParticipantsForEvent(Guid userId, Guid eventId);
+    Task<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsForEvent(Guid userId, Guid eventId);
 
     /// <summary>
     /// Gets all the participations for a user.
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    IEnumerable<ParticipantForResponseDto> GetAllParticipantsForUser(Guid userId);
+    Task<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsForUser(Guid userId);
 
     /// <summary>
     /// Gets a specific participant for a user in a specific event.
@@ -55,7 +46,7 @@ public interface IParticipantService
     /// <param name="userId"></param>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    ParticipantForResponseDto GetParticipant(Guid userId, Guid eventId);
+    Task<ParticipantForResponseDto> GetParticipant(Guid userId, Guid eventId);
 
     /// <summary>
     /// Updates a participant using a dto.
@@ -63,6 +54,13 @@ public interface IParticipantService
     /// <param name="participantId"></param>
     /// <param name="updatedParticipantDto"></param>
     /// <returns></returns>
-    ParticipantForResponseDto UpdateParticipant(Guid participantId, ParticipantForUpdateDto updatedParticipantDto);
-    ParticipantForResponseDto UpdateParticipantResponseType(Guid participantId, ParticipantForUpdateResponseTypeDto dto);
+    Task<ParticipantForResponseDto> UpdateParticipant(Guid participantId, ParticipantForUpdateDto updatedParticipantDto);
+
+    /// <summary>
+    /// Updates a participant's response type.
+    /// </summary>
+    /// <param name="participantId"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    Task<ParticipantForResponseDto> UpdateParticipantResponseType(Guid participantId, ParticipantForUpdateResponseTypeDto dto);
 }

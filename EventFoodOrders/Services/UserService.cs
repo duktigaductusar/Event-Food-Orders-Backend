@@ -19,10 +19,10 @@ public class UserService : IUserService
     private readonly int _graphBatchLimit = 20;
     private readonly IGraphTokenService _graphTokenService;
     private readonly HttpClient _httpClient;
-    private string _accessToken;
-    private IConfiguration _config;
-    private IUoW _uow;
-    
+    private readonly IConfiguration _config;
+    private readonly IUoW _uow;
+    private string _accessToken = String.Empty;
+
     public UserService(
         IGraphTokenService graphTokenService,
         HttpClient httpClient,
@@ -59,7 +59,7 @@ public class UserService : IUserService
         
         if (eventId == null) { return result; }       
         
-        var participantsForEvent = _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
+        var participantsForEvent = await _uow.EventRepository.GetParticipantsByEventId(eventId.Value);
         var participantIdsForEvent = participantsForEvent.Select(p => p.UserId).ToHashSet();
         return [.. result.Where(u => !participantIdsForEvent.Contains(u.UserId))];
     }

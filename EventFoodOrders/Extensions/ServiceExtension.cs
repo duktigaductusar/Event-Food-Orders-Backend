@@ -29,6 +29,7 @@ public static class ServiceExtension
         services.AddScoped<IUoW, UoW>();
         services.AddScoped<ICustomAutoMapper, CustomAutoMapper>();
         services.AddScoped<IMailerService, MailerService>();
+        services.AddScoped<IMailManager, MailManager>();
         services.AddScoped<IIdCarrier, CustomIdCarrier>();
     }
 

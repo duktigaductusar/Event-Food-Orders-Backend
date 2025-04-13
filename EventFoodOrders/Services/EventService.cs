@@ -7,21 +7,29 @@ using EventFoodOrders.Exceptions;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
+using Microsoft.Extensions.Logging;
 using Event = EventFoodOrders.Entities.Event;
 using Participant = EventFoodOrders.Entities.Participant;
 
 namespace EventFoodOrders.Services;
 
-public class EventService(IParticipantService participantService, IUoW uoW, ICustomAutoMapper mapper, IUserService userService, IMailerService mailerService) : IEventService
+public class EventService(
+    IParticipantService participantService,
+    IUserService userService,
+    IUoW uoW,
+    ICustomAutoMapper mapper,
+    IMailManager mailManager
+) : IEventService
 {
     private readonly IEventRepository _eventRepository = uoW.EventRepository;
     private readonly IParticipantRepository _participantRepository = uoW.ParticipantRepository;
     private readonly IMapper _mapper = mapper.Mapper;
     private readonly IUserService _userService = userService;
+    private readonly IParticipantService _participantService = participantService;
 
     public async Task<EventForResponseDto> CreateEvent(Guid ownerId, EventForCreationDto eventForCreation)
     {
-        var newEvent = _eventRepository.AddEvent(
+        var newEvent = await _eventRepository.AddEvent(
             _mapper.MapToNewEvent(ownerId, eventForCreation));
 
         var participantsToAdd = new List<Participant>();
@@ -59,19 +67,19 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
                 });
             }
         }
-        participantService.AddParticipantsToNewEvent(newEvent, participantsToAdd);
-        if (eventForCreation.UserIds?.Length != null && eventForCreation.UserIds?.Length > 0)
-        {
-            await mailerService.SendInvitationMail(eventForCreation, owner.UserId, newEvent.Id);
-        }
-        await mailerService.SendCreatorConfirmationMail(eventForCreation, owner.UserId, newEvent.Id);
+        
+        var participants = await _participantService.AddParticipantsToEvent(
+            newEvent, participantsToAdd);
+
+        await mailManager.HandleNewEventMails(
+            newEvent, participantsToAdd.Select(p => p.UserId).ToArray());
 
         return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
 
-    public EventForResponseDto UpdateEvent(Guid eventId, Guid ownerId, EventForUpdateDto updatedEventDto)
+    public async Task<EventForResponseDto> UpdateEvent(Guid eventId, Guid ownerId, EventForUpdateDto updatedEventDto)
     {
-        var eventToUpdate = _eventRepository.GetEventForUser(ownerId, eventId);
+        var eventToUpdate = await _eventRepository.GetEventForUser(ownerId, eventId);
         var updatedEvent = _mapper.MapToEventFromUpdateDto(updatedEventDto, eventId, ownerId);
 
         var participantsToDelete = eventToUpdate.Participants
@@ -80,7 +88,7 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
 
         foreach (Participant participant in participantsToDelete)
         {
-            participantService.DeleteParticipant(participant.Id);
+            await _participantService.DeleteParticipant(participant.Id);
         }
 
         var existingParticipantIds = eventToUpdate.Participants
@@ -89,46 +97,72 @@ public class EventService(IParticipantService participantService, IUoW uoW, ICus
 
         var participantsToAdd = new List<Participant>();
 
-        foreach (Guid id in updatedEventDto.UserIds ?? [])
+        foreach (Guid userId in updatedEventDto.UserIds ?? [])
         {
-            if (existingParticipantIds.Contains(id) == false)
+            if (await _userService.GetUserWithId(userId) is null)
+            {
+                List<Guid> usersInGroup = await _userService.GetUsersFromGroup(userId);
+                usersInGroup.Remove(ownerId);
+                foreach (Guid userIdFromGroup in usersInGroup)
+                {
+                    if (existingParticipantIds.Contains(userId) == false)
+                    {
+                        participantsToAdd.Add(new Participant
+                        {
+                            UserId = userIdFromGroup,
+                            EventId = eventId,
+                        });
+                    }
+                }
+            }
+            else if (existingParticipantIds.Contains(userId) == false)
             {
                 participantsToAdd.Add(new Participant
                 {
-                    UserId = id,
+                    UserId = userId,
                     EventId = eventId
                 });
             }
         }
 
-        participantService.AddParticipantsToNewEvent(updatedEvent, participantsToAdd);
-        updatedEvent = _eventRepository.UpdateEvent(eventId, updatedEvent);
+        updatedEvent = await _eventRepository.UpdateEvent(eventId, updatedEvent);
+
+        await _participantService.AddParticipantsToEvent(updatedEvent, participantsToAdd);
+        
+        await mailManager.HandleUpdateEventMails(
+            updatedEvent,
+            participantsToAdd,
+            participantsToDelete);
+
         return _mapper.Map<EventForResponseDto>(updatedEvent);
     }
 
-    public bool DeleteEvent(Guid userId, Guid eventId)
+    public async Task<bool> DeleteEvent(Guid ownerId, Guid eventId)
     {
-        _eventRepository.DeleteEvent(userId, eventId);
+        var eventToDelete = await _eventRepository.GetEventByIdWithParticipants(eventId);
+
+        if (eventToDelete != null) {
+            await _eventRepository.DeleteEvent(ownerId, eventId);
+            await mailManager.HandleCancelEventMails(eventToDelete, ownerId);
+        }
 
         return true;
     }
 
-    public EventForResponseWithDetailsDto GetEventForUser(Guid userId, Guid eventId)
+    public async Task<EventForResponseWithDetailsDto> GetEventForUser(Guid userId, Guid eventId)
     {
-        var returnEvent = _eventRepository.GetEventForUser(userId, eventId);
-        var eventParticipant = _participantRepository.GetParticipantWithEventAndUserId(eventId, userId);
+        var returnEvent = await _eventRepository.GetEventForUser(userId, eventId);
+        var eventParticipant = await _participantRepository.GetParticipantWithEventAndUserId(eventId, userId);
 
         return eventParticipant == null
             ? throw new EventNotFoundException(eventId)
             : _mapper.MapToEventForResponseWithDetailsDto(returnEvent, eventParticipant);
     }
 
-    public IEnumerable<EventForResponseDto> GetAllEventsForUser(Guid userId)
+    public async Task<IEnumerable<EventForResponseDto>> GetAllEventsForUser(Guid userId)
     {
-        IEnumerable<Event> returnEvents = _eventRepository.GetAllEventsForUser(userId);
+        IEnumerable<Event> returnEvents = await _eventRepository.GetAllEventsForUser(userId);
         List<EventForResponseDto> events = [];
-
-        // string name = _userService.GetUserWithId(userId);
 
         foreach (Event e in returnEvents)
         {
