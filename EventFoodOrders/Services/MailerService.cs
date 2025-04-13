@@ -18,16 +18,15 @@ public class MailerService(IUserService userService) : IMailerService
     private readonly string baseUrl = $"http://localhost:4200/"; //ToDo: Dynamic URL call from env or config.
 
     //ToDo: Link not working, Frontend redirects to Home page.
-    public async Task SendInvitationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId)
+    public async Task SendInvitationMail(Event focusedEvent, IEnumerable<Guid> userIds)
     {
-        var userIds = focusedEvent.UserIds?.ToList() ?? [];
-        if (userIds.Count == 0)
+        if (!userIds.Any())
         {
             return;
         }
 
-        var eventUrl = $"{baseUrl}event-details/{eventId}";
-        Guid[] ownerIdArray = [ownerId];
+        var eventUrl = $"{baseUrl}event-details/{focusedEvent.Id}";
+        Guid[] ownerIdArray = [focusedEvent.OwnerId];
         var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
 
         EmailTemplate message = new(
@@ -35,26 +34,26 @@ public class MailerService(IUserService userService) : IMailerService
             $@"<html>
                 <body>
                     <p>{ownerInfo[0].Username} bjuder in dig till {focusedEvent.Title}.</p>
-                    <p>Antal Deltagare: {userIds.Count}</p>
+                    <p>Datum och tid för eventet: {focusedEvent.Date.LocalDateTime}<p>
+                    <p>Antal Deltagare: {userIds.Count()}</p>
                     <br/>
                     <p>{focusedEvent.Description}</p>
                     <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
                 </body>
             </html>");
 
-        await userService.SendEmail(userIds, message);
+        await userService.SendEmail(userIds.ToList(), message);
     }
 
-    public async Task SendInvitationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId)
+    public async Task SendInvitationUpdateMail(Event focusedEvent, IEnumerable<Guid> userIds)
     {
-        var userIds = focusedEvent.UserIds?.ToList() ?? [];
-        if (userIds.Count == 0)
+        if (!userIds.Any())
         {
             return;
         }
 
-        var eventUrl = $"{baseUrl}event-details/{eventId}";
-        Guid[] ownerIdArray = [ownerId];
+        var eventUrl = $"{baseUrl}event-details/{focusedEvent.Id}";
+        Guid[] ownerIdArray = [focusedEvent.OwnerId];
         var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
 
         EmailTemplate message = new(
@@ -62,14 +61,15 @@ public class MailerService(IUserService userService) : IMailerService
             $@"<html>
                 <body>
                     <p>{ownerInfo[0].Username} bjuder in dig till {focusedEvent.Title}.</p>
-                    <p>Antal Deltagare: {userIds.Count}</p>
+                    <p>Datum och tid för eventet: {focusedEvent.Date.LocalDateTime}<p>
+                    <p>Antal Deltagare: {userIds.Count()}</p>
                     <br/>
                     <p>{focusedEvent.Description}</p>
                     <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
                 </body>
             </html>");
 
-        await userService.SendEmail(userIds, message);
+        await userService.SendEmail(userIds.ToList(), message);
     }
 
     public async Task SendEventCanceledMail(
@@ -87,7 +87,7 @@ public class MailerService(IUserService userService) : IMailerService
         $@"<html>
             <body>
                 <p>Eventet <strong>{focusedEvent.Title}</strong> har ställts av {ownerInfo[0].Username}.</p>
-                <p>Datum för det borttagna eventet: {focusedEvent.Date.LocalDateTime}<p>
+                <p>Datum och tid för det borttagna eventet: {focusedEvent.Date.LocalDateTime}<p>
                 <br/>
                 <p>Det innebär att din inbjudan inte längre gäller.</p>
                 <p>Ingen åtgärd krävs från dig.</p>
@@ -122,17 +122,19 @@ public class MailerService(IUserService userService) : IMailerService
         await userService.SendEmail(userIds.ToList(), message);
     }
 
-    public async Task SendCreateEventConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId)
+    public async Task SendCreateEventConfirmationMail(Event focusedEvent)
     {
-        var eventUrl = $"{baseUrl}event-management/{eventId}";
-        var ownerIdArray = new List<Guid>() { ownerId };
+        var eventUrl = $"{baseUrl}event-management/{focusedEvent.Id}";
+        var ownerIdArray = new List<Guid>() { focusedEvent.OwnerId };
         EmailTemplate message = new(
             "Bekräftelse nytt event skapat",
             $@"<html>
                 <body>
                     <p>Event '{focusedEvent.Title}' har skapats.</p>
+                    <p>Event ID: {focusedEvent.Id}</p>
+                    <p>Datum och tid för eventet: {focusedEvent.Date.LocalDateTime}</p>
+                    <br/>
                     <p>{focusedEvent.Description}</p>
-                    <p>Event Id: {eventId}</p>
                     <br/>
                     <p><a href=""{eventUrl}"">Klicka här för att hantera eventet.</a></p>
                 </body>
@@ -140,17 +142,19 @@ public class MailerService(IUserService userService) : IMailerService
         await userService.SendEmail(ownerIdArray, message);
     }
 
-    public async Task SendUpdateEventConfirmationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId)
+    public async Task SendUpdateEventConfirmationMail(Event focusedEvent)
     {
-        var eventUrl = $"{baseUrl}event-management/{eventId}";
-        var ownerIdArray = new List<Guid>() { ownerId };
+        var eventUrl = $"{baseUrl}event-management/{focusedEvent.Id}";
+        var ownerIdArray = new List<Guid>() { focusedEvent.OwnerId };
         EmailTemplate message = new(
             "Bekräftelse event uppdaterat",
             $@"<html>
                 <body>
                     <p>Event '{focusedEvent.Title}' har uppdaterats.</p>
+                    <p>Event Id: {focusedEvent.Id}</p>
+                    <p>Datum och tid för eventet: {focusedEvent.Date.LocalDateTime}</p>
+                    <br/>
                     <p>{focusedEvent.Description}</p>   
-                    <p>Event Id: {eventId}</p>
                     <br/>
                     <p><a href=""{eventUrl}"">Klicka här för att hantera eventet.</a></p>
                 </body>

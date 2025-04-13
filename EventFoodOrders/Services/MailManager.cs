@@ -7,46 +7,40 @@ namespace EventFoodOrders.Services;
 public class MailManager(IMailerService mailerService) : IMailManager
 {
     public async Task HandleNewEventMails(
-        EventForCreationDto newEvent,
-        Guid ownerId,
-        Guid eventId
+        Event newEvent,
+        IEnumerable<Guid> userIds
     )
     {
-        if (newEvent.UserIds?.Length != null && newEvent.UserIds?.Length > 0)
+        if (userIds.Any())
         {
-            await mailerService.SendInvitationMail(newEvent, ownerId, eventId);
+            await mailerService.SendInvitationMail(newEvent, userIds);
         }
-        await mailerService.SendCreateEventConfirmationMail(newEvent, ownerId, eventId);
+        await mailerService.SendCreateEventConfirmationMail(newEvent);
     }
 
     public async Task HandleUpdateEventMails(
-        EventForUpdateDto updatedEventDto,
         Event updatedEvent,
         IEnumerable<Participant> participantsToAdd,
-        IEnumerable<Participant> participantsToDelete,
-        Guid ownerId,
-        Guid eventId
+        IEnumerable<Participant> participantsToDelete
     )
     {
-        var focusedEvent = updatedEventDto with
-        {
-            UserIds = participantsToAdd
+        var userIds = participantsToAdd
                 .Select(p => p.UserId)
-                .ToArray()
-        };
+                .ToHashSet();
 
-        var participantsToAdIds = participantsToAdd.Select(p => p.UserId).ToHashSet();
-
-        var participantsToSendRevokeMailTo = participantsToDelete.Where(p => !participantsToAdIds.Contains(p.UserId));
+        var userIdsToSendRevokeMailTo = participantsToDelete
+            .Where(p => !userIds.Contains(p.UserId))
+            .Select(p => p.UserId);
 
         await mailerService.SendRevokeInvitationMail(
-           updatedEvent, participantsToSendRevokeMailTo.Select(p => p.UserId));
+           updatedEvent, userIdsToSendRevokeMailTo);
 
-        if (focusedEvent.UserIds?.Length != null && focusedEvent.UserIds?.Length > 0)
+        if (userIds.Count != 0)
         {
-            await mailerService.SendInvitationMail(focusedEvent, ownerId, eventId);
+            await mailerService.SendInvitationUpdateMail(updatedEvent, userIds);
         }
-        await mailerService.SendUpdateEventConfirmationMail(focusedEvent, ownerId, eventId);
+
+        await mailerService.SendUpdateEventConfirmationMail(updatedEvent);
     }
 
     public async Task HandleCancelEventMails(

@@ -9,19 +9,15 @@ public interface IMailerService
     /// Sends confirmation mail for new event to creator.
     /// </summary>
     /// <param name="focusedEvent"></param>
-    /// <param name="ownerId"></param>
-    /// <param name="eventId"></param>
     /// <returns></returns>
-    Task SendCreateEventConfirmationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId);
+    Task SendCreateEventConfirmationMail(Event focusedEvent);
 
     /// <summary>
     /// Sends confirmation mail for updated event to creator.
     /// </summary>
     /// <param name="focusedEvent"></param>
-    /// <param name="ownerId"></param>
-    /// <param name="eventId"></param>
     /// <returns></returns>
-    Task SendUpdateEventConfirmationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId);
+    Task SendUpdateEventConfirmationMail(Event focusedEvent);
 
     /// <summary>
     /// Send delete confirmation mail to the user that deleted the event.
@@ -43,19 +39,17 @@ public interface IMailerService
     /// Sends the initial invitation email to all invited participants.
     /// </summary>
     /// <param name="focusedEvent"></param>
-    /// <param name="ownerId"></param>
-    /// <param name="eventId"></param>
+    /// <param name="userIds"></param>
     /// <returns></returns>
-    Task SendInvitationMail(EventForCreationDto focusedEvent, Guid ownerId, Guid eventId);
+    Task SendInvitationMail(Event focusedEvent, IEnumerable<Guid> userIds);
 
     /// <summary>
     /// Sends the invitation email to newly invited participants.
     /// </summary>
     /// <param name="focusedEvent"></param>
-    /// <param name="ownerId"></param>
-    /// <param name="eventId"></param>
+    /// <param name="userIds"></param>
     /// <returns></returns>
-    Task SendInvitationMail(EventForUpdateDto focusedEvent, Guid ownerId, Guid eventId);
+    Task SendInvitationUpdateMail(Event focusedEvent, IEnumerable<Guid> userIds);
     
     /// <summary>
     /// Sends reminder emails at a predetermined time on the deadline day.
