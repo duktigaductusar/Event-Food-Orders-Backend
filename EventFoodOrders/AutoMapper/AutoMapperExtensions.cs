@@ -33,6 +33,7 @@ public static class AutoMapperExtensions
                 dest.ParticipantId = srcParticipant.Id.ToString();
                 dest.IsOwner = srcParticipant.UserId == srcEvent.OwnerId;
                 dest.ResponseType = srcParticipant.ResponseType;
+                dest.WantsMeal = srcParticipant.WantsMeal;
             })
         );
 
