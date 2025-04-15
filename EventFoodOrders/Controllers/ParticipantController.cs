@@ -2,16 +2,41 @@ using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using EventFoodOrders.IdHandling;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventFoodOrders.Controllers;
 
-//[Authorize] //ToDo: Un-comment when ready for full auth flow
+[Authorize]
 [ApiController]
 [Route("/api/participant")]
 public class ParticipantController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase
 {
     private readonly IParticipantService _participantService = serviceManager.ParticipantService;
     private readonly IIdCarrier _carrier = carrier;
+
+    [HttpPut]
+    [Route("{participantId}")]
+    public async Task<ActionResult<ParticipantForResponseDto>> UpdateParticipant(Guid participantId, ParticipantForUpdateDto dto)
+    {
+        ParticipantForResponseDto response = await _participantService.UpdateParticipant(participantId, dto);
+        return Ok(response);
+    }
+
+    [HttpPut]
+    [Route("{participantId}/response-type")]
+    public async Task<ActionResult<ParticipantForResponseDto>> UpdateParticipantResponse(Guid participantId, ParticipantForUpdateResponseTypeDto dto)
+    {
+        ParticipantForResponseDto response = await _participantService.UpdateParticipantResponseType(participantId, dto);
+        return Ok(response);
+    }
+
+    [HttpGet]
+    [Route("{eventId}/all")]
+    public async Task<ActionResult<IEnumerable<ParticipantForResponseDto>>> GetAllParticipantsInEvent(Guid eventId)
+    {
+        IEnumerable <ParticipantForResponseDto> response = await _participantService.GetAllParticipantsForEvent(_carrier.UserId, eventId);
+        return Ok(response);
+    }
 
     // TODO! Should this endpoint be used?
     //[HttpDelete]
@@ -39,28 +64,4 @@ public class ParticipantController(IServiceManager serviceManager, IIdCarrier ca
     //    ParticipantForResponseDto response = _participantService.AddParticipantToEvent(eventId, dto);
     //    return Created(uri: "", value: response);
     //}
-
-    [HttpPut]
-    [Route("{participantId}")]
-    public async Task<ActionResult<ParticipantForResponseDto>> UpdateParticipant(Guid participantId, ParticipantForUpdateDto dto)
-    {
-        ParticipantForResponseDto response = await _participantService.UpdateParticipant(participantId, dto);
-        return Ok(response);
-    }
-
-    [HttpPut]
-    [Route("{participantId}/response-type")]
-    public async Task<ActionResult<ParticipantForResponseDto>> UpdateParticipantResponse(Guid participantId, ParticipantForUpdateResponseTypeDto dto)
-    {
-        ParticipantForResponseDto response = await _participantService.UpdateParticipantResponseType(participantId, dto);
-        return Ok(response);
-    }
-
-    [HttpGet]
-    [Route("{eventId}/all")]
-    public async Task<ActionResult<IEnumerable<ParticipantForResponseDto>>> GetAllParticipantsInEvent(Guid eventId)
-    {
-        IEnumerable <ParticipantForResponseDto> response = await _participantService.GetAllParticipantsForEvent(_carrier.UserId, eventId);
-        return Ok(response);
-    }
 }

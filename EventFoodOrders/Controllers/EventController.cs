@@ -3,11 +3,12 @@ using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.IdHandling;
 using EventFoodOrders.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventFoodOrders.Controllers;
 
-//[Authorize] //ToDo: Un-comment when ready for full auth flow
+[Authorize]
 [ApiController]
 [Route("/api/event")]
 public class EventController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase

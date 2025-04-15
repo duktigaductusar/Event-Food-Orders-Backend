@@ -2,10 +2,11 @@
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using EventFoodOrders.IdHandling;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventFoodOrders.Controllers;
 
-//[Authorize] //ToDo: Un-comment when ready for full auth flow
+[Authorize]
 [ApiController]
 [Route("api/user")]
 public class UserController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase
@@ -25,8 +26,7 @@ public class UserController(IServiceManager serviceManager, IIdCarrier carrier) 
     [Route("userId")]
     public async Task<ActionResult<UserDto[]>> GetUsers([FromBody] UserIdsDto userIds)
     {
-        //var users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
-        List<UserDto> users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
+        var users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
         return users.ToArray();
     }
 }
