@@ -44,6 +44,7 @@ namespace EventFoodOrders.Mock
 
         public async Task SendEmail(List<Guid> userIds, EmailTemplate message)
         {
+            // OBS! The mocked user service will write to files instead of sending mails.
             await _mockService.SendEmail(userIds, message);
         }
 

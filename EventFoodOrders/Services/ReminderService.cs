@@ -4,6 +4,8 @@ using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Services;
 
+// TODO: Replace Timer with Task.Delay + CancellationToken for cleaner async handling and proper shutdown support
+// Read backend section at https://dataductus.atlassian.net/wiki/spaces/EFO/pages/3468951557/ToDo+s+som+r+kvar.
 public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFactory scopeFactory) : BackgroundService
 {
     private Timer? _timer;
@@ -71,7 +73,11 @@ public class ReminderService(ILogger<ReminderService> logger, IServiceScopeFacto
                         .ToList();
                     participants.Add(item.OwnerId);
                     if (participants.Count <= 0) continue;
-                    // await mailerService.SendReminderMail(participants, item); //ToDo: Uncomment for prod. Commented out during testing. Works as intended with mailing.
+                    
+                    // TODO! Uncomment this method
+                    // The mocked service will write to file during development instead of sending mails, this method can therefor be called in development.
+                    // await mailerService.SendReminderMail(participants, item);
+                    
                     logger.LogInformation("Reminder service running for participant list for event: " + item.Title);
                 }
             }
