@@ -3,6 +3,8 @@ using EventFoodOrders.Repositories.Interfaces;
 
 namespace EventFoodOrders.Services;
 
+// TODO: Replace Timer with Task.Delay + CancellationToken for cleaner async handling and proper shutdown support.
+// Read backend section at https://dataductus.atlassian.net/wiki/spaces/EFO/pages/3468951557/ToDo+s+som+r+kvar.
 public class SummaryService(ILogger<SummaryService> logger, IServiceScopeFactory scopeFactory) : BackgroundService
 {
     private Timer? _timer;
@@ -49,7 +51,7 @@ public class SummaryService(ILogger<SummaryService> logger, IServiceScopeFactory
             }
         }
         else
-        { 
+        {
             var initialDelay = _nextUpcomingEvent.Deadline - _now;
             logger.LogInformation($"Summary service will start in {initialDelay.TotalSeconds} seconds.");
             if (_timer == null)
@@ -66,15 +68,15 @@ public class SummaryService(ILogger<SummaryService> logger, IServiceScopeFactory
     private async Task DoWork(object? state)
     {
         logger.LogInformation($"Summary service started at: {_now.Hour}:{_now.Minute}:{_now.Second}.");
-        
+
         using var scope = scopeFactory.CreateScope();
         var mailerService = scope.ServiceProvider.GetService<IMailerService>();
-        
+
         if (mailerService != null && _nextUpcomingEvent != null)
         {
             await mailerService.SendSummaryMail(_nextUpcomingEvent);
         }
-        
+
         _nextUpcomingEvent = null;
     }
 
