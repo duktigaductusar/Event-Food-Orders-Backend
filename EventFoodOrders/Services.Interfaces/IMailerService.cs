@@ -58,7 +58,7 @@ public interface IMailerService
     /// <param name="focusedEvent"></param>
     /// <param name="eventId"></param>
     /// <returns></returns>
-    Task SendReminderMail(List<Guid> recipients, Event focusedEvent, Guid eventId);
+    Task SendReminderMail(List<Guid> recipients, Event focusedEvent);
 
     /// <summary>
     /// Sends a summary email to the event owner. Needs an Event entity as a parameter.
