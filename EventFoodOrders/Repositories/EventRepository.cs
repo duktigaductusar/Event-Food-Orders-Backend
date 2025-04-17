@@ -2,15 +2,17 @@
 using EventFoodOrders.Exceptions;
 using EventFoodOrders.Entities;
 using Microsoft.EntityFrameworkCore;
-using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Utilities;
 using System.Linq.Expressions;
+using EventFoodOrders.Repositories.Interfaces;
 
 namespace EventFoodOrders.Repositories;
 
-public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : IEventRepository
+public class EventRepository(
+    IDbContextFactory<EventFoodOrdersDbContext> contextFactory
+) : IEventRepository
 {
-    private IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
+    private readonly IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 
     public async Task<Event?> GetEventByIdWithParticipants(Guid eventId)
     {
@@ -153,7 +155,6 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         }
     }
 
-
     //For the reminder IHostedService
     public async Task<List<Event>> GetAllEventsAtDeadline(DateTime now)
     {
@@ -165,16 +166,38 @@ public class EventRepository(IDbContextFactory<EventFoodOrdersDbContext> context
         }
     }
 
-    //For the summary IHostedService
-    public async Task<Event?> GetNextUpcomingDeadline()
+    // For the summary IHostedService
+    public async Task<IEnumerable<Event>> GetEventsWithPassedDeadlines(int? nrOfDaysBeforeDeadline)
     {
         await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             return await context.Events
-                .Where(e => e.Deadline > DateTime.Now)
+                .Where(e =>
+                    e.Deadline < DateTimeOffset.UtcNow.AddDays(nrOfDaysBeforeDeadline ?? 0) &&
+                    e.Status == EventStatus.BeforeDeadline)
                 .OrderBy(e => e.Deadline)
                 .Include(e => e.Participants)
+                .ToListAsync();
+        }
+    }
+
+    // For the summary IHostedService
+    public async Task UpdateEventToStatusDeadlinePassed(Event focusedEvent)
+    {
+        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        {
+            var findEvent = await context.Events
+                .Where(e => e.Id == focusedEvent.Id)
                 .FirstOrDefaultAsync();
+
+            if (findEvent == null)
+            {
+                return;
+            }
+
+            findEvent.Status = EventStatus.DeadlinePassed;
+
+            await context.SaveChangesAsync();
         }
     }
 }

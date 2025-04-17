@@ -7,7 +7,9 @@ using System.Linq.Expressions;
 
 namespace EventFoodOrders.Repositories;
 
-public class ParticipantRepository(IDbContextFactory<EventFoodOrdersDbContext> contextFactory) : IParticipantRepository
+public class ParticipantRepository(
+    IDbContextFactory<EventFoodOrdersDbContext> contextFactory
+) : IParticipantRepository
 {
     private readonly IDbContextFactory<EventFoodOrdersDbContext> _contextFactory = contextFactory;
 

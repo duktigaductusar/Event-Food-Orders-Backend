@@ -49,6 +49,11 @@ namespace EventFoodOrders.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("owner_id");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("status");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
