@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using EventFoodOrders.Utilities;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -47,6 +48,10 @@ public class Event
     [Required]
     [Column("deadline")]
     public DateTimeOffset Deadline { get; set; }
+
+    [Required]
+    [Column("status")]
+    public String Status { get; set; } = EventStatus.BeforeDeadline;
 
     [ForeignKey("owner_id")]
     [Column("owner_id")]

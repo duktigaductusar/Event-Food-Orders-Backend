@@ -10,7 +10,9 @@ public class MailerService(
 ) : IMailerService
 {
     private readonly string baseUrl = configuration["ClientBaseUrl"]
-        ?? throw new ArgumentNullException("something went wrong");
+        ?? throw new ArgumentNullException($"Environment variable 'BaseUrl' is missing in");
+    private readonly string adminEventPath = "event-management";
+    private readonly string userEventPath = "event-details";
 
     public async Task SendInvitationMail(Entities.Event focusedEvent, IEnumerable<Guid> userIds)
     {
@@ -19,7 +21,7 @@ public class MailerService(
             return;
         }
 
-        var eventUrl = $"{baseUrl}event-details/{focusedEvent.Id}";
+        var eventUrl = $"{baseUrl}/{userEventPath}/{focusedEvent.Id}";
         Guid[] ownerIdArray = [focusedEvent.OwnerId];
         var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
 
@@ -46,7 +48,7 @@ public class MailerService(
             return;
         }
 
-        var eventUrl = $"{baseUrl}event-details/{focusedEvent.Id}";
+        var eventUrl = $"{baseUrl}/{userEventPath}/{focusedEvent.Id}";
         Guid[] ownerIdArray = [focusedEvent.OwnerId];
         var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
 
@@ -118,7 +120,7 @@ public class MailerService(
 
     public async Task SendCreateEventConfirmationMail(Entities.Event focusedEvent)
     {
-        var eventUrl = $"{baseUrl}event-management/{focusedEvent.Id}";
+        var eventUrl = $"{baseUrl}/{adminEventPath}/{focusedEvent.Id}";
         var ownerIdArray = new List<Guid>() { focusedEvent.OwnerId };
         EmailTemplate message = new(
             "Bekräftelse nytt event skapat",
@@ -138,7 +140,7 @@ public class MailerService(
 
     public async Task SendUpdateEventConfirmationMail(Entities.Event focusedEvent)
     {
-        var eventUrl = $"{baseUrl}event-management/{focusedEvent.Id}";
+        var eventUrl = $"{baseUrl}/{adminEventPath}/{focusedEvent.Id}";
         var ownerIdArray = new List<Guid>() { focusedEvent.OwnerId };
         EmailTemplate message = new(
             "Bekräftelse event uppdaterat",
@@ -177,7 +179,7 @@ public class MailerService(
     {
         if (recipients.Count == 0) { return; }
 
-        var eventUrl = $"{baseUrl}{focusedEvent.Id}/";
+        var eventUrl = $"{baseUrl}/{userEventPath}/{focusedEvent.Id}/";
         EmailTemplate message = new(
             $"Påminnelse om {Safe(focusedEvent.Title)}",
             $@"<html>
@@ -198,7 +200,7 @@ public class MailerService(
         var allergiesString = string.Join(", ", allergies);
         var preferences = focusedEvent.Participants.Where(p => p.Preferences != null).Select(p => p.Preferences).ToHashSet();
         var preferencesString = string.Join(", ", preferences);
-        var eventUrl = $"{baseUrl}{focusedEvent.Id}/";
+        var eventUrl = $"{baseUrl}/{adminEventPath}/{focusedEvent.Id}/";
 
         EmailTemplate message = new(
             $"Sammanfattning för {Safe(focusedEvent.Title)}",

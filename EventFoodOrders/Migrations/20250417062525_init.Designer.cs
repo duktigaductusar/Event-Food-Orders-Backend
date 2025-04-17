@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventFoodOrders.Migrations
 {
     [DbContext(typeof(EventFoodOrdersDbContext))]
-    [Migration("20250415090156_init")]
+    [Migration("20250417062525_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -51,6 +51,11 @@ namespace EventFoodOrders.Migrations
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("owner_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("status");
 
                     b.Property<string>("Title")
                         .IsRequired()
