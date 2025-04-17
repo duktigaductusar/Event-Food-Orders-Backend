@@ -52,7 +52,7 @@ public class MockUserService(IUserSeed seeder, IUoW uow) : IUserService
             var userFolderPath = Path.Combine(_mockEmailRootFolder, $"UserId__{userId}");
             Directory.CreateDirectory(userFolderPath);
 
-            var fileName = MakeSafeFileName(GetEmailTitleWithTimeStamp(message)) + ".txt";
+            var fileName = MakeSafeFileName(GetEmailTitleWithTimeStamp(message)) + ".html";
             var filePath = Path.Combine(userFolderPath, fileName);
 
             var content = new StringBuilder()

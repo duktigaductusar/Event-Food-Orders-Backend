@@ -70,7 +70,7 @@ public interface IEventRepository
     /// Get the next upcoming deadline, based on DateTime.Now.
     /// </summary>
     /// <returns></returns>
-    Task<Event?> GetNextUpcomingDeadline();
+    Task<IEnumerable<Event>> GetEventsWithPassedDeadlines(int? daysBeforeDeadline);
 
     /// <summary>
     /// Get ordered attending office participants by user IDs.
@@ -86,4 +86,11 @@ public interface IEventRepository
     /// <param name="eventId"></param>
     /// <returns></returns>
     Task<Event?> GetEventByIdWithParticipants(Guid eventId);
+
+    /// <summary>
+    /// Update an event to status deadline passed.
+    /// </summary>
+    /// <param name="focusedEvent"></param>
+    /// <returns></returns>
+    Task UpdateEventToStatusDeadlinePassed(Event focusedEvent);
 }
