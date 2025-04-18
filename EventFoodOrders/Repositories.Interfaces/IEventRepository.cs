@@ -64,13 +64,13 @@ public interface IEventRepository
     /// </summary>
     /// <param name="now"></param>
     /// <returns></returns>
-    Task<List<Event>> GetAllEventsAtDeadline(DateTime now);
+    Task<List<Event>> GetAllEventsAtDeadline(DateTimeOffset dateTimeOffset);
 
     /// <summary>
     /// Get the next upcoming deadline, based on DateTime.Now.
     /// </summary>
     /// <returns></returns>
-    Task<IEnumerable<Event>> GetEventsWithPassedDeadlines(int? daysBeforeDeadline);
+    Task<IEnumerable<Event>> GetActiveEventsWithPassedDeadlines();
 
     /// <summary>
     /// Get ordered attending office participants by user IDs.
