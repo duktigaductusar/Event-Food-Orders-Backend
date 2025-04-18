@@ -156,14 +156,31 @@ public class EventRepository(
     }
 
     //For the reminder IHostedService
-    public async Task<List<Event>> GetAllEventsAtDeadline(DateTimeOffset dateTimeOffset)
+    public async Task<List<Event>> GetAllEventsAtDeadline(DateTimeOffset date)
     {
-        await using (var context = await _contextFactory.CreateDbContextAsync())
+        var start = date.Date;
+        var end = start.AddDays(1);
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        var events = await context.Events
+            .Include(e => e.Participants)
+            .Where(e =>
+                e.Deadline >= start &&
+                e.Deadline < end)
+            .ToListAsync();
+
+        foreach (var e in events)
         {
-            return await context.Events
-                .Where(e => e.Deadline.Date == dateTimeOffset.Date)
-                .ToListAsync();
+            e.Participants = new(
+                e.Participants.Where(p =>
+                    p.ResponseType == ReType.Pending ||
+                    p.UserId == e.OwnerId
+                ).ToList()
+            );
         }
+
+        return events;
     }
 
     // For the summary IHostedService

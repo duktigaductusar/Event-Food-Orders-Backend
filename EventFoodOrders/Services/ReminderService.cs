@@ -1,15 +1,5 @@
 ﻿using EventFoodOrders.Entities;
-using EventFoodOrders.Repositories;
 using EventFoodOrders.Repositories.Interfaces;
-using EventFoodOrders.Utilities;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-
-using EventFoodOrders.Entities;
-using EventFoodOrders.Repositories.Interfaces;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace EventFoodOrders.Services;
 
@@ -25,18 +15,11 @@ public class ReminderService(
         while (!stoppingToken.IsCancellationRequested)
         {
             var now = GetSwedishDateTimeOffset().DateTime;
-            //var nextRunTime = now.Date.AddHours(7).AddMinutes(21); // 06:30 Swedish time today
-
-            //if (now > nextRunTime)
-            //{
-            //    nextRunTime = nextRunTime.AddDays(1); // Schedule for tomorrow.
-            //}
-
             var delay = GetDelayToNextRun(now);
-            logger.LogInformation("ReminderService will wait {Delay} before running (next run at {NextRun}).", delay, now.Add(delay));
 
             try
             {
+                logger.LogInformation("ReminderService will wait {Delay} before running (next run at {NextRun}).", delay, now.Add(delay));
                 await Task.Delay(delay, stoppingToken);
             }
             catch (OperationCanceledException)
@@ -67,13 +50,15 @@ public class ReminderService(
         return TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, timeZone);
     }
 
-    private TimeSpan GetDelayToNextRun(DateTimeOffset now)
+    private static TimeSpan GetDelayToNextRun(DateTimeOffset now)
     {
-        var nextRunTime = now.Date.AddHours(7).AddMinutes(32); // 06:30 Swedish time today
+        // 06:30 Swedish time today
+        var nextRunTime = now.Date.AddHours(6).AddMinutes(30);
 
         if (now > nextRunTime)
         {
-            nextRunTime = nextRunTime.AddDays(1); // Schedule for tomorrow.
+            // Schedule for tomorrow.
+            nextRunTime = nextRunTime.AddDays(1);
         }
 
         return nextRunTime - now;
@@ -100,11 +85,8 @@ public class ReminderService(
         foreach (var reminderEvent in reminderEvents)
         {
             var participants = reminderEvent.Participants
-                .Where(p => p.ResponseType == ReType.Pending)
                 .Select(p => p.UserId)
                 .ToList();
-
-            participants.Add(reminderEvent.OwnerId);
 
             if (participants.Count > 0)
             {
