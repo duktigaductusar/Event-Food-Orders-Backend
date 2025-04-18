@@ -9,11 +9,13 @@ public class SummaryService(
     IConfiguration configuration
 ) : BackgroundService
 {
-    private readonly TimeSpan PollingInterval = TimeSpan.FromMinutes(
+    private readonly TimeSpan _pollingInterval = TimeSpan.FromMinutes(
         double.TryParse(configuration["PollingIntervalSummaryService"], out var minutes)
             ? minutes
             : throw new ArgumentException("PollingIntervalSummaryService must be a number")
     );
+
+    private readonly TimeSpan _pollingIntervalError = TimeSpan.FromMinutes(5);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -27,18 +29,18 @@ public class SummaryService(
                 var uow = scope.ServiceProvider.GetRequiredService<IUoW>();
                 var mailerService = scope.ServiceProvider.GetRequiredService<IMailerService>();
                 var now = DateTime.Now;
-                var dueEvents = await uow.EventRepository.GetEventsWithPassedDeadlines(4);
+                var dueEvents = await uow.EventRepository.GetActiveEventsWithPassedDeadlines();
 
                 if (!dueEvents.Any())
                 {
-                    logger.LogInformation("No due events found. Checking again in {Interval} minutes.", PollingInterval.TotalMinutes);
+                    logger.LogInformation("No due events found. Checking again in {Interval} minutes.", _pollingInterval.TotalMinutes);
                 }
                 else
                 {
-                    await HandleSendSummaryMail(dueEvents, uow, mailerService);
+                    await DoNewEventSummaryWork(dueEvents, uow, mailerService);
                 }
 
-                await Task.Delay(PollingInterval, stoppingToken);
+                await Task.Delay(_pollingInterval, stoppingToken);
             }
             catch (OperationCanceledException)
             {
@@ -48,14 +50,14 @@ public class SummaryService(
             catch (Exception ex)
             {
                 logger.LogError(ex, "Unexpected error in SummaryService. Retrying in 5 minutes.");
-                await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+                await Task.Delay(_pollingIntervalError, stoppingToken);
             }
         }
 
         logger.LogInformation("SummaryService stopped.");
     }
 
-    private async Task HandleSendSummaryMail(
+    private async Task DoNewEventSummaryWork(
         IEnumerable<Event> dueEvents,
         IUoW uow,
         IMailerService mailerService
@@ -79,6 +81,7 @@ public class SummaryService(
 
 
 // OBS! PREVIOUS IMPLEMENTATION
+
 //using EventFoodOrders.Entities;
 //using EventFoodOrders.Repositories.Interfaces;
 
