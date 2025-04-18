@@ -156,24 +156,24 @@ public class EventRepository(
     }
 
     //For the reminder IHostedService
-    public async Task<List<Event>> GetAllEventsAtDeadline(DateTime now)
+    public async Task<List<Event>> GetAllEventsAtDeadline(DateTimeOffset dateTimeOffset)
     {
         await using (var context = await _contextFactory.CreateDbContextAsync())
         {
             return await context.Events
-                .Where(e => e.Deadline.Date == now.Date)
+                .Where(e => e.Deadline.Date == dateTimeOffset.Date)
                 .ToListAsync();
         }
     }
 
     // For the summary IHostedService
-    public async Task<IEnumerable<Event>> GetEventsWithPassedDeadlines(int? nrOfDaysBeforeDeadline)
+    public async Task<IEnumerable<Event>> GetActiveEventsWithPassedDeadlines()
     {
         await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
         {
             return await context.Events
                 .Where(e =>
-                    e.Deadline < DateTimeOffset.UtcNow.AddDays(nrOfDaysBeforeDeadline ?? 0) &&
+                    e.Deadline < DateTimeOffset.UtcNow &&
                     e.Status == EventStatus.BeforeDeadline)
                 .OrderBy(e => e.Deadline)
                 .Include(e => e.Participants)
