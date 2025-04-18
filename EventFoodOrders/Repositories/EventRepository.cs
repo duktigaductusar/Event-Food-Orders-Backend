@@ -16,7 +16,7 @@ public class EventRepository(
 
     public async Task<Event?> GetEventByIdWithParticipants(Guid eventId)
     {
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             return await context.Events
                 .AsNoTracking()
@@ -28,7 +28,7 @@ public class EventRepository(
 
     public async Task<Event> AddEvent(Event newEvent)
     {
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             context.Events.Add(newEvent);
             await context.SaveChangesAsync();
@@ -44,7 +44,7 @@ public class EventRepository(
             throw new EventNotFoundException(eventId);
         }
 
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             Event? eventToUpdate = await context.Events
                 .Where(e => e.Id == eventId)
@@ -58,14 +58,14 @@ public class EventRepository(
 
             context.Entry(eventToUpdate).CurrentValues.SetValues(updatedEvent);
             await context.SaveChangesAsync();
-            
+
             return eventToUpdate;
         }
     }
 
     public async Task DeleteEvent(Guid userId, Guid eventId)
     {
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             Event? eventToUpdate = await context.Events
                 .Where(e => e.Id == eventId)
@@ -84,7 +84,7 @@ public class EventRepository(
 
     public async Task<Event> GetEventForUser(Guid userId, Guid eventId)
     {
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             Event? eventToFind = await context.Events
                 .Where(e => e.Id == eventId)
@@ -104,7 +104,7 @@ public class EventRepository(
 
     public async Task<IEnumerable<Event>> GetAllEventsForUser(Guid userId)
     {
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             return await context.Events
                 .AsNoTracking()
@@ -117,7 +117,7 @@ public class EventRepository(
 
     public async Task<IEnumerable<Participant>> GetAttendingOfficeParticipantsDescendingByUpdate(IEnumerable<Guid> userIds)
     {
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             return await context.Events
                 .AsNoTracking()
@@ -132,7 +132,7 @@ public class EventRepository(
 
     public async Task<Event?> GetSingleEventWithCondition(Expression<Func<Event, bool>> condition)
     {
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             return await context.Events
                 .AsNoTracking()
@@ -144,7 +144,7 @@ public class EventRepository(
 
     public async Task<IEnumerable<Participant>> GetParticipantsByEventId(Guid eventId)
     {
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             return await context.Events
                 .AsNoTracking()
@@ -161,32 +161,33 @@ public class EventRepository(
         var start = date.Date;
         var end = start.AddDays(1);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
-
-        var events = await context.Events
-            .Include(e => e.Participants)
-            .Where(e =>
-                e.Deadline >= start &&
-                e.Deadline < end)
-            .ToListAsync();
-
-        foreach (var e in events)
+        await using (EventFoodOrdersDbContext _context = await _contextFactory.CreateDbContextAsync())
         {
-            e.Participants = new(
-                e.Participants.Where(p =>
-                    p.ResponseType == ReType.Pending ||
-                    p.UserId == e.OwnerId
-                ).ToList()
-            );
-        }
+            var events = await _context.Events
+                .Include(e => e.Participants)
+                .Where(e =>
+                    e.Deadline >= start &&
+                    e.Deadline < end)
+                .ToListAsync();
 
-        return events;
+                        foreach (var e in events)
+                        {
+                            e.Participants = new(
+                                e.Participants.Where(p =>
+                                    p.ResponseType == ReType.Pending ||
+                                    p.UserId == e.OwnerId
+                                ).ToList()
+                            );
+                        }
+
+                        return events;
+        }
     }
 
     // For the summary IHostedService
     public async Task<IEnumerable<Event>> GetActiveEventsWithPassedDeadlines()
     {
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             return await context.Events
                 .Where(e =>
@@ -201,7 +202,7 @@ public class EventRepository(
     // For the summary IHostedService
     public async Task UpdateEventToStatusDeadlinePassed(Event focusedEvent)
     {
-        await using (EventFoodOrdersDbContext context = _contextFactory.CreateDbContext())
+        await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             var findEvent = await context.Events
                 .Where(e => e.Id == focusedEvent.Id)
