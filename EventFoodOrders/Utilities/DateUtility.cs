@@ -6,10 +6,10 @@ public static class DateUtility
             ? "Central European Standard Time"
             : "Europe/Stockholm";
 
-    public static DateTimeOffset GetSwedishDateTimeOffset(DateTime )
+    public static DateTimeOffset GetSwedishDateTimeOffset(DateTimeOffset date)
     {
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneId);
-        return TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, timeZone);
+        return TimeZoneInfo.ConvertTime(date, timeZone);
     }
 
     public static DateTimeOffset GetSwedishDateTimeOffsetNow()
