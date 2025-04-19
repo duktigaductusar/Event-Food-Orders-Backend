@@ -45,6 +45,10 @@ namespace EventFoodOrders.Migrations
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("end_time");
 
+                    b.Property<DateTimeOffset>("LastUpdated")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("last_updated");
+
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("owner_id");

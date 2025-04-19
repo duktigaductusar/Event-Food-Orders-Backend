@@ -28,7 +28,6 @@ public class SummaryService(
                 using var scope = scopeFactory.CreateScope();
                 var uow = scope.ServiceProvider.GetRequiredService<IUoW>();
                 var mailerService = scope.ServiceProvider.GetRequiredService<IMailerService>();
-                var now = DateTime.Now;
                 var dueEvents = await uow.EventRepository.GetActiveEventsWithPassedDeadlines();
 
                 if (!dueEvents.Any())
@@ -47,9 +46,9 @@ public class SummaryService(
                 logger.LogInformation("SummaryService is stopping due to cancellation.");
                 break;
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                logger.LogError(ex, "Unexpected error in SummaryService. Retrying in 5 minutes.");
+                logger.LogError(exception, "Unexpected error in SummaryService. Retrying in 5 minutes.");
                 await Task.Delay(_pollingIntervalError, stoppingToken);
             }
         }

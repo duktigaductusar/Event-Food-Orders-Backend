@@ -1,6 +1,5 @@
 ﻿using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
-using System.Globalization;
 
 namespace EventFoodOrders.Services;
 
@@ -30,9 +29,10 @@ public class MailerService(
             $@"<html>
                 <body>
                     <p>{Safe(ownerInfo[0].Username)} bjuder in dig till {Safe(focusedEvent.Title)}.</p>
-                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date.LocalDateTime)}<p>
+                    <p>Event Id: {focusedEvent.Id}</p>
+                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date)}</p>
+                    <p>Deadline: {Safe(focusedEvent.Deadline)}</p>
                     <p>Antal Deltagare: {userIds.Count()}</p>
-                    <br/>
                     <p>{Safe(focusedEvent.Description ?? String.Empty)}</p>
                     <p><a href=""{Safe(eventUrl)}"">Klicka här för att svara på inbjudan.</a></p>
                 </body>
@@ -57,9 +57,10 @@ public class MailerService(
             $@"<html>
                 <body>
                     <p>{Safe(ownerInfo[0].Username)} bjuder in dig till {Safe(focusedEvent.Title)}.</p>
-                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date.LocalDateTime)}<p>
+                    <p>Event Id: {focusedEvent.Id}</p>
+                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date)}<p>
+                    <p>Deadline: {Safe(focusedEvent.Deadline)}</p>
                     <p>Antal Deltagare: {userIds.Count()}</p>
-                    <br/>
                     <p>{Safe(focusedEvent.Description ?? String.Empty)}</p>
                     <p><a href=""{Safe(eventUrl)}"">Klicka här för att svara på inbjudan.</a></p>
                 </body>
@@ -83,8 +84,7 @@ public class MailerService(
         $@"<html>
             <body>
                 <p>Eventet <strong>{Safe(focusedEvent.Title)}</strong> har ställts av {Safe(ownerInfo[0].Username)}.</p>
-                <p>Datum och tid för det borttagna eventet: {Safe(focusedEvent.Date.LocalDateTime)}<p>
-                <br/>
+                <p>Datum och tid för det borttagna eventet: {Safe(focusedEvent.Date)}</p>
                 <p>Det innebär att din inbjudan inte längre gäller.</p>
                 <p>Ingen åtgärd krävs från dig.</p>
             </body>
@@ -108,8 +108,8 @@ public class MailerService(
         $@"<html>
             <body>
                 <p>Din inbjudan har blivit avbokad till eventet <strong>{Safe(focusedEvent.Title)}</strong>.</p>
-                <p>Datum för det avbokade eventet: {Safe(focusedEvent.Date.LocalDateTime)}<p>
-                <br/>
+                <p>Event Id: {focusedEvent.Id}</p>
+                <p>Datum för det avbokade eventet: {Safe(focusedEvent.Date)}</p>
                 <p>{Safe(ownerInfo[0].Username)} har tagit bort dig från deltagarlistan.</p>
                 <p>Ingen åtgärd krävs från dig.</p>
             </body>
@@ -127,11 +127,10 @@ public class MailerService(
             $@"<html>
                 <body>
                     <p>Event '{Safe(focusedEvent.Title)}' har skapats.</p>
-                    <p>Event ID: {focusedEvent.Id}</p>
-                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date.LocalDateTime)}</p>
-                    <br/>
+                    <p>Event Id: {focusedEvent.Id}</p>
+                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date)}</p>
+                    <p>Deadline: {Safe(focusedEvent.Deadline)}</p>
                     <p>{Safe(focusedEvent.Description ?? String.Empty)}</p>
-                    <br/>
                     <p><a href=""{Safe(eventUrl)}"">Klicka här för att hantera eventet.</a></p>
                 </body>
             </html>");
@@ -148,10 +147,9 @@ public class MailerService(
                 <body>
                     <p>Event '{Safe(focusedEvent.Title)}' har uppdaterats.</p>
                     <p>Event Id: {focusedEvent.Id}</p>
-                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date.LocalDateTime)}</p>
-                    <br/>
+                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date)}</p>
+                    <p>Deadline: {Safe(focusedEvent.Deadline)}</p>
                     <p>{Safe(focusedEvent.Description ?? String.Empty)}</p>   
-                    <br/>
                     <p><a href=""{Safe(eventUrl)}"">Klicka här för att hantera eventet.</a></p>
                 </body>
             </html>");
@@ -167,8 +165,7 @@ public class MailerService(
                 <body>
                     <p>Event '{Safe(focusedEvent.Title)}' har stängts.</p>
                     <p>Event Id: {focusedEvent.Id}</p>
-                    <p>Datum och tid för det stängda eventet: {Safe(focusedEvent.Date.LocalDateTime)}<p>
-                    <br/>
+                    <p>Datum och tid för det stängda eventet: {Safe(focusedEvent.Date)}</p>
                     <p>{Safe(focusedEvent.Description ?? String.Empty)}</p>
                 </body>
             </html>");
@@ -184,7 +181,10 @@ public class MailerService(
             $"Påminnelse om {Safe(focusedEvent.Title)}",
             $@"<html>
                 <body>
-                    <p>Deadline för att svara på inbjudan till {Safe(focusedEvent.Title)} är idag klockan {focusedEvent.Deadline.Hour}:{focusedEvent.Deadline.Minute}</p>
+                    <p>Event '{Safe(focusedEvent.Title)}' påminelse.</p>
+                    <p>Event Id: {focusedEvent.Id}</p>
+                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date)}</p>
+                    <p>Deadline: {Safe(focusedEvent.Deadline)}</p>
                     <p><a href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a></p>
                  </body>
             </html>");
@@ -207,13 +207,12 @@ public class MailerService(
             $@"<html>
                 <body>
                     <p>Deadline för {Safe(focusedEvent.Title)} har gått ut.</p>
+                    <p>Event Id: {focusedEvent.Id}</p>
+                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date.LocalDateTime)}</p>
                     <p>{office.Count} personer kommer närvara på plats.</p>
                     <p>{wantsFood.Count} personer önskar mat, {allergies.Count} person(er) har anmält allergier och {preferences.Count} person(er) har anmält matpreferenser.</p>
-                    <br/>
                     <p>Allergier: {Safe(allergiesString)}</p>
-                    <br/>
                     <p>Matpreferenser: {Safe(preferencesString)}</p>
-                    <br/>
                     <p><a href=""{Safe(eventUrl)}"">Klicka här för att hantera eventet.</a></p>
                 </body>
             </html>");
@@ -226,8 +225,10 @@ public class MailerService(
         return System.Net.WebUtility.HtmlEncode(unsafeValue);
     }
 
-    private static string Safe(DateTime unsafeValue)
+    private static string Safe(DateTimeOffset unsafeValue)
     {
-        return System.Net.WebUtility.HtmlEncode(unsafeValue.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture));
+        return System.Net.WebUtility.HtmlEncode(
+            DateUtility.GetSwedishDateTimeOffsetAsString(unsafeValue)
+        );
     }
 }

@@ -5,7 +5,7 @@ using EventFoodOrders.Utilities;
 namespace EventFoodOrders.Entities;
 
 [Table("participants")]
-public class Participant
+public class Participant : ITrackLastUpdated
 {
     public Participant()
     {
@@ -14,7 +14,6 @@ public class Participant
         WantsMeal = false;
         Allergies = "";
         Preferences = "";
-        LastUpdated = DateTime.Now;
     }
 
     public Participant(Guid userId, Guid eventId)

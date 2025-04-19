@@ -20,15 +20,15 @@ public class MailManager(IMailerService mailerService) : IMailManager
 
     public async Task HandleUpdateEventMails(
         Event updatedEvent,
-        IEnumerable<Participant> participantsToAdd,
-        IEnumerable<Participant> participantsToDelete
+        IEnumerable<Participant> participantsToSendUpdateTo,
+        IEnumerable<Participant> participantsToSendDeleteTo
     )
     {
-        var userIds = participantsToAdd
+        var userIds = participantsToSendUpdateTo
                 .Select(p => p.UserId)
                 .ToHashSet();
 
-        var userIdsToSendRevokeMailTo = participantsToDelete
+        var userIdsToSendRevokeMailTo = participantsToSendDeleteTo
             .Where(p => !userIds.Contains(p.UserId))
             .Select(p => p.UserId);
 
