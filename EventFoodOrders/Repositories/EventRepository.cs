@@ -158,7 +158,8 @@ public class EventRepository(
     //For the reminder IHostedService
     public async Task<List<Event>> GetAllEventsAtDeadline(DateTimeOffset date)
     {
-        var start = date.Date;
+        var dateUtc = date.ToUniversalTime();
+        var start = dateUtc.ToUniversalTime();
         var end = start.AddDays(1);
 
         await using (EventFoodOrdersDbContext _context = await _contextFactory.CreateDbContextAsync())
@@ -170,17 +171,17 @@ public class EventRepository(
                     e.Deadline < end)
                 .ToListAsync();
 
-                        foreach (var e in events)
-                        {
-                            e.Participants = new(
-                                e.Participants.Where(p =>
-                                    p.ResponseType == ReType.Pending ||
-                                    p.UserId == e.OwnerId
-                                ).ToList()
-                            );
-                        }
+            foreach (var e in events)
+            {
+                e.Participants = new(
+                    e.Participants.Where(p =>
+                        p.ResponseType == ReType.Pending ||
+                        p.UserId == e.OwnerId
+                    ).ToList()
+                );
+            }
 
-                        return events;
+            return events;
         }
     }
 

@@ -2,12 +2,19 @@
 
 public static class DateUtility
 {
-    public static DateTimeOffset GetSwedishDateTimeOffset()
-    {
-        string timeZoneId = OperatingSystem.IsWindows()
+    public static string TimeZoneId {  get; set; } = OperatingSystem.IsWindows()
             ? "Central European Standard Time"
             : "Europe/Stockholm";
-        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+
+    public static DateTimeOffset GetSwedishDateTimeOffset(DateTime )
+    {
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneId);
+        return TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, timeZone);
+    }
+
+    public static DateTimeOffset GetSwedishDateTimeOffsetNow()
+    {
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneId);
         return TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, timeZone);
     }
 }

@@ -14,7 +14,6 @@ public class Participant : ITrackLastUpdated
         WantsMeal = false;
         Allergies = "";
         Preferences = "";
-        // LastUpdated = DateTime.Now;
     }
 
     public Participant(Guid userId, Guid eventId)
