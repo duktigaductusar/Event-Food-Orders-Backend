@@ -46,7 +46,7 @@ public class ReminderService(
     private static TimeSpan GetDelayToNextRun(DateTimeOffset now)
     {
         // 06:30 Swedish time today.
-        var nextRunTime = now.Date.AddHours(12).AddMinutes(27);
+        var nextRunTime = now.Date.AddHours(6).AddMinutes(30);
 
         if (now > nextRunTime)
         {
