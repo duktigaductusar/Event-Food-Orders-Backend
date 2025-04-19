@@ -128,7 +128,9 @@ public class EventService(
         updatedEvent = await _eventRepository.UpdateEvent(eventId, updatedEvent);
 
         await _participantService.AddParticipantsToEvent(updatedEvent, participantsToAdd);
-        
+
+        // TODO! Fix Issue: Send only mails if user have been updated in event should send mail when
+        // event have been updated to, e.g., time and name and description.
         await mailManager.HandleUpdateEventMails(
             updatedEvent,
             participantsToAdd,

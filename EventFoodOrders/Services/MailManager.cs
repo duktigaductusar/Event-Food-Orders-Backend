@@ -18,6 +18,8 @@ public class MailManager(IMailerService mailerService) : IMailManager
         await mailerService.SendCreateEventConfirmationMail(newEvent);
     }
 
+    // TODO! Fix Issue: Send only mails if user have been updated in event should send mail when
+    // event have been updated to, e.g., time and name and description.
     public async Task HandleUpdateEventMails(
         Event updatedEvent,
         IEnumerable<Participant> participantsToAdd,

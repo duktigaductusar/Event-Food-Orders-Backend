@@ -120,8 +120,8 @@ public static class DBSeed
                 {
                     Title = f.PickRandom(eventTitles),
                     Description = f.PickRandom(eventDescripotions),
-                    Date = f.Date.FutureOffset(2),
-                    Deadline = f.Date.FutureOffset(1)
+                    Date = f.Date.FutureOffset(2).ToUniversalTime(),
+                    Deadline = f.Date.FutureOffset(1).ToUniversalTime()
                 };
 
                 return e;

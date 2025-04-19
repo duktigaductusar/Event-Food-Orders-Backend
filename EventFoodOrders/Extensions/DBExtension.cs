@@ -8,8 +8,14 @@ public static class DBExtension
 {
     public static void ConfigureDatabaseExtension(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContextFactory<EventFoodOrdersDbContext>(opt =>
-            opt.UseSqlServer(configuration.GetConnectionString("DbContext")));
+        services.AddSingleton<UtcSaveChangesInterceptor>();
+
+        services.AddDbContextFactory<EventFoodOrdersDbContext>((sp, options) =>
+        {
+            options
+                .UseSqlServer(configuration.GetConnectionString("DbContext"))
+                .AddInterceptors(sp.GetRequiredService<UtcSaveChangesInterceptor>());
+        });
     }
 
     public static void UseDatabaseExtension(this IApplicationBuilder app, bool isDevelopment)

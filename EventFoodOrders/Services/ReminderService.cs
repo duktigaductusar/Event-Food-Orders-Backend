@@ -1,5 +1,6 @@
 ﻿using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories.Interfaces;
+using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Services;
 
@@ -14,7 +15,7 @@ public class ReminderService(
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            var now = GetSwedishDateTimeOffset().DateTime;
+            var now = DateUtility.GetSwedishDateTimeOffset().DateTime;
             var delay = GetDelayToNextRun(now);
 
             try
@@ -39,15 +40,6 @@ public class ReminderService(
         }
 
         logger.LogInformation("ReminderService stopped.");
-    }
-
-    private static DateTimeOffset GetSwedishDateTimeOffset()
-    {
-        string timeZoneId = OperatingSystem.IsWindows()
-            ? "Central European Standard Time"
-            : "Europe/Stockholm";
-        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-        return TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, timeZone);
     }
 
     private static TimeSpan GetDelayToNextRun(DateTimeOffset now)
