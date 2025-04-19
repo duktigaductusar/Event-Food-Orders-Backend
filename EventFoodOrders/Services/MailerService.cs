@@ -13,6 +13,39 @@ public class MailerService(
     private readonly string adminEventPath = "event-management";
     private readonly string userEventPath = "event-details";
 
+    private static class EmailStyles
+    {
+        public const string Body = "margin: 0; padding: 8px; background-color: #f5f5f5;";
+        public const string Wrapper = "max-width: 600px; font-family: Arial, sans-serif; color: #333; background-color: white; padding: 0; margin: 0 auto; border: 1px solid #dae5e1; border-radius: 16px;";
+        public const string Header = "padding: 20px; background-color: #dae5e1; border-top-left-radius: 16px; border-top-right-radius: 16px;";
+        public const string Main = "padding: 30px; background-color: white;";
+        public const string Footer = "padding: 20px; background-color: #dae5e1; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;";
+        public const string Button = "display: inline-block; background: #64837a; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;";
+        public const string Heading = "font-size: 20px; font-weight: bold; margin-bottom: 10px;";
+        public const string Paragraph = "margin-bottom: 10px;";
+        public const string Icon = @"<img src=""https://ductus.global/wp-content/uploads/2023/12/ductus-logo-black.png"" alt=""Ductus"" width=""320"" style=""max-width: 100%; height: auto; display: block; margin: 0 auto;"" />";
+    }
+
+    private static string HtmlWrapper(string title, string content)
+    {
+        return $@"
+<html>
+    <body style='{EmailStyles.Body}'>
+        <div style='{EmailStyles.Wrapper}'>
+            <div style='{EmailStyles.Header}'>
+                <h3 style='{EmailStyles.Heading}'>{title}</h3>
+            </div>
+            <div style='{EmailStyles.Main}'>
+                {content}
+            </div>
+            <div style='{EmailStyles.Footer}'>
+                {EmailStyles.Icon}
+            </div>
+        </div>
+    </body>
+</html>";
+    }
+
     public async Task SendInvitationMail(Entities.Event focusedEvent, IEnumerable<Guid> userIds)
     {
         if (!userIds.Any())
@@ -26,17 +59,16 @@ public class MailerService(
 
         EmailTemplate message = new(
             "Inbjudan till nytt event",
-            $@"<html>
-                <body>
-                    <p>{Safe(ownerInfo[0].Username)} bjuder in dig till {Safe(focusedEvent.Title)}.</p>
-                    <p>Event Id: {focusedEvent.Id}</p>
-                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date)}</p>
-                    <p>Deadline: {Safe(focusedEvent.Deadline)}</p>
-                    <p>Antal Deltagare: {userIds.Count()}</p>
-                    <p>{Safe(focusedEvent.Description ?? String.Empty)}</p>
-                    <p><a href=""{Safe(eventUrl)}"">Klicka här för att svara på inbjudan.</a></p>
-                </body>
-            </html>");
+            HtmlWrapper($"Inbjudan till event '{Safe(focusedEvent.Title)}'",
+                $@"<p style='{EmailStyles.Paragraph}'>{Safe(ownerInfo[0].Username)} bjuder in dig till {Safe(focusedEvent.Title)}.</p>
+                <p style='{EmailStyles.Paragraph}'>Event Id: {focusedEvent.Id}</p>
+                <p style='{EmailStyles.Paragraph}'>Datum och tid för eventet: {Safe(focusedEvent.Date)}</p>
+                <p style='{EmailStyles.Paragraph}'>Deadline: {Safe(focusedEvent.Deadline)}</p>
+                <p style='{EmailStyles.Paragraph}'>Antal Deltagare: {userIds.Count()}</p>
+                <p style='{EmailStyles.Paragraph}'>{Safe(focusedEvent.Description ?? String.Empty)}</p>
+                <br/>
+                <a style='{EmailStyles.Button}' href=""{Safe(eventUrl)}"">Klicka här för att svara på inbjudan</a>"            
+        ));
 
         await userService.SendEmail(userIds.ToList(), message);
     }
@@ -54,17 +86,16 @@ public class MailerService(
 
         EmailTemplate message = new(
             "Event har uppdaterats",
-            $@"<html>
-                <body>
-                    <p>{Safe(ownerInfo[0].Username)} bjuder in dig till {Safe(focusedEvent.Title)}.</p>
-                    <p>Event Id: {focusedEvent.Id}</p>
-                    <p>Datum och tid för eventet: {Safe(focusedEvent.Date)}<p>
-                    <p>Deadline: {Safe(focusedEvent.Deadline)}</p>
-                    <p>Antal Deltagare: {userIds.Count()}</p>
-                    <p>{Safe(focusedEvent.Description ?? String.Empty)}</p>
-                    <p><a href=""{Safe(eventUrl)}"">Klicka här för att svara på inbjudan.</a></p>
-                </body>
-            </html>");
+            HtmlWrapper($"Inbjudan till event '{Safe(focusedEvent.Title)}'",
+                $@"<p style='{EmailStyles.Paragraph}'>{Safe(ownerInfo[0].Username)} bjuder in dig till {Safe(focusedEvent.Title)}.</p>
+                <p style='{EmailStyles.Paragraph}'>Event Id: {focusedEvent.Id}</p>
+                <p style='{EmailStyles.Paragraph}'>Datum och tid för eventet: {Safe(focusedEvent.Date)}</p>
+                <p style='{EmailStyles.Paragraph}'>Deadline: {Safe(focusedEvent.Deadline)}</p>
+                <p style='{EmailStyles.Paragraph}'>Antal Deltagare: {userIds.Count()}</p>
+                <p style='{EmailStyles.Paragraph}'>{Safe(focusedEvent.Description ?? String.Empty)}</p>
+                <br/>
+                <a style='{EmailStyles.Button}' href=""{Safe(eventUrl)}"">Klicka här för att svara på inbjudan</a>"
+        ));
 
         await userService.SendEmail(userIds.ToList(), message);
     }
@@ -80,15 +111,13 @@ public class MailerService(
         var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
 
         EmailTemplate message = new(
-        "Eventet har blivit borttaget",
-        $@"<html>
-            <body>
-                <p>Eventet <strong>{Safe(focusedEvent.Title)}</strong> har ställts av {Safe(ownerInfo[0].Username)}.</p>
-                <p>Datum och tid för det borttagna eventet: {Safe(focusedEvent.Date)}</p>
-                <p>Det innebär att din inbjudan inte längre gäller.</p>
-                <p>Ingen åtgärd krävs från dig.</p>
-            </body>
-        </html>");
+            "Eventet har blivit borttaget",
+            HtmlWrapper($"Inbjudan till event '{Safe(focusedEvent.Title)}'",
+                $@"<p style='{EmailStyles.Paragraph}'>Eventet <strong>{Safe(focusedEvent.Title)}</strong> har ställts av {Safe(ownerInfo[0].Username)}.</p>
+                <p style='{EmailStyles.Paragraph}'>Datum och tid för det borttagna eventet: {Safe(focusedEvent.Date)}</p>
+                <p style='{EmailStyles.Paragraph}'>Det innebär att din inbjudan inte längre gäller.</p>
+                <p style='{EmailStyles.Paragraph}'>Ingen åtgärd krävs från dig.</p>"
+        ));
 
         await userService.SendEmail(userIds.ToList(), message);
     }
