@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EventFoodOrders.Entities;
 
 [Table("events")]
-public class Event
+public class Event : ITrackLastUpdated
 {
     public Event()
     {
@@ -52,6 +52,9 @@ public class Event
     [Required]
     [Column("status")]
     public String Status { get; set; } = EventStatus.BeforeDeadline;
+
+    [Column("last_updated")]
+    public DateTimeOffset LastUpdated { get; set; }
 
     [ForeignKey("owner_id")]
     [Column("owner_id")]

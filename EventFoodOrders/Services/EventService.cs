@@ -7,7 +7,6 @@ using EventFoodOrders.Exceptions;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
-using Microsoft.Extensions.Logging;
 using Event = EventFoodOrders.Entities.Event;
 using Participant = EventFoodOrders.Entities.Participant;
 
@@ -67,7 +66,7 @@ public class EventService(
                 });
             }
         }
-        
+
         var participants = await _participantService.AddParticipantsToEvent(
             newEvent, participantsToAdd);
 
@@ -80,6 +79,12 @@ public class EventService(
     public async Task<EventForResponseDto> UpdateEvent(Guid eventId, Guid ownerId, EventForUpdateDto updatedEventDto)
     {
         var eventToUpdate = await _eventRepository.GetEventForUser(ownerId, eventId);
+        // Keep original values for comparison
+        var originalTitle = eventToUpdate.Title;
+        var originalStartTime = eventToUpdate.Date;
+        var originalEndTime = eventToUpdate.EndTime;
+        var originalDescription = eventToUpdate.Description;
+
         var updatedEvent = _mapper.MapToEventFromUpdateDto(updatedEventDto, eventId, ownerId);
 
         var participantsToDelete = eventToUpdate.Participants
@@ -128,10 +133,16 @@ public class EventService(
         updatedEvent = await _eventRepository.UpdateEvent(eventId, updatedEvent);
 
         await _participantService.AddParticipantsToEvent(updatedEvent, participantsToAdd);
-        
+
+        var eventDetailsChanged =
+            originalTitle != updatedEvent.Title ||
+            originalStartTime != updatedEvent.Date ||
+            originalEndTime != updatedEvent.EndTime ||
+            originalDescription != updatedEvent.Description;
+
         await mailManager.HandleUpdateEventMails(
             updatedEvent,
-            participantsToAdd,
+            eventDetailsChanged ? updatedEvent.Participants : participantsToAdd,
             participantsToDelete);
 
         return _mapper.Map<EventForResponseDto>(updatedEvent);
@@ -141,7 +152,8 @@ public class EventService(
     {
         var eventToDelete = await _eventRepository.GetEventByIdWithParticipants(eventId);
 
-        if (eventToDelete != null) {
+        if (eventToDelete != null)
+        {
             await _eventRepository.DeleteEvent(ownerId, eventId);
             await mailManager.HandleCancelEventMails(eventToDelete, ownerId);
         }

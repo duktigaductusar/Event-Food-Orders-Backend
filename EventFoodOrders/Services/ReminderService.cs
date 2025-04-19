@@ -1,5 +1,6 @@
 ﻿using EventFoodOrders.Entities;
 using EventFoodOrders.Repositories.Interfaces;
+using EventFoodOrders.Utilities;
 
 namespace EventFoodOrders.Services;
 
@@ -14,7 +15,8 @@ public class ReminderService(
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            var now = GetSwedishDateTimeOffset().DateTime;
+            // Use Swedish now to schedule reminders mail.  
+            var now = DateUtility.GetSwedishDateTimeOffsetNow().DateTime;
             var delay = GetDelayToNextRun(now);
 
             try
@@ -41,18 +43,9 @@ public class ReminderService(
         logger.LogInformation("ReminderService stopped.");
     }
 
-    private static DateTimeOffset GetSwedishDateTimeOffset()
-    {
-        string timeZoneId = OperatingSystem.IsWindows()
-            ? "Central European Standard Time"
-            : "Europe/Stockholm";
-        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-        return TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, timeZone);
-    }
-
     private static TimeSpan GetDelayToNextRun(DateTimeOffset now)
     {
-        // 06:30 Swedish time today
+        // 06:30 Swedish time today.
         var nextRunTime = now.Date.AddHours(6).AddMinutes(30);
 
         if (now > nextRunTime)
@@ -78,8 +71,11 @@ public class ReminderService(
 
         foreach (var date in daysToCheck)
         {
+            // Convert Swedish date back to universal time to check
+            // against stored values in database.
             reminderEvents.AddRange(
-                await uow.EventRepository.GetAllEventsAtDeadline(date));
+                await uow.EventRepository.GetAllEventsAtDeadline(
+                    date.ToUniversalTime()));
         }
 
         foreach (var reminderEvent in reminderEvents)

@@ -22,6 +22,7 @@ namespace EventFoodOrders.Migrations
                     end_time = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     deadline = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    last_updated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     owner_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
