@@ -22,7 +22,6 @@ jobs:
         sed -i "s|\${JWT_ISSUER}|${{ secrets.JWT_ISSUER }}|g" EventFoodOrders/.env
         sed -i "s|\${JWT_AUDIENCE}|${{ secrets.JWT_AUDIENCE }}|g" EventFoodOrders/.env
         sed -i "s|\${JWT_SECRET}|${{ secrets.JWT_SECRET }}|g" EventFoodOrders/.env
-        sed -i "s|\${DB_CONNECTION_STRING}|${{ secrets.DB_CONNECTION_STRING }}|g" EventFoodOrders/.env
 
     - name: Start Database with Docker Compose
       run: docker compose -f docker-compose.staging.yml up -d event-food-orders-api
