@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
   
-    - name: Inject Secrets into appsettings.json
+    - name: Inject Secrets into .env
       run: |
         cp EventFoodOrders/.env.template EventFoodOrders/.env
         
@@ -28,7 +28,7 @@ jobs:
         sed -i "s|\${DB_CONNECTION_STRING}|${{ secrets.DB_CONNECTION_STRING }}|g" EventFoodOrders/.env
 
     - name: Start Database with Docker Compose
-      run: docker compose -f docker-compose.staging.yml up -d event-food-orders
+      run: docker compose -f docker-compose.staging.yml up -d event-food-orders-api
 
     - name: Start API Container
       run: docker compose -f docker-compose.staging.yml up -d event-food-orders-db
@@ -59,7 +59,7 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Inject Secrets into appsettings.json
+      - name: Inject Secrets into .env
         run: |
           cp EventFoodOrders/.env.template EventFoodOrders/.env
           sed -i "s|\${AZURE_AD_TENANT_ID}|${{ secrets.AZURE_AD_TENANT_ID }}|g" EventFoodOrders/.env
