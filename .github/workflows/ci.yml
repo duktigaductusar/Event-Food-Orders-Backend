@@ -16,15 +16,12 @@ jobs:
     - name: Inject Secrets into .env
       run: |
         cp EventFoodOrders/.env.template EventFoodOrders/.env
-        
         sed -i "s|\${AZURE_AD_TENANT_ID}|${{ secrets.AZURE_AD_TENANT_ID }}|g" EventFoodOrders/.env
         sed -i "s|\${AZURE_AD_CLIENT_ID}|${{ secrets.AZURE_AD_CLIENT_ID }}|g" EventFoodOrders/.env
         sed -i "s|\${AZURE_AD_CLIENT_SECRET}|${{ secrets.AZURE_AD_CLIENT_SECRET }}|g" EventFoodOrders/.env
-        
         sed -i "s|\${JWT_ISSUER}|${{ secrets.JWT_ISSUER }}|g" EventFoodOrders/.env
         sed -i "s|\${JWT_AUDIENCE}|${{ secrets.JWT_AUDIENCE }}|g" EventFoodOrders/.env
         sed -i "s|\${JWT_SECRET}|${{ secrets.JWT_SECRET }}|g" EventFoodOrders/.env
-
         sed -i "s|\${DB_CONNECTION_STRING}|${{ secrets.DB_CONNECTION_STRING }}|g" EventFoodOrders/.env
 
     - name: Start Database with Docker Compose
@@ -68,14 +65,16 @@ jobs:
           sed -i "s|\${JWT_ISSUER}|${{ secrets.JWT_ISSUER }}|g" EventFoodOrders/.env
           sed -i "s|\${JWT_AUDIENCE}|${{ secrets.JWT_AUDIENCE }}|g" EventFoodOrders/.env
           sed -i "s|\${JWT_SECRET}|${{ secrets.JWT_SECRET }}|g" EventFoodOrders/.env
+          sed -i "s|\${DB_CONNECTION_STRING}|${{ secrets.DB_CONNECTION_STRING }}|g" EventFoodOrders/.env
 
       - name: Determine Image Tag
         run: echo "IMAGE_TAG=pr-${{ github.event.pull_request.number || github.sha }}" >> $GITHUB_ENV
 
+      - name: Define lowercase image name
+        run: echo "IMAGE_NAME=$(echo ghcr.io/${{ github.repository_owner }}/ductus-event-food-service-api:${{ env.IMAGE_TAG }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Build Docker image
-        run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/event-food-orders-api:${{ env.IMAGE_TAG }} .
+        run: docker build -t "$IMAGE_NAME" -f Containers/app/Dockerfile .
 
       - name: Push Docker image to GitHub Container Registry
-        run: |
-          docker push ghcr.io/${{ github.repository_owner }}/event-food-orders-api:${{ env.IMAGE_TAG }}
+        run: docker push "$IMAGE_NAME"
