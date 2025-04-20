@@ -80,14 +80,16 @@ public class ReminderService(
 
         foreach (var reminderEvent in reminderEvents)
         {
-            var participants = reminderEvent.Participants
+            var pendingUserIds = reminderEvent.Participants
+                .Where(p => p.ResponseType == ReType.Pending)
                 .Select(p => p.UserId)
                 .ToList();
 
-            if (participants.Count > 0)
+            if (pendingUserIds.Count > 0)
             {
-                await mailerService.SendReminderMail(participants, reminderEvent);
-                logger.LogInformation("Reminder email prepared for event: {Title}, participants: {Count}", reminderEvent.Title, participants.Count);
+                await mailerService.SendReminderMail(pendingUserIds, reminderEvent);
+                await mailerService.SendReminderMailConfirmation(reminderEvent, pendingUserIds);
+                logger.LogInformation("Reminder email prepared for event: {Title}, participants: {Count}", reminderEvent.Title, pendingUserIds.Count);
             }
         }
     }

@@ -51,6 +51,6 @@ public class MailManager(IServiceManager sm) : IMailManager
         await sm.MailerService.SendEventCanceledMail(
             eventToDelete, eventUserIds);
 
-        await sm.MailerService.SendDeleteEventConfirmationMail(eventToDelete, ownerId);
+        await sm.MailerService.SendDeleteEventConfirmationMail(eventToDelete);
     }
 }

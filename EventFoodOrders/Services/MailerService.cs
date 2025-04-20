@@ -147,9 +147,9 @@ public class MailerService(
         await sm.UserService.SendEmail(ownerIdArray, message);
     }
 
-    public async Task SendDeleteEventConfirmationMail(Entities.Event focusedEvent, Guid ownerId)
+    public async Task SendDeleteEventConfirmationMail(Entities.Event focusedEvent)
     {
-        var ownerIdArray = new List<Guid>() { ownerId };
+        var ownerIdArray = new List<Guid>() { focusedEvent.OwnerId };
 
         EmailTemplate message = new(
             "Bekräftelse event stängt",
@@ -157,6 +157,25 @@ public class MailerService(
                 $@"<p style='{EmailStyles.Paragraph}'>Event Id: {focusedEvent.Id}</p>
                 <p style='{EmailStyles.Paragraph}'>Datum och tid för det stängda eventet: {Safe(focusedEvent.Date)}</p>
                 <p style='{EmailStyles.Paragraph}'>{Safe(focusedEvent.Description ?? String.Empty)}</p>"
+        ));
+        await sm.UserService.SendEmail(ownerIdArray, message);
+    }
+
+    public async Task SendReminderMailConfirmation(Entities.Event focusedEvent, List<Guid> pendingUserIds)
+    {
+        var eventUrl = $"{baseUrl}/{adminEventPath}/{focusedEvent.Id}";
+        var ownerIdArray = new List<Guid>() { focusedEvent.OwnerId };
+
+        EmailTemplate message = new(
+            $"Påminelse skickad till väntande deltagare",
+            DuctusHtmlEmailWrapper($"Påminelse skickad till väntande deltagare gällande event '{focusedEvent.Title}'",
+                $@"<p style='{EmailStyles.Paragraph}'>Event Id: {focusedEvent.Id}</p>
+                <p style='{EmailStyles.Paragraph}'>Datum och tid för eventet: {Safe(focusedEvent.Date)}</p>
+                <p style='{EmailStyles.Paragraph}'>Deadline: {Safe(focusedEvent.Deadline)}</p>
+                <p style='{EmailStyles.Paragraph}'>Antal väntande svar: {pendingUserIds.Count}</p>    
+                <blockquote style='{EmailStyles.Description}'>{Safe(focusedEvent.Description ?? "Ingen beskrivning tillgänglig")}</blockquote>
+                <br/>
+                <a style='{EmailStyles.Button}' href=""{Safe(eventUrl)}"">Klicka här för att hantera eventet.</a>"
         ));
         await sm.UserService.SendEmail(ownerIdArray, message);
     }
@@ -184,10 +203,28 @@ public class MailerService(
         List<Guid> ownerId = [focusedEvent.OwnerId];
         var office = focusedEvent.Participants.Where(p => p.ResponseType == ReType.AttendingOffice).ToList();
         var wantsFood = focusedEvent.Participants.Where(p => p.WantsMeal).ToList();
-        var allergies = focusedEvent.Participants.Where(p => p.Allergies != null).Select(p => p.Allergies).ToHashSet();
+
+        var allergies = focusedEvent.Participants
+            .Select(p => p.Allergies?.Trim())
+            .Where(a => !string.IsNullOrWhiteSpace(a))
+            .ToHashSet();
+
+        var preferences = focusedEvent.Participants
+            .Select(p => p.Preferences?.Trim())
+            .Where(p => !string.IsNullOrWhiteSpace(p))
+            .ToHashSet();
+
         var allergiesString = string.Join(", ", allergies);
-        var preferences = focusedEvent.Participants.Where(p => p.Preferences != null).Select(p => p.Preferences).ToHashSet();
         var preferencesString = string.Join(", ", preferences);
+
+        var allergiesHtml = string.IsNullOrWhiteSpace(allergiesString)
+            ? string.Empty
+            : $"<p style='{EmailStyles.Paragraph}'>Allergier: {Safe(allergiesString)}</p>";
+
+        var preferencesHtml = string.IsNullOrWhiteSpace(preferencesString)
+            ? string.Empty
+            : $"<p style='{EmailStyles.Paragraph}'>Matpreferenser: {Safe(preferencesString)}</p>";
+
         var eventUrl = $"{baseUrl}/{adminEventPath}/{focusedEvent.Id}/";
 
         EmailTemplate message = new(
@@ -195,10 +232,10 @@ public class MailerService(
             DuctusHtmlEmailWrapper($"Deadline för {Safe(focusedEvent.Title)} har gått ut",
                 $@"<p style='{EmailStyles.Paragraph}'>Event Id: {focusedEvent.Id}</p>
                 <p style='{EmailStyles.Paragraph}'>Datum och tid för eventet: {Safe(focusedEvent.Date.LocalDateTime)}</p>
-                <p style='{EmailStyles.Paragraph}'>{office.Count} personer kommer närvara på plats.</p>
-                <p style='{EmailStyles.Paragraph}'>{wantsFood.Count} personer önskar mat, {allergies.Count} person(er) har anmält allergier och {preferences.Count} person(er) har anmält matpreferenser.</p>
-                <p style='{EmailStyles.Paragraph}'>Allergier: {Safe(allergiesString)}</p>
-                <p style='{EmailStyles.Paragraph}'>Matpreferenser: {Safe(preferencesString)}</p>
+                <p style='{EmailStyles.Paragraph}'>{office.Count} deltagare kommer närvara på plats.</p>
+                <p style='{EmailStyles.Paragraph}'>{wantsFood.Count} deltagare önskar mat, {allergies.Count} deltagare har anmält allergier och {preferences.Count} deltagare har anmält matpreferenser.</p>        
+                {allergiesHtml}
+                {p}
                 <blockquote style='{EmailStyles.Description}'>{Safe(focusedEvent.Description ?? "Ingen beskrivning tillgänglig")}</blockquote>
                 <br/>
                 <a style='{EmailStyles.Button}' href=""{Safe(eventUrl)}"">Klicka här för att hantera eventet.</a>"
