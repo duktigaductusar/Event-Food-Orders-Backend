@@ -164,24 +164,12 @@ public class EventRepository(
 
         await using (EventFoodOrdersDbContext _context = await _contextFactory.CreateDbContextAsync())
         {
-            var events = await _context.Events
+            return await _context.Events
                 .Include(e => e.Participants)
                 .Where(e =>
                     e.Deadline >= start &&
                     e.Deadline < end)
                 .ToListAsync();
-
-            foreach (var e in events)
-            {
-                e.Participants = new(
-                    e.Participants.Where(p =>
-                        p.ResponseType == ReType.Pending ||
-                        p.UserId == e.OwnerId
-                    ).ToList()
-                );
-            }
-
-            return events;
         }
     }
 

@@ -23,9 +23,8 @@ public interface IMailerService
     /// Send delete confirmation mail to the user that deleted the event.
     /// </summary>
     /// <param name="focusedEvent"></param>
-    /// <param name="ownerId"></param>
     /// <returns></returns>
-    Task SendDeleteEventConfirmationMail(Event focusedEvent, Guid ownerId);
+    Task SendDeleteEventConfirmationMail(Event focusedEvent);
 
     /// <summary>
     /// Send event canceled event to participants in the event.
@@ -74,4 +73,5 @@ public interface IMailerService
     /// <param name="userIds"></param>
     /// <returns></returns>
     Task SendRevokeInvitationMail(Event focusedEvent, IEnumerable<Guid> userIds);
+    Task SendReminderMailConfirmation(Event focusedEvent, List<Guid> pendingResponses);
 }
