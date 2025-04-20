@@ -23,7 +23,7 @@ services:
     env_file:
        - EventFoodOrders/.env
     environment:
-        ASPNETCORE_ENVIRONMENT: Testing
+        ASPNETCORE_ENVIRONMENT: Staging
     ports:
       - "8080:8080"
     networks:
