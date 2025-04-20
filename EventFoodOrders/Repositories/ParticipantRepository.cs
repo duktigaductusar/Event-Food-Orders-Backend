@@ -40,35 +40,26 @@ public class ParticipantRepository(
         await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
             Participant? participantToUpdate = context.Participants
-                .Where(e => e.Id == participantId)
+                .Where(p => p.Id == participantId)
                 .FirstOrDefault();
 
-            if (participantToUpdate is Participant)
+            if (participantToUpdate is null)
             {
-                UpdateParticipantEntity(participantToUpdate, updatedParticipant);
+                throw new ParticipantNotFoundException(participantId);
             }
-            else throw new ParticipantNotFoundException(participantId);
-
+            
+            UpdateParticipantEntity(participantToUpdate, updatedParticipant);
             await context.SaveChangesAsync();
         }
 
         return updatedParticipant;
     }
 
-    public async Task DeleteParticipant(Guid participantId)
+    public async Task DeleteParticipants(IEnumerable<Participant> participants)
     {
         await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
-            Participant? participantToUpdate = await context.Participants
-                .Where(e => e.Id == participantId)
-                .FirstOrDefaultAsync();
-
-            if (participantToUpdate is Participant)
-            {
-                context.Remove(participantToUpdate);
-            }
-            else throw new ParticipantNotFoundException(participantId);
-
+            context.Participants.RemoveRange(participants);
             await context.SaveChangesAsync();
         }
     }

@@ -67,17 +67,17 @@ public class EventRepository(
     {
         await using (EventFoodOrdersDbContext context = await _contextFactory.CreateDbContextAsync())
         {
-            Event? eventToUpdate = await context.Events
+            Event? eventToDelete = await context.Events
                 .Where(e => e.Id == eventId)
                 .Where(e => e.OwnerId == userId)
                 .FirstOrDefaultAsync();
 
-            if (eventToUpdate is null)
+            if (eventToDelete is null)
             {
                 throw new EventNotFoundException(eventId);
             }
 
-            context.Remove(eventToUpdate);
+            context.Events.Remove(eventToDelete);
             await context.SaveChangesAsync();
         }
     }

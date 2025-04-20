@@ -10,9 +10,6 @@ using Newtonsoft.Json;
 
 namespace EventFoodOrders.Services;
 
-/**
- * TODO! Batch requests instead of submitting multiple requests 
- */
 public class UserService : IUserService
 {
     // Batch info: https://learn.microsoft.com/en-us/graph/json-batching?tabs=http#json-batching-restrictions

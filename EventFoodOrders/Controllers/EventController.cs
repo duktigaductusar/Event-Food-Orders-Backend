@@ -1,7 +1,6 @@
 using EventFoodOrders.Dto.EventDTOs;
 using EventFoodOrders.Dto.ParticipantDTOs;
 using EventFoodOrders.Dto.UserDTOs;
-using EventFoodOrders.IdHandling;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +10,12 @@ namespace EventFoodOrders.Controllers;
 [Authorize]
 [ApiController]
 [Route("/api/event")]
-public class EventController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase
+public class EventController(IServiceManager sm) : ControllerBase
 {
-    private readonly IEventService _service = serviceManager.EventService;
-    private readonly IIdCarrier _carrier = carrier;
-
     [HttpPost]
     public async Task<ActionResult<EventForResponseDto>> CreateEvent(EventForCreationDto newEvent)
     {
-        EventForResponseDto response = await _service.CreateEvent(_carrier.UserId, newEvent);
+        EventForResponseDto response = await sm.EventService.CreateEvent(sm.IdCarrier.UserId, newEvent);
         return Created(uri: "", value: response);
     }
 
@@ -27,7 +23,7 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
     [Route("{eventId}")]
     public async Task<ActionResult<EventForResponseDto>> UpdateEvent(Guid eventId, EventForUpdateDto eventToUpdate)
     {
-        EventForResponseDto response = await _service.UpdateEvent(eventId, _carrier.UserId, eventToUpdate);
+        EventForResponseDto response = await sm.EventService.UpdateEvent(eventId, sm.IdCarrier.UserId, eventToUpdate);
         return Ok(response);
     }
 
@@ -35,7 +31,7 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
     [Route("{eventId}")]
     public async Task<ActionResult<bool>> DeleteEvent(Guid eventId)
     {
-        bool response = await _service.DeleteEvent(_carrier.UserId, eventId);
+        bool response = await sm.EventService.DeleteEvent(sm.IdCarrier.UserId, eventId);
         return Ok(response);
     }
 
@@ -43,7 +39,7 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
     [Route("{eventId}")]
     public async Task<ActionResult<EventForResponseWithDetailsDto>> GetSingleEventForUser(Guid eventId)
     {
-        EventForResponseWithDetailsDto response = await _service.GetEventForUser(_carrier.UserId, eventId);
+        EventForResponseWithDetailsDto response = await sm.EventService.GetEventForUser(sm.IdCarrier.UserId, eventId);
         return Ok(response);
     }
 
@@ -51,10 +47,10 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
     [Route("{eventId}/info")]
     public async Task<ActionResult<EventForResponseWithUsersDto>> GetSingleEventWithAllParticipantsAndUsers(Guid eventId)
     {
-        EventForResponseWithDetailsDto response = await _service.GetEventForUser(_carrier.UserId, eventId);
-        IEnumerable<ParticipantForResponseDto> participants = await serviceManager.ParticipantService.GetAllParticipantsForEvent(_carrier.UserId, eventId);
-        IEnumerable<UserDto> users = await serviceManager.UserService.GetUsersFromIds([.. participants.Select(p => p.UserId)]);
-        var dto = _service.GetEventWithUsers(response, participants, users);
+        EventForResponseWithDetailsDto response = await sm.EventService.GetEventForUser(sm.IdCarrier.UserId, eventId);
+        IEnumerable<ParticipantForResponseDto> participants = await sm.ParticipantService.GetAllParticipantsForEvent(sm.IdCarrier.UserId, eventId);
+        IEnumerable<UserDto> users = await sm.UserService.GetUsersFromIds([.. participants.Select(p => p.UserId)]);
+        var dto = sm.EventService.GetEventWithUsers(response, participants, users);
         return Ok(dto);
     }
 
@@ -62,7 +58,7 @@ public class EventController(IServiceManager serviceManager, IIdCarrier carrier)
     [Route("all")]
     public async Task<ActionResult<IEnumerable<EventForResponseDto>>> GetAllEventsForUser()
     {
-        IEnumerable<EventForResponseDto> response = await _service.GetAllEventsForUser(_carrier.UserId);
+        IEnumerable<EventForResponseDto> response = await sm.EventService.GetAllEventsForUser(sm.IdCarrier.UserId);
         return Ok(response);
     }
 }

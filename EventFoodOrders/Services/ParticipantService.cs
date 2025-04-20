@@ -10,59 +10,57 @@ namespace EventFoodOrders.Services;
 
 public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipantService
 {
-    private readonly IParticipantRepository _participantRepository = uoW.ParticipantRepository;
-    private readonly IEventRepository _eventRepository = uoW.EventRepository;
     private readonly IMapper _mapper = mapper.Mapper;
 
     public async Task<IEnumerable<Participant>> AddParticipantsToEvent(Event newEvent, IEnumerable<Participant> participants)
     {
         var userIds = participants.Select(p => p.UserId).Distinct();
-        var orderedAttendingOfficeParticipants = await _eventRepository.GetAttendingOfficeParticipantsDescendingByUpdate(userIds);
+        var orderedByDescendingAttendingOfficeParticipants = await uoW.EventRepository
+            .GetAttendingOfficeParticipantsDescendingByUpdate(userIds);
 
         foreach (var participant in participants)
         {
-            var latestParticpantForUser = orderedAttendingOfficeParticipants
+            var latestAttendingOffice = orderedByDescendingAttendingOfficeParticipants
                 .Where(p => p.UserId == participant.UserId)
                 .FirstOrDefault();
 
-            if (latestParticpantForUser is not null)
+            if (latestAttendingOffice is not null)
             {
-                participant.Allergies = latestParticpantForUser.Allergies;
-                participant.Preferences = latestParticpantForUser.Preferences;
+                participant.Allergies = latestAttendingOffice.Allergies;
+                participant.Preferences = latestAttendingOffice.Preferences;
             }
         }
 
-        return await _participantRepository.AddParticipants(participants);
+        return await uoW.ParticipantRepository.AddParticipants(participants);
     }
 
     public async Task<ParticipantForResponseDto> UpdateParticipant(Guid participantId, ParticipantForUpdateDto dto)
     {
-        Participant participant = await _participantRepository.GetParticipantWithParticipantId(participantId) ?? throw new ParticipantNotFoundException();
+        Participant participant = await uoW.ParticipantRepository.GetParticipantWithParticipantId(participantId) ?? throw new ParticipantNotFoundException();
         participant = _mapper.MapToParticipantFromUpdateDto(participant, dto);
-        await _participantRepository.UpdateParticipant(participantId, participant);
+        await uoW.ParticipantRepository.UpdateParticipant(participantId, participant);
 
         return _mapper.Map<ParticipantForResponseDto>(participant);
     }
 
     public async Task<ParticipantForResponseDto> UpdateParticipantResponseType(Guid participantId, ParticipantForUpdateResponseTypeDto dto)
     {
-        Participant participant = await _participantRepository.GetParticipantWithParticipantId(participantId) ?? throw new ParticipantNotFoundException();
+        Participant participant = await uoW.ParticipantRepository.GetParticipantWithParticipantId(participantId) ?? throw new ParticipantNotFoundException();
         participant = _mapper.MapToParticipantFromUpdateResponseTypeDto(participant, dto);
-        await _participantRepository.UpdateParticipant(participantId, participant);
+        await uoW.ParticipantRepository.UpdateParticipant(participantId, participant);
 
         return _mapper.Map<ParticipantForResponseDto>(participant);
     }
 
-    public async Task<bool> DeleteParticipant(Guid participantId)
+    public async Task<bool> DeleteParticipants(IEnumerable<Participant> participants)
     {
-        await _participantRepository.DeleteParticipant(participantId);
-
+        await uoW.ParticipantRepository.DeleteParticipants(participants);
         return true;
     }
 
     public async Task<ParticipantForResponseDto> GetParticipant(Guid userId, Guid eventId)
     {
-        Event participantsEvent = await _eventRepository.GetEventForUser(userId, eventId);
+        Event participantsEvent = await uoW.EventRepository.GetEventForUser(userId, eventId);
         Participant? participant = participantsEvent.Participants
             .Where(p => p.UserId == userId)
             .FirstOrDefault();
@@ -77,7 +75,7 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
 
     public async Task<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsForEvent(Guid userId, Guid eventId)
     {
-        Event participantsEvent = await _eventRepository.GetEventForUser(userId, eventId);
+        Event participantsEvent = await uoW.EventRepository.GetEventForUser(userId, eventId);
         IEnumerable<Participant> participants = [.. participantsEvent.Participants];
 
         return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants); ;
@@ -85,7 +83,7 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
 
     public async Task<IEnumerable<ParticipantForResponseDto>> GetAllParticipantsForUser(Guid userId)
     {
-        IEnumerable<Participant> participants = await _participantRepository.GetAllParticipantsForUser(userId);
+        IEnumerable<Participant> participants = await uoW.ParticipantRepository.GetAllParticipantsForUser(userId);
 
         return _mapper.Map<IEnumerable<ParticipantForResponseDto>>(participants);
     }
