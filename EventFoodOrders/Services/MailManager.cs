@@ -1,5 +1,4 @@
-﻿using EventFoodOrders.Dto.EventDTOs;
-using EventFoodOrders.Entities;
+﻿using EventFoodOrders.Entities;
 using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Services;
@@ -21,28 +20,19 @@ public class MailManager(IServiceManager sm) : IMailManager
 
     public async Task HandleUpdateEventMails(
         Event updatedEvent,
-        IEnumerable<Participant> participantsToSendUpdateTo,
-        IEnumerable<Participant> participantsToSendDeleteTo
+        IEnumerable<Guid> usersToSendUpdateTo,
+        IEnumerable<Guid> usersToSendDeleteTo
     )
     {
-        var userIds = participantsToSendUpdateTo
-                .Select(p => p.UserId)
-                .ToHashSet();
-
-        var userIdsToSendRevokeMailTo = participantsToSendDeleteTo
-            .Where(p => !userIds.Contains(p.UserId))
-            .Select(p => p.UserId)
-            .ToHashSet();
-
-        if (userIdsToSendRevokeMailTo.Count != 0)
+        if (usersToSendDeleteTo.Any())
         {
             await sm.MailerService.SendRevokeInvitationMail(
-                updatedEvent, userIdsToSendRevokeMailTo);
+                updatedEvent, usersToSendDeleteTo);
         }
 
-        if (userIds.Count != 0)
+        if (usersToSendUpdateTo.Any())
         {
-            await sm.MailerService.SendInvitationUpdateMail(updatedEvent, userIds);
+            await sm.MailerService.SendInvitationUpdateMail(updatedEvent, usersToSendUpdateTo);
         }
 
         await sm.MailerService.SendUpdateEventConfirmationMail(updatedEvent);
@@ -53,13 +43,13 @@ public class MailManager(IServiceManager sm) : IMailManager
         Guid ownerId
     )
     {
-        var eventParticipants = eventToDelete.Participants
+        var eventUserIds = eventToDelete.Participants
             .Where(p => p.UserId != ownerId)
             .Select(p => p.UserId)
             .ToList();
 
         await sm.MailerService.SendEventCanceledMail(
-            eventToDelete, eventParticipants);
+            eventToDelete, eventUserIds);
 
         await sm.MailerService.SendDeleteEventConfirmationMail(eventToDelete, ownerId);
     }

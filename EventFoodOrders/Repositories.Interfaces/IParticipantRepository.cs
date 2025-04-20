@@ -17,8 +17,8 @@ public interface IParticipantRepository
     /// <summary>
     /// Deletes a participant in the database.
     /// </summary>
-    /// <param name="participantId"></param>
-    Task DeleteParticipant(Guid participantId);
+    /// <param name="participants"></param>
+    Task DeleteParticipants(IEnumerable<Participant> participants);
 
     /// <summary>
     /// Gets all the participants with a given user Id.

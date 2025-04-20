@@ -70,7 +70,7 @@ public class EventService(
         return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
 
-    public async Task<EventForResponseDto> UpdateEvent(Guid eventId, Guid ownerId, EventForUpdateDto updatedEventDto)
+    public async Task<EventForResponseDto> UpdateEvent(Guid eventId, Guid ownerId, EventForUpdateDto eventForUpdateDto)
     {
         var eventToUpdate = await uoW.EventRepository.GetEventForUser(ownerId, eventId);
         // Keep original values for comparison
@@ -79,32 +79,26 @@ public class EventService(
         var originalEndTime = eventToUpdate.EndTime;
         var originalDescription = eventToUpdate.Description;
 
-        var updatedEvent = _mapper.MapToEventFromUpdateDto(updatedEventDto, eventId, ownerId);
+        var updatedEvent = _mapper.MapToEventFromUpdateDto(eventForUpdateDto, eventId, ownerId);
 
-        var participantsToDelete = eventToUpdate.Participants
-            .Where(p => !(updatedEventDto.UserIds ?? []).Contains(p.UserId) && p.UserId != ownerId)
-            .ToList();
-
-        foreach (Participant participant in participantsToDelete)
-        {
-            await sm.ParticipantService.DeleteParticipant(participant.Id);
-        }
-
-        var existingParticipantIds = eventToUpdate.Participants
+        var existingParticipantUserIds = eventToUpdate.Participants
             .Select(p => p.UserId)
             .ToHashSet();
 
         var participantsToAdd = new List<Participant>();
 
-        foreach (Guid userId in updatedEventDto.UserIds ?? [])
+        var userIdsExtractedFromUserAndGroupIds = new List<Guid>();
+
+        foreach (Guid userId in eventForUpdateDto.UserIds ?? [])
         {
             if (await sm.UserService.GetUserWithId(userId) is null)
             {
-                List<Guid> usersInGroup = await sm.UserService.GetUsersFromGroup(userId);
-                usersInGroup.Remove(ownerId);
-                foreach (Guid userIdFromGroup in usersInGroup)
+                List<Guid> userIdsInGroup = await sm.UserService.GetUsersFromGroup(userId);
+                userIdsInGroup.Remove(ownerId);
+                userIdsExtractedFromUserAndGroupIds.AddRange(userIdsInGroup);
+                foreach (Guid userIdFromGroup in userIdsInGroup)
                 {
-                    if (existingParticipantIds.Contains(userId) == false)
+                    if(!existingParticipantUserIds.Contains(userIdFromGroup))
                     {
                         participantsToAdd.Add(new Participant
                         {
@@ -114,15 +108,32 @@ public class EventService(
                     }
                 }
             }
-            else if (existingParticipantIds.Contains(userId) == false)
+            else
             {
-                participantsToAdd.Add(new Participant
+                userIdsExtractedFromUserAndGroupIds.Add(userId);
+                if (!existingParticipantUserIds.Contains(userId))
                 {
-                    UserId = userId,
-                    EventId = eventId
-                });
+                    participantsToAdd.Add(new Participant
+                    {
+                        UserId = userId,
+                        EventId = eventId
+                    });
+                }
             }
         }
+
+        var participantsToDelete = eventToUpdate.Participants
+           .Where(p =>
+                p.UserId != ownerId &&
+                !userIdsExtractedFromUserAndGroupIds.Contains(p.UserId))
+           .ToList();
+
+        var userToSendDeleteTo = participantsToDelete
+            .Select(p => p.UserId)
+            .ToHashSet();
+
+        await sm.ParticipantService.DeleteParticipants(
+            participantsToDelete);
 
         updatedEvent = await uoW.EventRepository.UpdateEvent(eventId, updatedEvent);
 
@@ -134,10 +145,19 @@ public class EventService(
             originalEndTime != updatedEvent.EndTime ||
             originalDescription != updatedEvent.Description;
 
+        var newParticipantsList = updatedEvent.Participants
+            .Concat(participantsToAdd)
+            .Select(p => p.UserId)
+            .ToHashSet();
+
+        var userToSendUpdateTo = eventDetailsChanged
+            ? newParticipantsList
+            : participantsToAdd.Select(p => p.UserId).ToHashSet();
+
         await sm.MailManager.HandleUpdateEventMails(
             updatedEvent,
-            eventDetailsChanged ? updatedEvent.Participants : participantsToAdd,
-            participantsToDelete);
+            userToSendUpdateTo,
+            userToSendDeleteTo);
 
         return _mapper.Map<EventForResponseDto>(updatedEvent);
     }

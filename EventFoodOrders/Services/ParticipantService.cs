@@ -15,18 +15,19 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
     public async Task<IEnumerable<Participant>> AddParticipantsToEvent(Event newEvent, IEnumerable<Participant> participants)
     {
         var userIds = participants.Select(p => p.UserId).Distinct();
-        var orderedAttendingOfficeParticipants = await uoW.EventRepository.GetAttendingOfficeParticipantsDescendingByUpdate(userIds);
+        var orderedByDescendingAttendingOfficeParticipants = await uoW.EventRepository
+            .GetAttendingOfficeParticipantsDescendingByUpdate(userIds);
 
         foreach (var participant in participants)
         {
-            var latestParticpantForUser = orderedAttendingOfficeParticipants
+            var latestAttendingOffice = orderedByDescendingAttendingOfficeParticipants
                 .Where(p => p.UserId == participant.UserId)
                 .FirstOrDefault();
 
-            if (latestParticpantForUser is not null)
+            if (latestAttendingOffice is not null)
             {
-                participant.Allergies = latestParticpantForUser.Allergies;
-                participant.Preferences = latestParticpantForUser.Preferences;
+                participant.Allergies = latestAttendingOffice.Allergies;
+                participant.Preferences = latestAttendingOffice.Preferences;
             }
         }
 
@@ -51,10 +52,9 @@ public class ParticipantService(IUoW uoW, ICustomAutoMapper mapper) : IParticipa
         return _mapper.Map<ParticipantForResponseDto>(participant);
     }
 
-    public async Task<bool> DeleteParticipant(Guid participantId)
+    public async Task<bool> DeleteParticipants(IEnumerable<Participant> participants)
     {
-        await uoW.ParticipantRepository.DeleteParticipant(participantId);
-
+        await uoW.ParticipantRepository.DeleteParticipants(participants);
         return true;
     }
 
