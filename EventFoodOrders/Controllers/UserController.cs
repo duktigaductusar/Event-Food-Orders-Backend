@@ -1,7 +1,6 @@
 ﻿using EventFoodOrders.Dto.UserDTOs;
 using EventFoodOrders.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using EventFoodOrders.IdHandling;
 using Microsoft.AspNetCore.Authorization;
 
 namespace EventFoodOrders.Controllers;
@@ -9,16 +8,13 @@ namespace EventFoodOrders.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/user")]
-public class UserController(IServiceManager serviceManager, IIdCarrier carrier) : ControllerBase
+public class UserController(IServiceManager sm) : ControllerBase
 {
-    private readonly IIdCarrier _carrier = carrier;
-
     [HttpGet]
     public async Task<ActionResult<UserDto[]>> GetUsersFromQuery([FromQuery] string queryString, [FromQuery] Guid? eventId)
     {   
-
-        var users = await serviceManager.UserService.GetUsersFromQuery(queryString, eventId);
-        users.RemoveAll(u => u.UserId == _carrier.UserId);
+        var users = await sm.UserService.GetUsersFromQuery(queryString, eventId);
+        users.RemoveAll(u => u.UserId == sm.IdCarrier.UserId);
         return users.ToArray();
     }
 
@@ -26,7 +22,7 @@ public class UserController(IServiceManager serviceManager, IIdCarrier carrier) 
     [Route("userId")]
     public async Task<ActionResult<UserDto[]>> GetUsers([FromBody] UserIdsDto userIds)
     {
-        var users = await serviceManager.UserService.GetUsersFromIds(userIds.UserIds);
+        var users = await sm.UserService.GetUsersFromIds(userIds.UserIds);
         return users.ToArray();
     }
 }

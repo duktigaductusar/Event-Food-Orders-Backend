@@ -4,7 +4,7 @@ using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Services;
 
-public class MailManager(IMailerService mailerService) : IMailManager
+public class MailManager(IServiceManager sm) : IMailManager
 {
     public async Task HandleNewEventMails(
         Event newEvent,
@@ -13,10 +13,10 @@ public class MailManager(IMailerService mailerService) : IMailManager
     {
         if (userIds.Any())
         {
-            await mailerService.SendInvitationMail(
+            await sm.MailerService.SendInvitationMail(
                 newEvent, userIds.Where(id => id != newEvent.OwnerId));
         }
-        await mailerService.SendCreateEventConfirmationMail(newEvent);
+        await sm.MailerService.SendCreateEventConfirmationMail(newEvent);
     }
 
     public async Task HandleUpdateEventMails(
@@ -36,16 +36,16 @@ public class MailManager(IMailerService mailerService) : IMailManager
 
         if (userIdsToSendRevokeMailTo.Count != 0)
         {
-            await mailerService.SendRevokeInvitationMail(
+            await sm.MailerService.SendRevokeInvitationMail(
                 updatedEvent, userIdsToSendRevokeMailTo);
         }
 
         if (userIds.Count != 0)
         {
-            await mailerService.SendInvitationUpdateMail(updatedEvent, userIds);
+            await sm.MailerService.SendInvitationUpdateMail(updatedEvent, userIds);
         }
 
-        await mailerService.SendUpdateEventConfirmationMail(updatedEvent);
+        await sm.MailerService.SendUpdateEventConfirmationMail(updatedEvent);
     }
 
     public async Task HandleCancelEventMails(
@@ -58,9 +58,9 @@ public class MailManager(IMailerService mailerService) : IMailManager
             .Select(p => p.UserId)
             .ToList();
 
-        await mailerService.SendEventCanceledMail(
+        await sm.MailerService.SendEventCanceledMail(
             eventToDelete, eventParticipants);
 
-        await mailerService.SendDeleteEventConfirmationMail(eventToDelete, ownerId);
+        await sm.MailerService.SendDeleteEventConfirmationMail(eventToDelete, ownerId);
     }
 }

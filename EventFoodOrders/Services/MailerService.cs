@@ -5,7 +5,7 @@ namespace EventFoodOrders.Services;
 
 public class MailerService(
     IConfiguration configuration,
-    IUserService userService
+    IServiceManager sm
 ) : IMailerService
 {
     private readonly string baseUrl = configuration["ClientBaseUrl"]
@@ -22,7 +22,7 @@ public class MailerService(
 
         var eventUrl = $"{baseUrl}/{userEventPath}/{focusedEvent.Id}";
         Guid[] ownerIdArray = [focusedEvent.OwnerId];
-        var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
+        var ownerInfo = await sm.UserService.GetUsersFromIds(ownerIdArray);
 
         EmailTemplate message = new(
             "Inbjudan till nytt event",
@@ -37,7 +37,7 @@ public class MailerService(
                 <a style='{EmailStyles.Button}' href=""{Safe(eventUrl)}"">Klicka här för att svara på inbjudan</a>"            
         ));
 
-        await userService.SendEmail(userIds.ToList(), message);
+        await sm.UserService.SendEmail(userIds.ToList(), message);
     }
 
     public async Task SendInvitationUpdateMail(Entities.Event focusedEvent, IEnumerable<Guid> userIds)
@@ -49,7 +49,7 @@ public class MailerService(
 
         var eventUrl = $"{baseUrl}/{userEventPath}/{focusedEvent.Id}";
         Guid[] ownerIdArray = [focusedEvent.OwnerId];
-        var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
+        var ownerInfo = await sm.UserService.GetUsersFromIds(ownerIdArray);
 
         EmailTemplate message = new(
             "Event har uppdaterats",
@@ -64,7 +64,7 @@ public class MailerService(
                 <a style='{EmailStyles.Button}' href=""{Safe(eventUrl)}"">Klicka här för att svara på inbjudan</a>"
         ));
 
-        await userService.SendEmail(userIds.ToList(), message);
+        await sm.UserService.SendEmail(userIds.ToList(), message);
     }
 
     public async Task SendEventCanceledMail(
@@ -75,7 +75,7 @@ public class MailerService(
         if (!userIds.Any()) { return; }
         
         Guid[] ownerIdArray = [focusedEvent.OwnerId];
-        var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
+        var ownerInfo = await sm.UserService.GetUsersFromIds(ownerIdArray);
 
         EmailTemplate message = new(
             "Eventet har blivit borttaget",
@@ -85,7 +85,7 @@ public class MailerService(
                 <p style='{EmailStyles.Paragraph}'>Ingen åtgärd krävs från dig.</p>"
         ));
 
-        await userService.SendEmail(userIds.ToList(), message);
+        await sm.UserService.SendEmail(userIds.ToList(), message);
     }
 
     public async Task SendRevokeInvitationMail(
@@ -96,7 +96,7 @@ public class MailerService(
         if (!userIds.Any()) { return; }
 
         Guid[] ownerIdArray = [focusedEvent.OwnerId];
-        var ownerInfo = await userService.GetUsersFromIds(ownerIdArray);
+        var ownerInfo = await sm.UserService.GetUsersFromIds(ownerIdArray);
 
         EmailTemplate message = new(
             "Din inbjudan har blivit avbokad",
@@ -107,7 +107,7 @@ public class MailerService(
                 <p style='{EmailStyles.Paragraph}'>Ingen åtgärd krävs från dig.</p>"
         ));
 
-        await userService.SendEmail(userIds.ToList(), message);
+        await sm.UserService.SendEmail(userIds.ToList(), message);
     }
 
     public async Task SendCreateEventConfirmationMail(Entities.Event focusedEvent)
@@ -126,7 +126,7 @@ public class MailerService(
                 <a style='{EmailStyles.Button}' href=""{Safe(eventUrl)}"">Klicka här för att hantera eventet.</a>"
         ));
 
-        await userService.SendEmail(ownerIdArray, message);
+        await sm.UserService.SendEmail(ownerIdArray, message);
     }
 
     public async Task SendUpdateEventConfirmationMail(Entities.Event focusedEvent)
@@ -144,7 +144,7 @@ public class MailerService(
                 <br/>
                 <a style='{EmailStyles.Button}' href=""{Safe(eventUrl)}"">Klicka här för att hantera eventet.</a>"
         ));
-        await userService.SendEmail(ownerIdArray, message);
+        await sm.UserService.SendEmail(ownerIdArray, message);
     }
 
     public async Task SendDeleteEventConfirmationMail(Entities.Event focusedEvent, Guid ownerId)
@@ -158,7 +158,7 @@ public class MailerService(
                 <p style='{EmailStyles.Paragraph}'>Datum och tid för det stängda eventet: {Safe(focusedEvent.Date)}</p>
                 <p style='{EmailStyles.Paragraph}'>{Safe(focusedEvent.Description ?? String.Empty)}</p>"
         ));
-        await userService.SendEmail(ownerIdArray, message);
+        await sm.UserService.SendEmail(ownerIdArray, message);
     }
 
     public async Task SendReminderMail(List<Guid> recipients, Entities.Event focusedEvent)
@@ -176,7 +176,7 @@ public class MailerService(
                 <br/>
                 <a style='{EmailStyles.Button}' href=""{eventUrl}"">Klicka här för att svara på inbjudan.</a>"
          ));
-        await userService.SendEmail(recipients, message);
+        await sm.UserService.SendEmail(recipients, message);
     }
 
     public async Task SendSummaryMail(Entities.Event focusedEvent)
@@ -203,7 +203,7 @@ public class MailerService(
                 <br/>
                 <a style='{EmailStyles.Button}' href=""{Safe(eventUrl)}"">Klicka här för att hantera eventet.</a>"
          ));
-        await userService.SendEmail(ownerId, message);
+        await sm.UserService.SendEmail(ownerId, message);
     }
 
     private static string Safe(string unsafeValue)

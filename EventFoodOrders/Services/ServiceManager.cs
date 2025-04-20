@@ -1,20 +1,28 @@
-﻿using EventFoodOrders.Services.Interfaces;
+﻿using EventFoodOrders.IdHandling;
+using EventFoodOrders.Services.Interfaces;
 
 namespace EventFoodOrders.Services;
 
-/**
- * Todo implement Lazy and ass mail service and manager here.
- *  1) Remove circular dependency when using services in services.
- *  2) Reduce memory usage.
- *  3) Improve performance.
- */
 public class ServiceManager(
-    IEventService eventService,
-    IParticipantService participantService,
-    IUserService userService
+    Lazy<IEventService> eventService,
+    Lazy<IParticipantService> participantService,
+    Lazy<IUserService> userService,
+    Lazy<IMailManager> mailManager,
+    Lazy<IMailerService> mailerService,
+    Lazy<IIdCarrier> idCarrier
 ) : IServiceManager
 {
-    public IEventService EventService { get; set; } = eventService;
-    public IParticipantService ParticipantService { get; set; } = participantService;
-    public IUserService UserService { get; set; } = userService;
+    private readonly Lazy<IEventService> _eventService = eventService;
+    private readonly Lazy<IParticipantService> _participantService = participantService;
+    private readonly Lazy<IUserService> _userService = userService;
+    private readonly Lazy<IMailManager> _mailManager = mailManager;
+    private readonly Lazy<IMailerService> _mailerService = mailerService;
+    private readonly Lazy<IIdCarrier> _idCarrier = idCarrier;
+
+    public IEventService EventService { get => _eventService.Value; }
+    public IParticipantService ParticipantService { get => _participantService.Value; }
+    public IUserService UserService { get => _userService.Value; }
+    public IMailManager MailManager { get => _mailManager.Value; }
+    public IMailerService MailerService { get => _mailerService.Value; }
+    public IIdCarrier IdCarrier { get => _idCarrier.Value; }
 }
