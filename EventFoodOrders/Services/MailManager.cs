@@ -13,7 +13,8 @@ public class MailManager(IMailerService mailerService) : IMailManager
     {
         if (userIds.Any())
         {
-            await mailerService.SendInvitationMail(newEvent, userIds);
+            await mailerService.SendInvitationMail(
+                newEvent, userIds.Where(id => id != newEvent.OwnerId));
         }
         await mailerService.SendCreateEventConfirmationMail(newEvent);
     }
@@ -30,10 +31,14 @@ public class MailManager(IMailerService mailerService) : IMailManager
 
         var userIdsToSendRevokeMailTo = participantsToSendDeleteTo
             .Where(p => !userIds.Contains(p.UserId))
-            .Select(p => p.UserId);
+            .Select(p => p.UserId)
+            .ToHashSet();
 
-        await mailerService.SendRevokeInvitationMail(
-           updatedEvent, userIdsToSendRevokeMailTo);
+        if (userIdsToSendRevokeMailTo.Count != 0)
+        {
+            await mailerService.SendRevokeInvitationMail(
+                updatedEvent, userIdsToSendRevokeMailTo);
+        }
 
         if (userIds.Count != 0)
         {
