@@ -71,7 +71,7 @@ public class EventService(
             newEvent, participantsToAdd);
 
         await mailManager.HandleNewEventMails(
-            newEvent, participantsToAdd.Select(p => p.UserId).ToArray());
+            newEvent, participantsToAdd.Select(p => p.UserId).ToHashSet());
 
         return _mapper.MapToEventForResponseDto(newEvent, owner);
     }
