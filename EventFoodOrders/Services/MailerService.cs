@@ -235,7 +235,7 @@ public class MailerService(
                 <p style='{EmailStyles.Paragraph}'>{office.Count} deltagare kommer närvara på plats.</p>
                 <p style='{EmailStyles.Paragraph}'>{wantsFood.Count} deltagare önskar mat, {allergies.Count} deltagare har anmält allergier och {preferences.Count} deltagare har anmält matpreferenser.</p>        
                 {allergiesHtml}
-                {p}
+                {preferencesHtml}
                 <blockquote style='{EmailStyles.Description}'>{Safe(focusedEvent.Description ?? "Ingen beskrivning tillgänglig")}</blockquote>
                 <br/>
                 <a style='{EmailStyles.Button}' href=""{Safe(eventUrl)}"">Klicka här för att hantera eventet.</a>"
