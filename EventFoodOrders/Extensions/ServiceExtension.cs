@@ -14,23 +14,26 @@ public static class ServiceExtension
     {
         if (isDev)
         {
-            services.AddScoped<IUserSeed, UserSeed>();
-            services.AddScoped<IUserService, MockWithGraphUserService>();
+            services.AddAsLazy<IUserSeed, UserSeed>();
+            services.AddAsLazy<IUserService, MockWithGraphUserService>();
         }
         else
         {
-            services.AddScoped<IUserService, UserService>();
+            services.AddAsLazy<IUserService, UserService>();
         }
-        services.AddScoped<IEventService, EventService>();
-        services.AddScoped<IParticipantService, ParticipantService>();
-        services.AddScoped<IServiceManager, ServiceManager>();
+
+        services.AddAsLazy<IEventService, EventService>();
+        services.AddAsLazy<IParticipantService, ParticipantService>();
+        services.AddAsLazy<IMailerService, MailerService>();
+        services.AddAsLazy<IMailManager, MailManager>();
+        services.AddAsLazy<IIdCarrier, CustomIdCarrier>();
+        services.AddScoped<IServiceManager, ServiceManager>(); 
+
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IParticipantRepository, ParticipantRepository>();
         services.AddScoped<IUoW, UoW>();
+
         services.AddScoped<ICustomAutoMapper, CustomAutoMapper>();
-        services.AddScoped<IMailerService, MailerService>();
-        services.AddScoped<IMailManager, MailManager>();
-        services.AddScoped<IIdCarrier, CustomIdCarrier>();
     }
 
     public static void ConfigureSingletonServices(this IServiceCollection services)
@@ -43,5 +46,24 @@ public static class ServiceExtension
         services.AddHostedService<ReminderService>();
         services.AddHostedService<SummaryService>();
     }
-    
+
+    private static void AddAsLazy<IServiceType, ServiceType>(
+        this IServiceCollection collection,
+        ServiceLifetime lifetime = ServiceLifetime.Scoped
+    )
+        where ServiceType : class, IServiceType
+        where IServiceType : class
+    {
+        collection.Add(new ServiceDescriptor(
+            typeof(IServiceType),
+            typeof(ServiceType),
+            lifetime
+        ));
+
+        collection.Add(new ServiceDescriptor(
+            typeof(Lazy<IServiceType>),
+            p => new Lazy<IServiceType>(() => p.GetRequiredService<IServiceType>()),
+            lifetime
+        ));
+    }
 }

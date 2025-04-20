@@ -60,11 +60,11 @@ public interface IEventRepository
     Task<Event> UpdateEvent(Guid eventId, Event updatedEvent);
 
     /// <summary>
-    /// Get all events which have a deadline that is on the DateTime.date sent as parameter.
+    /// Get all events which have a deadline that is on the date sent as parameter.
     /// </summary>
-    /// <param name="now"></param>
+    /// <param name="date"></param>
     /// <returns></returns>
-    Task<List<Event>> GetAllEventsAtDeadline(DateTimeOffset dateTimeOffset);
+    Task<List<Event>> GetAllEventsAtDeadline(DateTimeOffset date);
 
     /// <summary>
     /// Get the next upcoming deadline, based on DateTime.Now.
@@ -75,8 +75,7 @@ public interface IEventRepository
     /// <summary>
     /// Get ordered attending office participants by user IDs.
     /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="participants"></param>
+    /// <param name="userIds"></param>
     /// <returns></returns>
     Task<IEnumerable<Participant>> GetAttendingOfficeParticipantsDescendingByUpdate(IEnumerable<Guid> userIds);
     

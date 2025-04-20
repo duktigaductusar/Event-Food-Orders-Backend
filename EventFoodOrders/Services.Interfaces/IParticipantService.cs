@@ -21,9 +21,9 @@ public interface IParticipantService
     /// <summary>
     /// Deletes a participant.
     /// </summary>
-    /// <param name="participantId"></param>
+    /// <param name="participants"></param>
     /// <returns></returns>
-    Task<bool> DeleteParticipant(Guid participantId);
+    Task<bool> DeleteParticipants(IEnumerable<Participant> participants);
 
     /// <summary>
     /// Gets all the participants in an event, given that the user is a registered participant.

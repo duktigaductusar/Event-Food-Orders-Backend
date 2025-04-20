@@ -24,11 +24,11 @@ public interface IMailManager
     /// Coordinate mails when an event is updated.
     /// </summary>
     /// <param name="updatedEvent"></param>
-    /// <param name="participantsToSendUpdateTo"></param>
-    /// <param name="participantsToSendDeleteTo"></param>
+    /// <param name="usersToSendUpdateTo"></param>
+    /// <param name="usersToSendDeleteTo"></param>
     /// <returns></returns>
     Task HandleUpdateEventMails(Event updatedEvent,
-        IEnumerable<Participant> participantsToSendUpdateTo,
-        IEnumerable<Participant> participantsToSendDeleteTo
+        IEnumerable<Guid> usersToSendUpdateTo,
+        IEnumerable<Guid> usersToSendDeleteTo
     );
 }
