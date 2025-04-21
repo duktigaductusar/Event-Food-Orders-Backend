@@ -8,6 +8,7 @@ MockMails
 
 # Environment files
 .env
+.env.production
 
 # Node artifact files
 node_modules/

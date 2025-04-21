@@ -19,12 +19,12 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
         },
-        "http-staging": {
+        "http-test": {
             "commandName": "Project",
             "dotnetRunMessages": true,
             "applicationUrl": "http://localhost:8080",
             "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Staging"
+                "ASPNETCORE_ENVIRONMENT": "Testing"
             }
         }
     },

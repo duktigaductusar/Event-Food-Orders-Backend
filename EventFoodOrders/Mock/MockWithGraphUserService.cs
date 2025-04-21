@@ -1,21 +1,23 @@
 ﻿using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.Options;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
+using Microsoft.Extensions.Options;
 
 namespace EventFoodOrders.Mock
 {
     public class MockWithGraphUserService(
         IGraphTokenService graphTokenService,
         HttpClient httpClient,
-        IConfiguration config,
+        IOptions<AppGraphOptions> options,
         IUserSeed seeder,
         IUoW uow
     ) : IUserService
     {
         private IUserService _userService = new UserService(
-            graphTokenService, httpClient, config, uow);
+            graphTokenService, httpClient, options, uow);
         private IUserService _mockService = new MockUserService(seeder, uow);
 
         public async Task<List<string>> GetNamesWithIds(List<Guid> userIds)

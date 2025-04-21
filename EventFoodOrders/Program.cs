@@ -3,6 +3,7 @@ using EventFoodOrders.Extensions;
 using EventFoodOrders.Middleware;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Services;
+using EventFoodOrders.Options;
 
 namespace EventFoodOrders;
 
@@ -16,6 +17,7 @@ public class Program
 
         Env.Load();
         builder.Configuration.AddEnvironmentVariables();
+        builder.Services.ConfigureOptionsExtension(builder.Configuration);
 
         builder.Services.AddControllers();
         builder.Services.AddHttpClient<IUserService, UserService>();

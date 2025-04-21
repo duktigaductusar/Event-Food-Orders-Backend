@@ -2,6 +2,6 @@
 
 public interface IUoW
 {
-    IEventRepository EventRepository { get; set; }
-    IParticipantRepository ParticipantRepository { get; set; }
+    IEventRepository EventRepository { get; }
+    IParticipantRepository ParticipantRepository { get; }
 }
