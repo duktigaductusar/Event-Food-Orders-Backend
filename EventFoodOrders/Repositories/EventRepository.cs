@@ -110,12 +110,11 @@ public class EventRepository(
                 .AsNoTracking()
                 .Include(e => e.Participants)
                 .Where(e => 
-                    e.Participants.Where(p => p.UserId == userId).Count() > 0
-                    && e.Status == EventStatus.BeforeDeadline)
+                    e.Participants.Where(p => p.UserId == userId).Count() > 0 &&
+                    e.Status == EventStatus.BeforeDeadline)
                 .ToListAsync();
         }
     }
-
 
     public async Task<IEnumerable<Participant>> GetAttendingOfficeParticipantsDescendingByUpdate(IEnumerable<Guid> userIds)
     {
