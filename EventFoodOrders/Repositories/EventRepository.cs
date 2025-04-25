@@ -109,7 +109,9 @@ public class EventRepository(
             return await context.Events
                 .AsNoTracking()
                 .Include(e => e.Participants)
-                .Where(e => e.Participants.Where(p => p.UserId == userId).Count() > 0)
+                .Where(e => 
+                    e.Participants.Where(p => p.UserId == userId).Count() > 0
+                    && e.Status == EventStatus.BeforeDeadline)
                 .ToListAsync();
         }
     }
