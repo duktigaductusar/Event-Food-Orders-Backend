@@ -1,19 +1,18 @@
 ﻿using EventFoodOrders.Entities;
+using EventFoodOrders.Options;
 using EventFoodOrders.Repositories.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace EventFoodOrders.Services;
 
 public class SummaryService(
     ILogger<SummaryService> logger,
     IServiceScopeFactory scopeFactory,
-    IConfiguration configuration
+    IOptions<EventFoodOrdersOptions> options
 ) : BackgroundService
 {
     private readonly TimeSpan _pollingInterval = TimeSpan.FromMinutes(
-        double.TryParse(configuration["PollingIntervalSummaryService"], out var minutes)
-            ? minutes
-            : throw new ArgumentException("PollingIntervalSummaryService must be a number")
-    );
+        options.Value.PollingIntervalSummaryService);
 
     private readonly TimeSpan _pollingIntervalError = TimeSpan.FromMinutes(5);
 

@@ -1,15 +1,16 @@
-﻿using EventFoodOrders.Services.Interfaces;
+﻿using EventFoodOrders.Options;
+using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
+using Microsoft.Extensions.Options;
 
 namespace EventFoodOrders.Services;
 
 public class MailerService(
-    IConfiguration configuration,
+    IOptions<EventFoodOrdersOptions> options,
     IServiceManager sm
 ) : IMailerService
 {
-    private readonly string baseUrl = configuration["ClientBaseUrl"]
-        ?? throw new ArgumentNullException($"Environment variable 'BaseUrl' is missing in");
+    private readonly string baseUrl = options.Value.ClientBaseUrl;
     private readonly string adminEventPath = "event-management";
     private readonly string userEventPath = "event-details";
 

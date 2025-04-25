@@ -3,9 +3,11 @@ using System.Net.Http.Headers;
 using System.Text;
 using EventFoodOrders.Dto.GraphDTOs;
 using EventFoodOrders.Dto.UserDTOs;
+using EventFoodOrders.Options;
 using EventFoodOrders.Repositories.Interfaces;
 using EventFoodOrders.Services.Interfaces;
 using EventFoodOrders.Utilities;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace EventFoodOrders.Services;
@@ -16,21 +18,21 @@ public class UserService : IUserService
     private readonly int _graphBatchLimit = 20;
     private readonly IGraphTokenService _graphTokenService;
     private readonly HttpClient _httpClient;
-    private readonly IConfiguration _config;
+    private readonly IOptions<AppGraphOptions> _options;
     private readonly IUoW _uow;
     private string _accessToken = String.Empty;
 
     public UserService(
         IGraphTokenService graphTokenService,
         HttpClient httpClient,
-        IConfiguration config,
+        IOptions<AppGraphOptions> options,
         IUoW uow
         )
     {
         _graphTokenService = graphTokenService;
         _httpClient = httpClient;
         _httpClient.BaseAddress = new Uri("https://graph.microsoft.com/v1.0/");
-        _config = config;
+        _options = options;
         _uow = uow;
     }
 
@@ -112,7 +114,7 @@ public class UserService : IUserService
         };
         var jsonPayload = JsonConvert.SerializeObject(mailPayload);
         var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-        var requestUri = $"users/{_config["Graph:SenderEmail"]}/sendMail";
+        var requestUri = $"users/{_options.Value.SenderEmail}/sendMail";
         var response = await _httpClient.PostAsync(requestUri, content);
         response.EnsureSuccessStatusCode();
     }

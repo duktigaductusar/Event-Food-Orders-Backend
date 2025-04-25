@@ -29,8 +29,8 @@ public static class ServiceExtension
         services.AddAsLazy<IIdCarrier, CustomIdCarrier>();
         services.AddScoped<IServiceManager, ServiceManager>(); 
 
-        services.AddScoped<IEventRepository, EventRepository>();
-        services.AddScoped<IParticipantRepository, ParticipantRepository>();
+        services.AddAsLazy<IEventRepository, EventRepository>();
+        services.AddAsLazy<IParticipantRepository, ParticipantRepository>();
         services.AddScoped<IUoW, UoW>();
 
         services.AddScoped<ICustomAutoMapper, CustomAutoMapper>();

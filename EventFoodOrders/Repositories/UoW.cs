@@ -2,9 +2,14 @@
 
 namespace EventFoodOrders.Repositories;
 
-public class UoW(IEventRepository eventRepository, IParticipantRepository participantRepository) : IUoW
+public class UoW(
+    Lazy<IEventRepository> eventRepository,
+    Lazy<IParticipantRepository> participantRepository
+) : IUoW
 {
-    public IEventRepository EventRepository { get; set; } = eventRepository;
-    public IParticipantRepository ParticipantRepository { get; set; } = participantRepository;
-    
+    private readonly Lazy<IEventRepository> _eventRepository = eventRepository;
+    private readonly Lazy<IParticipantRepository> _participantRepository = participantRepository;
+
+    public IEventRepository EventRepository { get => _eventRepository.Value; }
+    public IParticipantRepository ParticipantRepository { get => _participantRepository.Value; }
 }

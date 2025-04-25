@@ -8,6 +8,7 @@ MockMails
 
 # Environment files
 .env
+.env.production
 
 # Node artifact files
 node_modules/
@@ -343,3 +344,6 @@ FakesAssemblies/
 /EventFoodOrders/Properties/serviceDependencies.json
 /EventFoodOrders/Properties/serviceDependencies.local.json
 /EventFoodOrders/Properties/serviceDependencies.local.json.user
+
+# Docker
+docker-compose.production.yml
