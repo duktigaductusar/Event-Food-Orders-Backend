@@ -1,6 +1,5 @@
-﻿using EventFoodOrders.Exceptions;
-
-namespace EventFoodOrders.Middleware;
+﻿using System.Text.Json;
+using EventFoodOrders.Exceptions;
 
 public class CustomExceptionHandler(RequestDelegate next)
 {
@@ -14,16 +13,25 @@ public class CustomExceptionHandler(RequestDelegate next)
         }
         catch (Exception ex)
         {
+            int statusCode = StatusCodes.Status500InternalServerError;
+            string message = "An unexpected error occurred.";
+
             if (ex is CustomException cEx)
             {
-                context.Response.StatusCode = cEx.Code;
+                statusCode = cEx.Code;
+                message = cEx.Message;
             }
-            else
+
+            context.Response.StatusCode = statusCode;
+            context.Response.ContentType = "application/json";
+
+            var errorResponse = new
             {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            }
-            context.Response.ContentType = "text/plain";
-            await context.Response.WriteAsync(ex.Message);
+                status = statusCode,
+                error = message
+            };
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
         }
     }
 }
