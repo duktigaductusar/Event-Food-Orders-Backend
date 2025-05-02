@@ -38,7 +38,7 @@ public class Program
         var app = builder.Build();
         #endregion Build Phase
 
-        #region Pipeline Configuration Phase  
+        #region Pipeline Configuration Phase
         app.UseCustomExceptionHandler();
         app.UseHttpsRedirection();
         app.UseRouting();
@@ -50,6 +50,8 @@ public class Program
         app.UseAuthorization();
         app.UserCustomIdHandler();
         app.UseSession();
+
+        app.UseMiddleware<RequestSizeLimitMiddleware>();
 
         app.MapControllers();
 
