@@ -10,6 +10,9 @@ MockMails
 .env
 .env.production
 
+# Docker Files
+docker-compose.production.yml
+
 # Node artifact files
 node_modules/
 dist/

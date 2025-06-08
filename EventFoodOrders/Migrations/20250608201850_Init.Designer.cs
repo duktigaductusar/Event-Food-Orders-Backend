@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventFoodOrders.Migrations
 {
     [DbContext(typeof(EventFoodOrdersDbContext))]
-    [Migration("20250608200243_Init")]
+    [Migration("20250608201850_Init")]
     partial class Init
     {
         /// <inheritdoc />

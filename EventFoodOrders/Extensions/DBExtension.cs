@@ -27,9 +27,10 @@ public static class DBExtension
 
         if (isDevelopment)
         {
-            var userSeed = serviceProvider.GetRequiredService<IUserSeed>();
-            Console.WriteLine("Seeding data...");
-            DBSeed.Run(context, userSeed);
-        }
+        var userSeed = serviceProvider.GetRequiredService<IUserSeed>();
+
+        Console.WriteLine("Seeding data...");
+        DBSeed.Run(context, userSeed);
     }
+}
 }
